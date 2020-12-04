@@ -1,10 +1,19 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.gms.google-services'
+    id 'com.google.firebase.crashlytics'
+    id 'dagger.hilt.android.plugin'
+    id 'com.squareup.sqldelight'
+    id 'com.google.firebase.firebase-perf'
 }
 
 android {
     compileSdkVersion 30
+    buildToolsVersion "30.0.2"
 
     defaultConfig {
         applicationId "io.github.diubruteforce.smartcr"
@@ -17,39 +26,153 @@ android {
     }
 
     buildTypes {
+        debug {
+            //applicationIdSuffix ".debug"
+        }
+
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
         useIR = true
+        freeCompilerArgs += '-Xopt-in=kotlin.RequiresOptIn'
     }
+
     buildFeatures {
         compose true
     }
+
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
         kotlinCompilerVersion '1.4.20'
     }
+
+    // The kotlinx-coroutines-core artifact contains a resource file that is not
+    // required for the coroutines to operate normally and is only used by the debugger.
+    packagingOptions {
+        exclude "DebugProbesKt.bin"
+    }
 }
 
 dependencies {
+    // Test
+    testImplementation 'junit:junit:4.13.1'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
+    // Core
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.3.2'
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
+    implementation "androidx.activity:activity-ktx:1.2.0-beta02"
+    implementation "androidx.fragment:fragment-ktx:1.3.0-beta02"
+    implementation "androidx.constraintlayout:constraintlayout:2.0.4"
+
+    // Lifecycle
+    def lifecycle_version = "2.2.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
+
+    // Animation
+    implementation "com.airbnb.android:lottie:3.4.4"
+
+    // Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_toolkit_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_toolkit_version"
+    androidTestImplementation "androidx.navigation:navigation-testing:$navigation_toolkit_version"
+    def nav_compose_version = "1.0.0-alpha03"
+    implementation "androidx.navigation:navigation-compose:$nav_compose_version"
+
+    // Compose
     implementation "androidx.compose.ui:ui:$compose_version"
     implementation "androidx.compose.material:material:$compose_version"
     implementation "androidx.compose.ui:ui-tooling:$compose_version"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.0-alpha06'
-    testImplementation 'junit:junit:4.+'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.2'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+
+    // Image Loader
+    implementation "io.coil-kt:coil:1.0.0"
+    implementation "dev.chrisbanes.accompanist:accompanist-coil:0.4.0"
+
+    // Firebase
+    implementation 'com.google.firebase:firebase-analytics-ktx:18.0.0'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx:17.3.0'
+    implementation 'com.google.firebase:firebase-perf-ktx:19.0.10'
+
+    // Coroutine
+    def coroutine_version = "1.4.2"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$coroutine_version"
+
+    // Networking
+    def okhttp_version = '4.9.0'
+    def retrofit_version = '2.9.0'
+    implementation "com.squareup.okhttp3:okhttp:$okhttp_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$okhttp_version"
+    implementation "com.squareup.okhttp3:mockwebserver:$okhttp_version"
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    // WorkManager
+    def work_version = "2.4.0"
+    implementation "androidx.work:work-runtime-ktx:$work_version"
+    androidTestImplementation "androidx.work:work-testing:$work_version"
+
+    // Database
+    implementation "com.squareup.sqldelight:android-driver:$sqldelight_version"
+    implementation "com.squareup.sqldelight:coroutines-extensions-jvm:$sqldelight_version"
+
+    // DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0-alpha05"
+
+    // Logging
+    implementation  "com.jakewharton.timber:timber:4.7.1"
+
+    // Hilt
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    implementation 'androidx.hilt:hilt-lifecycle-viewmodel:1.0.0-alpha02'
+    kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
+
+    implementation 'androidx.hilt:hilt-work:1.0.0-alpha02'
+    kapt 'androidx.hilt:hilt-compiler:1.0.0-alpha02'
+
+    androidTestImplementation  "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptAndroidTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+    testImplementation "com.google.dagger:hilt-android-testing:$hilt_version"
+    kaptTest "com.google.dagger:hilt-android-compiler:$hilt_version"
+
+    // Google One tap sign in
+    implementation 'com.google.android.gms:play-services-auth:19.0.0'
+
+    // Facebook login
+    implementation 'com.facebook.android:facebook-login:7.1.0'
+
+    // Lottie Animation
+    implementation "com.airbnb.android:lottie:3.4.4"
+
+    // Youtube Player
+    implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
+
+    // OTP
+    implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.1.2'
+
+    // Performance
+    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
+}
+
+kapt {
+    correctErrorTypes true
 }
