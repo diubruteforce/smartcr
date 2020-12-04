@@ -7,12 +7,12 @@ import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
 
 private val DarkColorPalette = darkColors(
-    primary = orange500,
+    primary = orange200,
     error = redError
 )
 
 private val LightColorPalette = lightColors(
-    primary = orange200,
+    primary = orange500,
     error = redError
 )
 

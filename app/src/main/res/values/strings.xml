@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SmartCR</string>
+    <string name="welcome_student">Welcome Student!</string>
+    <string name="stay_sign_in">Stay signed in to make things easier</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="sign_in">Sign in</string>
+    <string name="dont_have_account">Don’t Have an Account?</string>
 </resources>

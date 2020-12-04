@@ -101,7 +101,11 @@ dependencies {
 
     // Image Loader
     implementation "io.coil-kt:coil:1.0.0"
-    implementation "dev.chrisbanes.accompanist:accompanist-coil:0.4.0"
+
+    // Accompanist
+    def accompanist_version = "0.4.0"
+    implementation "dev.chrisbanes.accompanist:accompanist-coil:$accompanist_version"
+    implementation "dev.chrisbanes.accompanist:accompanist-insets:$accompanist_version"
 
     // Firebase
     implementation 'com.google.firebase:firebase-analytics-ktx:18.0.0'
