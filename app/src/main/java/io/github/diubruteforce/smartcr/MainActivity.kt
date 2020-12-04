@@ -1,38 +1,39 @@
 package io.github.diubruteforce.smartcr
 
+import android.content.res.Resources
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material.Text
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.setContent
-import androidx.compose.ui.tooling.preview.Preview
-import io.github.diubruteforce.smartcr.ui.SmartCRTheme
+import dagger.hilt.android.AndroidEntryPoint
+import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             SmartCRTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    Greeting("Android")
+
                 }
             }
         }
     }
-}
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
-}
+    /*
+    * This method is called by fragment to get the theme
+    * By changing this theme I am changing the splash theme
+    * In Splash theme I have green background for the window
+    * copied from https://stackoverflow.com/a/39150319/6307259
+    * */
+    override fun getTheme(): Resources.Theme {
+        val theme = super.getTheme()
+        theme.applyStyle(R.style.Theme_SmartCR_NoActionBar, true)
 
-@Preview(showBackground = true)
-@Composable
-fun DefaultPreview() {
-    SmartCRTheme {
-        Greeting("Android")
+        return theme
     }
 }
