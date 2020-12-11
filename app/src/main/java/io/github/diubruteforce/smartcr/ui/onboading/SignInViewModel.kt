@@ -30,6 +30,10 @@ class SignInViewModel @ViewModelInject constructor() : BaseViewModel(){
         _state.value = _state.value.copy(passwordState = newPasswordState)
     }
 
+    fun clearSideEffect(){
+        _state.value = _state.value.copy(sideEffect = SideEffect.Uninitialized)
+    }
+
     fun signIn(){
         val diuIdState = _state.value.diuIdState.validate()
         val passwordState = _state.value.passwordState.validate()

@@ -37,7 +37,10 @@ class MainActivity : AppCompatActivity() {
 
                         composable(Route.SignIn) {
                             SignInScreen(
-                                viewModel = hiltViewModel()
+                                viewModel = hiltViewModel(),
+                                navigateToHome = { },
+                                navigateToForgotPassword = { },
+                                navigateToSignUp = { }
                             )
                         }
                     }

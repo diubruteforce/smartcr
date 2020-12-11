@@ -8,4 +8,8 @@
     <string name="enter_your_student_id">Enter your student id</string>
     <string name="enter_your_password">Enter your password</string>
     <string name="sign_up">Sign up</string>
+    <string name="try_again">Try Again</string>
+    <string name="wrong_credential">Wrong Credential</string>
+    <string name="wrong_credential_message">Please make sure you have entered right credential. If you forgot, reset the password.</string>
+    <string name="reset">Reset</string>
 </resources>

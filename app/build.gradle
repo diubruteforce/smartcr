@@ -84,9 +84,6 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-runtime-ktx:$lifecycle_version"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
-    // Animation
-    implementation "com.airbnb.android:lottie:3.4.4"
-
     // Navigation
     implementation "androidx.navigation:navigation-fragment-ktx:$navigation_toolkit_version"
     implementation "androidx.navigation:navigation-ui-ktx:$navigation_toolkit_version"
@@ -165,7 +162,8 @@ dependencies {
     implementation 'com.facebook.android:facebook-login:7.1.0'
 
     // Lottie Animation
-    implementation "com.airbnb.android:lottie:3.4.4"
+    implementation "com.airbnb.android:lottie:3.5.0"
+    //implementation "com.airbnb.android:lottie-compose:1.0.0-alpha03"
 
     // Youtube Player
     implementation 'com.pierfrancescosoffritti.androidyoutubeplayer:core:10.0.5'
