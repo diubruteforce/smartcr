@@ -11,7 +11,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import io.github.diubruteforce.smartcr.R
 
 @Composable
-fun SplashScreenContent(
+fun SplashScreen(){
+    SplashScreenContent()
+}
+
+@Composable
+private fun SplashScreenContent(
 
 ) {
     Box(
@@ -26,6 +31,6 @@ fun SplashScreenContent(
 
 @Composable
 @Preview(showBackground = true)
-fun PreviewCompSplashScreenContent(){
+private fun PreviewCompSplashScreenContent(){
     SplashScreenContent()
 }

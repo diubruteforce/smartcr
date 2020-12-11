@@ -13,11 +13,12 @@ import io.github.diubruteforce.smartcr.ui.theme.Margin
 @Composable
 fun LargeButton(
     modifier: Modifier = Modifier,
-    text: String
+    text: String,
+    onClick: () -> Unit
 ){
     Button(
-        modifier = modifier.fillMaxWidth().heightIn(min = 48.dp).padding(horizontal = Margin.normal),
-        onClick = { /*TODO*/ }
+        modifier = modifier.fillMaxWidth().heightIn(min = 48.dp),
+        onClick = onClick
     ) {
         Text(text = text)
     }
