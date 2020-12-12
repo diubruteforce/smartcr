@@ -4,14 +4,32 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.onActive
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.diubruteforce.smartcr.R
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 @Composable
-fun SplashScreen(){
+fun SplashScreen(
+    navigateToOnBoarding: () -> Unit,
+    navigateToHome: () -> Unit
+){
+    val coroutineScope = rememberCoroutineScope()
+
+    onActive {
+        coroutineScope.launch {
+            delay(1000)
+            if (Random.nextInt() % 2 == 1) navigateToHome()
+            else navigateToOnBoarding()
+        }
+    }
+
     SplashScreenContent()
 }
 

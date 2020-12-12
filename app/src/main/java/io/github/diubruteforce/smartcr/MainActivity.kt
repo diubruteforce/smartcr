@@ -8,13 +8,12 @@ import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.viewinterop.viewModel
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
+import io.github.diubruteforce.smartcr.ui.home.HomeScreen
 import io.github.diubruteforce.smartcr.ui.onboading.SignInScreen
-import io.github.diubruteforce.smartcr.ui.onboading.SignInViewModel
+import io.github.diubruteforce.smartcr.ui.onboading.SignUpScreen
 import io.github.diubruteforce.smartcr.ui.onboading.SplashScreen
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 
@@ -27,21 +26,38 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             SmartCRTheme {
-                ProvideWindowInsets {
+                ProvideWindowInsets() {
                     val navController = rememberNavController()
 
                     NavHost(navController = navController, startDestination = Route.SignIn) {
                         composable(Route.Splash) {
-                            SplashScreen()
+                            SplashScreen(
+                                navigateToOnBoarding = { navController.navigate(Route.SignIn) },
+                                navigateToHome = { navController.navigate(Route.Home) }
+                            )
                         }
 
                         composable(Route.SignIn) {
                             SignInScreen(
                                 viewModel = hiltViewModel(),
-                                navigateToHome = { },
+                                navigateToHome = { navController.navigate(Route.Home) },
                                 navigateToForgotPassword = { },
-                                navigateToSignUp = { }
+                                navigateToSignUp = {
+                                    navController.navigate(Route.SignUp) {
+                                        popUpTo(Route.SignIn) {
+                                            inclusive = true
+                                        }
+                                    }
+                                }
                             )
+                        }
+
+                        composable(Route.SignUp){
+                            SignUpScreen(navigateToHome = { navController.navigate(Route.Home) })
+                        }
+
+                        composable(Route.Home){
+                            HomeScreen(navigateToOnBoarding = { navController.navigate(Route.SignIn) })
                         }
                     }
 
@@ -72,4 +88,5 @@ object Route {
     const val Splash = "Splash"
     const val SignUp = "SignUp"
     const val SignIn = "SignIn"
+    const val Home = "Home"
 }
