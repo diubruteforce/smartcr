@@ -1,16 +1,20 @@
 package io.github.diubruteforce.smartcr.utils
 
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import okhttp3.logging.HttpLoggingInterceptor
 import timber.log.Timber
 
 object SmartCRCrashlytics {
-    private val crashlytics = FirebaseCrashlytics.getInstance()
+    private val crashlytics by lazy { FirebaseCrashlytics.getInstance() }
 
     fun setUserId(id: String) {
         crashlytics.setUserId(id)
     }
 
+    fun setScreenView(screen: String) {
+        crashlytics.setCustomKey(FirebaseAnalytics.Event.SCREEN_VIEW, screen)
+    }
 }
 
 object SmartCRCrashlyticsTree : Timber.Tree() {
