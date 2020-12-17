@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.sp
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.grayText
+import io.github.diubruteforce.smartcr.utils.extension.DiuEmailValidator
 import io.github.diubruteforce.smartcr.utils.extension.DiuIdValidator
 import io.github.diubruteforce.smartcr.utils.extension.PasswordValidator
 import timber.log.Timber
@@ -47,11 +48,46 @@ data class TextFieldState(
             isError = false
         )
 
+        val DiuEmailState = TextFieldState(
+            value = "",
+            errorText = "Invalid Student Id",
+            validator = Regex.DiuEmailValidator,
+            isError = false
+        )
+
         val PasswordState = TextFieldState(
             value = "",
             errorText = "Must be more than 6 letter",
             validator = Regex.PasswordValidator,
             isError = false
+        )
+    }
+}
+
+@Composable
+fun DiuEmail(
+    modifier: Modifier = Modifier,
+    state: TextFieldState,
+    onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    imeAction: ImeAction = ImeAction.Next,
+    onImeActionPerformed: (ImeAction) -> Unit = {}
+) {
+    CRTextFieldLayout(
+        modifier = modifier,
+        isError = state.isError,
+        errorText = state.errorText
+    ) {
+        CRTextField(
+            value = state.value,
+            onValueChange = onValueChange,
+            placeHolder = stringResource(id = R.string.enter_diu_email),
+            focusRequester = focusRequester,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Email,
+                imeAction = imeAction
+            ),
+            onImeActionPerformed = onImeActionPerformed,
         )
     }
 }

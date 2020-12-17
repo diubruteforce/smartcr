@@ -15,10 +15,7 @@ import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.ui.SideEffect
-import io.github.diubruteforce.smartcr.ui.common.DiuId
-import io.github.diubruteforce.smartcr.ui.common.LargeButton
-import io.github.diubruteforce.smartcr.ui.common.Loading
-import io.github.diubruteforce.smartcr.ui.common.Password
+import io.github.diubruteforce.smartcr.ui.common.*
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 import io.github.diubruteforce.smartcr.ui.theme.grayText
@@ -35,7 +32,7 @@ fun SignInScreen(
 ) {
     SignInScreenContent(
         stateFlow = viewModel.state,
-        onDiuIdChange = viewModel::onDiuIdChange,
+        onDiuEmailChange = viewModel::onDiuEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
         signIn = viewModel::signIn,
         navigateToHome = navigateToHome,
@@ -49,7 +46,7 @@ fun SignInScreen(
 @Composable
 private fun SignInScreenContent(
     stateFlow: StateFlow<SignInState>,
-    onDiuIdChange: (String) -> Unit,
+    onDiuEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     signIn: () -> Unit,
     navigateToHome: () -> Unit,
@@ -65,7 +62,7 @@ private fun SignInScreenContent(
     ) {
         val ime = AmbientWindowInsets.current.ime
         val focusManager = AmbientFocusManager.current
-        val diuIdFocusRequester = remember { FocusRequester() }
+        val diuEmailFocusRequester = remember { FocusRequester() }
         val passwordFocusRequester = remember { FocusRequester() }
         val state = stateFlow.collectAsState().value
 
@@ -131,10 +128,10 @@ private fun SignInScreenContent(
 
         Spacer(modifier = Modifier.weight(1f))
 
-        DiuId(
+        DiuEmail(
             state = state.diuIdState,
-            onValueChange = onDiuIdChange,
-            focusRequester = diuIdFocusRequester,
+            onValueChange = onDiuEmailChange,
+            focusRequester = diuEmailFocusRequester,
             onImeActionPerformed = { passwordFocusRequester.requestFocus() }
         )
 
@@ -204,7 +201,7 @@ private fun PreviewSignInScreenContent() {
     SmartCRTheme {
         SignInScreenContent(
             stateFlow = MutableStateFlow(SignInState()),
-            onDiuIdChange = { /*TODO*/ },
+            onDiuEmailChange = { /*TODO*/ },
             onPasswordChange = { /*TODO*/ },
             signIn = { /*TODO*/ },
             navigateToHome = {},

@@ -12,7 +12,7 @@ import kotlin.random.Random
 
 data class SignInState(
     val sideEffect: SideEffect = SideEffect.Uninitialized,
-    val diuIdState: TextFieldState = TextFieldState.DiuIdState,
+    val diuIdState: TextFieldState = TextFieldState.DiuEmailState,
     val passwordState: TextFieldState = TextFieldState.PasswordState
 )
 
@@ -20,7 +20,7 @@ class SignInViewModel @ViewModelInject constructor() : BaseViewModel(){
     private val _state = MutableStateFlow(SignInState())
     val state: StateFlow<SignInState> get() = _state
 
-    fun onDiuIdChange(newDiuId: String){
+    fun onDiuEmailChange(newDiuId: String){
         val newDiuIdState = _state.value.diuIdState.copy(value = newDiuId)
         _state.value = _state.value.copy(diuIdState = newDiuIdState)
     }

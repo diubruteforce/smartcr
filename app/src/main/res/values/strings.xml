@@ -12,4 +12,5 @@
     <string name="wrong_credential">Wrong Credential</string>
     <string name="wrong_credential_message">Please make sure you have entered right credential. If you forgot, reset the password.</string>
     <string name="reset">Reset</string>
+    <string name="enter_diu_email">Enter DIU Email</string>
 </resources>
