@@ -7,7 +7,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.ExperimentalFocus
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.AmbientFocusManager
 import androidx.compose.ui.res.stringResource
@@ -46,7 +45,7 @@ fun SignInScreen(
     )
 }
 
-@OptIn(ExperimentalFocus::class, ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun SignInScreenContent(
     stateFlow: StateFlow<SignInState>,

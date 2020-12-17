@@ -13,7 +13,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.ExperimentalFocus
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focusRequester
 import androidx.compose.ui.graphics.Color
@@ -57,7 +56,6 @@ data class TextFieldState(
     }
 }
 
-@OptIn(ExperimentalFocus::class)
 @Composable
 fun DiuId(
     modifier: Modifier = Modifier,
@@ -86,7 +84,6 @@ fun DiuId(
     }
 }
 
-@OptIn(ExperimentalFocus::class)
 @Composable
 fun Password(
     modifier: Modifier = Modifier,
@@ -139,7 +136,6 @@ fun CRTextFieldLayout(
     }
 }
 
-@OptIn(ExperimentalFocus::class)
 @Composable
 fun CRTextField(
     modifier: Modifier = Modifier,
