@@ -1,26 +1,18 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="513dp"
-    android:height="365.5dp"
+    android:height="353.229dp"
     android:viewportWidth="513"
-    android:viewportHeight="365.5">
-  <path
-      android:pathData="M95.5,32.5h375v321h-375z"
-      android:fillColor="#f39200"/>
-  <path
-      android:pathData="M95.5,32.5h375v321h-375z"
-      android:strokeAlpha="0.5"
-      android:fillColor="#fff"
-      android:fillAlpha="0.5"/>
-  <path
-      android:pathData="M283.501,346.731C281.559,347.058 282.301,347.154 282.006,347.241 285.229,346.615 283.406,346.692 283.501,346.731Z"
-      android:fillColor="#f2f2f4"/>
-  <path
-      android:pathData="M312.805,339.754C314.405,339.438 315.985,339.136 317.617,338.792 316.205,339.08 314.787,339.333 313.377,339.6Z"
-      android:fillColor="#f2f2f4"/>
-  <path
-      android:pathData="M325.481,336.723 L324.63,336.875c-0.724,0.335 -1.457,0.65 -2.2,0.954C325.501,336.954 328.992,335.799 332.268,334.784s6.3,-2.1 8.449,-2.73a57.809,57.809 0,0 0,-6.738 2.03C331.163,335.068 328.014,336.012 325.481,336.723Z"
-      android:fillColor="#f2f2f4"/>
-  <path
+    android:viewportHeight="353.229">
+    <path
+        android:pathData="M283.501,346.731C281.559,347.058 282.301,347.154 282.006,347.241 285.229,346.615 283.406,346.692 283.501,346.731Z"
+        android:fillColor="#f2f2f4" />
+    <path
+        android:pathData="M312.805,339.754C314.405,339.438 315.985,339.136 317.617,338.792 316.205,339.08 314.787,339.333 313.377,339.6Z"
+        android:fillColor="#f2f2f4" />
+    <path
+        android:pathData="M325.481,336.723 L324.63,336.875c-0.724,0.335 -1.457,0.65 -2.2,0.954C325.501,336.954 328.992,335.799 332.268,334.784s6.3,-2.1 8.449,-2.73a57.809,57.809 0,0 0,-6.738 2.03C331.163,335.068 328.014,336.012 325.481,336.723Z"
+        android:fillColor="#f2f2f4" />
+    <path
       android:pathData="M353.229,329.167l0.634,-0.247L356.681,327.623C355.735,327.83 359.821,325.897 353.229,329.167Z"
       android:fillColor="#f2f2f4"/>
   <path

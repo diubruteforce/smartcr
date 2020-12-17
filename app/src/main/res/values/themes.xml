@@ -2,8 +2,17 @@
     <!-- Base application theme. -->
     <style name="Theme.SmartCR" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="M">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <item name="android:windowLightStatusBar" tools:targetApi="23">@bool/use_light_system_bars
+        </item>
+        <item name="android:windowLightNavigationBar" tools:targetApi="27">
+            @bool/use_light_system_bars
+        </item>
+
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@color/nav_bar_scrim</item>
+
         <item name="colorOnPrimary">@color/orange_500</item>
         <item name="colorPrimaryDark">@color/orange_200</item>
     </style>

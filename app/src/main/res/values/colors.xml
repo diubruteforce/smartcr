@@ -4,4 +4,9 @@
     <color name="orange_500">#FFF39200</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="system_ui_scrim_light">#CCFFFFFF</color>
+    <color name="system_ui_scrim_dark">#CC000000</color>
+
+    <color name="nav_bar_scrim">@color/system_ui_scrim_light</color>
 </resources>
