@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                 ProvideWindowInsets() {
                     val navController = rememberNavController()
 
-                    NavHost(navController = navController, startDestination = Route.SignIn) {
+                    NavHost(navController = navController, startDestination = Route.SignUp) {
                         composable(Route.Splash) {
                             SplashScreen(
                                 navigateToOnBoarding = { navController.navigate(Route.SignIn) },

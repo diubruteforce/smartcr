@@ -2,7 +2,7 @@
     <!-- Base application theme. -->
     <style name="Theme.SmartCR" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Status bar color. -->
-        <item name="android:statusBarColor" tools:targetApi="l">@android:color/background_light</item>
+        <item name="android:statusBarColor" tools:targetApi="l">@android:color/transparent</item>
         <item name="android:windowLightStatusBar" tools:targetApi="M">true</item>
         <item name="colorOnPrimary">@color/orange_500</item>
         <item name="colorPrimaryDark">@color/orange_200</item>
