@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
                 ProvideWindowInsets() {
                     val navController = rememberNavController()
 
-                    NavHost(navController = navController, startDestination = Route.SignUp) {
+                    NavHost(navController = navController, startDestination = Route.SignIn) {
                         composable(Route.Splash) {
                             SplashScreen(
                                 navigateToOnBoarding = { navController.navigate(Route.SignIn) },
@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
 
                         composable(Route.SignIn) {
                             SignInScreen(
-                                viewModel = hiltViewModel(),
+                                viewModel = viewModel(),
                                 navigateToHome = { navController.navigate(Route.Home) },
                                 navigateToForgotPassword = { },
                                 navigateToSignUp = {
@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                         composable(Route.SignUp){
-                            SignUpScreen(navigateToHome = { navController.navigate(Route.Home) })
+                            SignUpScreen()
                         }
 
                         composable(Route.Home){

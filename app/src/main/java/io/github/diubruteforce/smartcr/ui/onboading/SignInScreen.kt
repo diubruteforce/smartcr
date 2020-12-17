@@ -14,8 +14,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
-import io.github.diubruteforce.smartcr.model.ui.SideEffect
-import io.github.diubruteforce.smartcr.ui.common.*
+import io.github.diubruteforce.smartcr.model.ui.TypedSideEffect
+import io.github.diubruteforce.smartcr.ui.common.DiuEmail
+import io.github.diubruteforce.smartcr.ui.common.LargeButton
+import io.github.diubruteforce.smartcr.ui.common.Loading
+import io.github.diubruteforce.smartcr.ui.common.Password
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 import io.github.diubruteforce.smartcr.ui.theme.grayText
@@ -23,6 +26,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 fun SignInScreen(
     viewModel: SignInViewModel,
@@ -30,15 +34,61 @@ fun SignInScreen(
     navigateToSignUp: () -> Unit,
     navigateToForgotPassword: () -> Unit,
 ) {
+    // region: SideEffect
+    when (viewModel.sideEffect.collectAsState().value) {
+        TypedSideEffect.Uninitialized -> {
+        }
+        is TypedSideEffect.Loading -> Loading()
+        is TypedSideEffect.Success -> navigateToHome.invoke()
+        is TypedSideEffect.Fail -> {
+            AlertDialog(
+                onDismissRequest = viewModel::clearSideEffect,
+                title = {
+                    Text(
+                        text = stringResource(id = R.string.wrong_credential),
+                        style = MaterialTheme.typography.h5
+                    )
+                },
+                text = {
+                    Text(text = stringResource(id = R.string.wrong_credential_message))
+                },
+                buttons = {
+                    Row(
+                        modifier = Modifier.padding(horizontal = Margin.normal)
+                            .padding(bottom = Margin.normal)
+                    ) {
+                        TextButton(
+                            modifier = Modifier.weight(1f),
+                            onClick = navigateToForgotPassword,
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colors.error
+                            )
+                        ) {
+                            Text(text = stringResource(id = R.string.reset))
+                        }
+
+                        Spacer(modifier = Modifier.width(Margin.normal))
+
+                        OutlinedButton(
+                            modifier = Modifier.weight(1f),
+                            onClick = viewModel::clearSideEffect
+                        ) {
+                            Text(text = stringResource(id = R.string.try_again))
+                        }
+                    }
+                }
+            )
+        }
+    }
+    // endregion
+
     SignInScreenContent(
         stateFlow = viewModel.state,
         onDiuEmailChange = viewModel::onDiuEmailChange,
         onPasswordChange = viewModel::onPasswordChange,
         signIn = viewModel::signIn,
-        navigateToHome = navigateToHome,
         navigateToSignUp = navigateToSignUp,
-        navigateToForgotPassword = navigateToForgotPassword,
-        clearSideEffect = viewModel::clearSideEffect
+        navigateToForgotPassword = navigateToForgotPassword
     )
 }
 
@@ -49,10 +99,8 @@ private fun SignInScreenContent(
     onDiuEmailChange: (String) -> Unit,
     onPasswordChange: (String) -> Unit,
     signIn: () -> Unit,
-    navigateToHome: () -> Unit,
     navigateToSignUp: () -> Unit,
-    navigateToForgotPassword: () -> Unit,
-    clearSideEffect: () -> Unit,
+    navigateToForgotPassword: () -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -65,53 +113,6 @@ private fun SignInScreenContent(
         val diuEmailFocusRequester = remember { FocusRequester() }
         val passwordFocusRequester = remember { FocusRequester() }
         val state = stateFlow.collectAsState().value
-
-        // region: SideEffect
-        when (state.sideEffect) {
-            SideEffect.Uninitialized -> { }
-            SideEffect.Loading -> Loading()
-            SideEffect.Success -> navigateToHome.invoke()
-            SideEffect.Fail -> {
-                AlertDialog(
-                    onDismissRequest = clearSideEffect,
-                    title = {
-                        Text(
-                            text = stringResource(id = R.string.wrong_credential),
-                            style = MaterialTheme.typography.h5
-                        )
-                    },
-                    text = {
-                        Text(text = stringResource(id = R.string.wrong_credential_message))
-                    },
-                    buttons = {
-                        Row(
-                            modifier = Modifier.padding(horizontal = Margin.normal)
-                                .padding(bottom = Margin.normal)
-                        ) {
-                            TextButton(
-                                modifier = Modifier.weight(1f),
-                                onClick = navigateToForgotPassword,
-                                colors = ButtonConstants.defaultTextButtonColors(
-                                    contentColor = MaterialTheme.colors.error
-                                )
-                            ) {
-                                Text(text = stringResource(id = R.string.reset))
-                            }
-
-                            Spacer(modifier = Modifier.width(Margin.normal))
-
-                            OutlinedButton(
-                                modifier = Modifier.weight(1f),
-                                onClick = clearSideEffect
-                            ) {
-                                Text(text = stringResource(id = R.string.try_again))
-                            }
-                        }
-                    }
-                )
-            }
-        }
-        // endregion
 
         Spacer(modifier = Modifier.weight(1f))
 
@@ -129,7 +130,7 @@ private fun SignInScreenContent(
         Spacer(modifier = Modifier.weight(1f))
 
         DiuEmail(
-            state = state.diuIdState,
+            state = state.diuEmailState,
             onValueChange = onDiuEmailChange,
             focusRequester = diuEmailFocusRequester,
             onImeActionPerformed = { passwordFocusRequester.requestFocus() }
@@ -152,8 +153,9 @@ private fun SignInScreenContent(
 
             TextButton(
                 onClick = navigateToForgotPassword,
-                colors = ButtonConstants
-                    .defaultOutlinedButtonColors(contentColor = MaterialTheme.colors.grayText)
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = MaterialTheme.colors.grayText
+                )
             ) {
                 Text(
                     text = stringResource(id = R.string.forgot_password),
@@ -180,8 +182,9 @@ private fun SignInScreenContent(
 
                 TextButton(
                     onClick = navigateToSignUp,
-                    colors = ButtonConstants
-                        .defaultOutlinedButtonColors(contentColor = MaterialTheme.colors.error)
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = MaterialTheme.colors.error
+                    )
                 ) {
                     Text(
                         text = stringResource(id = R.string.sign_up),
@@ -201,13 +204,11 @@ private fun PreviewSignInScreenContent() {
     SmartCRTheme {
         SignInScreenContent(
             stateFlow = MutableStateFlow(SignInState()),
-            onDiuEmailChange = { /*TODO*/ },
-            onPasswordChange = { /*TODO*/ },
-            signIn = { /*TODO*/ },
-            navigateToHome = {},
-            navigateToSignUp = { /*TODO*/ },
-            navigateToForgotPassword = { /*TODO*/ },
-            clearSideEffect = {}
+            onDiuEmailChange = { },
+            onPasswordChange = { },
+            signIn = { },
+            navigateToSignUp = { },
+            navigateToForgotPassword = { }
         )
     }
 }

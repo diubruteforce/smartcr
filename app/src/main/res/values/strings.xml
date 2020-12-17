@@ -13,4 +13,8 @@
     <string name="wrong_credential_message">Please make sure you have entered right credential. If you forgot, reset the password.</string>
     <string name="reset">Reset</string>
     <string name="enter_diu_email">Enter DIU Email</string>
+    <string name="fill_up_the_details_to_get_started">Fill up the details to get started</string>
+    <string name="next">Next</string>
+    <string name="already_have_an_account">Already Have an Account?</string>
+    <string name="re_enter_your_password">Re-Enter Your Password</string>
 </resources>

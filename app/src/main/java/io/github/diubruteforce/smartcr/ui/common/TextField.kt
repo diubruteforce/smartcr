@@ -50,7 +50,7 @@ data class TextFieldState(
 
         val DiuEmailState = TextFieldState(
             value = "",
-            errorText = "Invalid Student Id",
+            errorText = "Invalid DIU Email",
             validator = Regex.DiuEmailValidator,
             isError = false
         )
@@ -124,6 +124,7 @@ fun DiuId(
 fun Password(
     modifier: Modifier = Modifier,
     state: TextFieldState,
+    placeHolder: String = stringResource(id = R.string.enter_your_password),
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Done,
@@ -137,7 +138,7 @@ fun Password(
         CRTextField(
             value = state.value,
             onValueChange = onValueChange,
-            placeHolder = stringResource(id = R.string.enter_your_password),
+            placeHolder = placeHolder,
             focusRequester = focusRequester,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Password,
