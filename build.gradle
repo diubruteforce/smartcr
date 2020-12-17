@@ -2,7 +2,7 @@
 apply plugin: "com.github.ben-manes.versions"
 buildscript {
     ext {
-        kotlin_version = "1.4.20"
+        kotlin_version = "1.4.21"
         compose_version = '1.0.0-alpha08'
         navigation_toolkit_version = '2.3.2'
         sqldelight_version = '1.4.4'
@@ -15,7 +15,7 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.0-alpha02'
+        classpath 'com.android.tools.build:gradle:7.0.0-alpha03'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
 
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigation_toolkit_version"
