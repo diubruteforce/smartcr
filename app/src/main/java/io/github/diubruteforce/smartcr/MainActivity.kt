@@ -15,6 +15,7 @@ import io.github.diubruteforce.smartcr.ui.home.HomeScreen
 import io.github.diubruteforce.smartcr.ui.onboading.SignInScreen
 import io.github.diubruteforce.smartcr.ui.onboading.SignUpScreen
 import io.github.diubruteforce.smartcr.ui.onboading.SplashScreen
+import io.github.diubruteforce.smartcr.ui.onboading.VerificationScreen
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 
 @AndroidEntryPoint
@@ -29,7 +30,7 @@ class MainActivity : AppCompatActivity() {
                 ProvideWindowInsets() {
                     val navController = rememberNavController()
 
-                    NavHost(navController = navController, startDestination = Route.SignIn) {
+                    NavHost(navController = navController, startDestination = Route.Verification) {
                         // region: OnBoarding Screens
                         composable(Route.Splash) {
                             SplashScreen(
@@ -58,6 +59,14 @@ class MainActivity : AppCompatActivity() {
                                 navigateToEmailVerification = {
 
                                 }
+                            )
+                        }
+
+                        composable(Route.Verification) {
+                            VerificationScreen(
+                                email = "kuddus12@diu.edu.bd",
+                                viewModel = viewModel(),
+                                navigateToProfileEdit = { }
                             )
                         }
                         // endregion
@@ -98,5 +107,7 @@ object Route {
     const val Splash = "Splash"
     const val SignUp = "SignUp"
     const val SignIn = "SignIn"
+    const val Verification = "Verification"
+
     const val Home = "Home"
 }

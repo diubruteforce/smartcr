@@ -21,4 +21,9 @@
     <string name="something_went_wrong">Something went wrong</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="didnt_recieve_any_email">Didn\'t receive any email?</string>
+    <string name="send_again">Send Again</string>
+    <string name="i_have_verified">I have verified</string>
+    <string name="check_your_email_for_verification">Check your email  for verification link</string>
+    <string name="we_have_sent_you_an_email">You have to verify your DIU student status before using this app. We have sent you an email at %1$s</string>
 </resources>

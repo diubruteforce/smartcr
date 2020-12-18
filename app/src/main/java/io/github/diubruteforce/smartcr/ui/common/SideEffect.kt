@@ -21,7 +21,7 @@ fun <Loading, Success, Fail> SideEffect(
     onFailAlertDenial: () -> Unit = onFailAlertDismissRequest,
     onFailAlertAffirmation: () -> Unit = onFailAlertDismissRequest,
     title: String = stringResource(id = R.string.error),
-    affirmationText: String = stringResource(id = R.string.ok),
+    affirmationText: String = stringResource(id = R.string.try_again),
     denialText: String = stringResource(id = R.string.cancel)
 ) {
     when (sideEffectState) {

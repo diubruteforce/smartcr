@@ -25,8 +25,6 @@ class SignInViewModel : BaseViewModel<SignInState, EmptySideEffectState>(
         setState { copy(passwordState = newPasswordState) }
     }
 
-    fun clearSideEffect() = setSideEffect { TypedSideEffectState.Uninitialized }
-
     fun signIn() = withState {
         val diuIdState = diuEmailState.validate()
         val passwordState = passwordState.validate()
