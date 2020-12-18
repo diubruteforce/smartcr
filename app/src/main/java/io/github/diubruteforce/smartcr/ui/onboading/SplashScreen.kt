@@ -11,22 +11,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.diubruteforce.smartcr.R
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
 @Composable
 fun SplashScreen(
+    viewModel: SplashViewModel,
     navigateToOnBoarding: () -> Unit,
+    navigateToVerification: () -> Unit,
+    navigateToProfileEdit: () -> Unit,
     navigateToHome: () -> Unit
 ){
     val coroutineScope = rememberCoroutineScope()
 
     onActive {
         coroutineScope.launch {
-            delay(1000)
-            if (Random.nextInt() % 2 == 1) navigateToHome()
-            else navigateToOnBoarding()
+            if (viewModel.isAuthenticated()) {
+                if (viewModel.isEmailVerified()) {
+                    if (viewModel.hasProfileData()) {
+                        navigateToHome.invoke()
+                    } else {
+                        navigateToProfileEdit.invoke()
+                    }
+                } else {
+                    navigateToVerification.invoke()
+                }
+            } else {
+                navigateToOnBoarding.invoke()
+            }
         }
     }
 

@@ -101,9 +101,13 @@ dependencies {
     implementation "dev.chrisbanes.accompanist:accompanist-insets:$accompanist_version"
 
     // Firebase
-    implementation 'com.google.firebase:firebase-analytics-ktx:18.0.0'
-    implementation 'com.google.firebase:firebase-crashlytics-ktx:17.3.0'
-    implementation 'com.google.firebase:firebase-perf-ktx:19.0.10'
+    implementation platform('com.google.firebase:firebase-bom:26.1.1')
+
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx'
+    implementation 'com.google.firebase:firebase-auth-ktx'
+    implementation 'com.google.firebase:firebase-firestore-ktx'
 
     // Coroutine
     def coroutine_version = "1.4.2"

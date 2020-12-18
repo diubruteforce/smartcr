@@ -33,14 +33,13 @@ import kotlinx.coroutines.flow.StateFlow
 fun SignUpScreen(
     viewModel: SignUpViewModel,
     navigateToSignIn: () -> Unit,
-    navigateToEmailVerification: () -> Unit
+    navigateToEmailVerification: (String) -> Unit
 ) {
-
     val sideEffect = viewModel.sideEffect.collectAsState().value
 
     SideEffect(
         sideEffectState = sideEffect,
-        onSuccess = { navigateToEmailVerification.invoke() },
+        onSuccess = { navigateToEmailVerification.invoke(it) },
         onFailAlertDismissRequest = viewModel::clearSideEffect
     )
 
