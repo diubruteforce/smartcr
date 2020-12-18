@@ -11,6 +11,7 @@ object AuthRepository {
     private val user get() = firebaseAuth.currentUser
 
     val isAuthenticated: Boolean get() = user != null
+    val userEmail: String get() = user?.email ?: ""
     val isEmailVerified: Boolean get() = user?.isEmailVerified ?: false
 
     suspend fun sendVerificationEmail(): Void =
@@ -21,8 +22,13 @@ object AuthRepository {
         firebaseAuth.sendPasswordResetEmail(email).await()
 
 
-    suspend fun createNewUser(email: String, password: String): AuthResult =
-        firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+    suspend fun createNewUser(email: String, password: String): AuthResult {
+        val response = firebaseAuth.createUserWithEmailAndPassword(email, password).await()
+
+        response.user!!.sendEmailVerification().await()
+
+        return response
+    }
 
     suspend fun signIn(email: String, password: String): AuthResult =
         firebaseAuth.signInWithEmailAndPassword(email, password).await()

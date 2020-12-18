@@ -26,14 +26,21 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 fun VerificationScreen(
     email: String,
     viewModel: VerificationViewModel,
-    navigateToProfileEdit: () -> Unit
+    navigateToSignIn: () -> Unit
 ) {
     val sideEffectState = viewModel.sideEffect.collectAsState().value
 
     SideEffect(
         sideEffectState = sideEffectState,
-        onSuccess = { navigateToProfileEdit.invoke() },
-        onFailAlertDismissRequest = viewModel::clearSideEffect
+        onSuccess = { },
+        onFailAlertDismissRequest = viewModel::clearSideEffect,
+        title = stringResource(id = R.string.awesome),
+        affirmationText = stringResource(id = R.string.sign_in),
+        onFailAlertAffirmation = {
+            viewModel.sendVerificationEmail()
+            viewModel.clearSideEffect()
+            navigateToSignIn.invoke()
+        }
     )
 
     VerificationScreenContent(

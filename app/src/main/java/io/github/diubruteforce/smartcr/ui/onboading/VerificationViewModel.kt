@@ -1,12 +1,11 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
+import io.github.diubruteforce.smartcr.data.repository.AuthRepository
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
-import io.github.diubruteforce.smartcr.model.ui.EmptySuccessState
 import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
-import kotlinx.coroutines.delay
-import kotlin.random.Random
+import timber.log.Timber
 
 object VerificationState
 
@@ -18,17 +17,22 @@ class VerificationViewModel : BaseViewModel<VerificationState, StringFailSideEff
         setSideEffect { EmptyLoadingState }
 
         launchInViewModelScope {
-            delay(1000)
-
-            if (Random.nextInt() % 2 == 1) {
-                setSideEffect { TypedSideEffectState.Fail("Network Error") }
-            } else {
-                setSideEffect { EmptySuccessState }
-            }
+            AuthRepository.signOut()
+            setSideEffect { TypedSideEffectState.Fail("To get started sign in.") }
         }
     }
 
     fun sendVerificationEmail() {
+        setSideEffect { EmptyLoadingState }
 
+        launchInViewModelScope {
+            try {
+                AuthRepository.sendVerificationEmail()
+            } catch (ex: Exception) {
+                Timber.e(ex)
+            } finally {
+                setSideEffect { TypedSideEffectState.Uninitialized }
+            }
+        }
     }
 }

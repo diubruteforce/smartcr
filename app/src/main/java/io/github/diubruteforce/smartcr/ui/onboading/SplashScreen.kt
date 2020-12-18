@@ -17,7 +17,7 @@ import kotlinx.coroutines.launch
 fun SplashScreen(
     viewModel: SplashViewModel,
     navigateToOnBoarding: () -> Unit,
-    navigateToVerification: () -> Unit,
+    navigateToVerification: (String) -> Unit,
     navigateToProfileEdit: () -> Unit,
     navigateToHome: () -> Unit
 ){
@@ -33,7 +33,7 @@ fun SplashScreen(
                         navigateToProfileEdit.invoke()
                     }
                 } else {
-                    navigateToVerification.invoke()
+                    navigateToVerification.invoke(viewModel.getUserEmail())
                 }
             } else {
                 navigateToOnBoarding.invoke()

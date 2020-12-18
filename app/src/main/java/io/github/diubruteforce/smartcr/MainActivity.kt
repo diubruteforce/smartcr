@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 },
                                 navigateToVerification = {
-                                    navController.navigate(Route.Verification) {
+                                    navController.navigate(Route.verificationRoute(it)) {
                                         popUpTo(Route.Splash) { inclusive = true }
                                     }
                                 },
@@ -72,18 +72,24 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 },
                                 navigateToEmailVerification = {
-                                    navController.navigate(Route.Verification) {
+                                    navController.navigate(Route.verificationRoute(it)) {
                                         popUpTo(Route.SignIn) { inclusive = true }
                                     }
                                 }
                             )
                         }
 
-                        composable(Route.Verification) {
+                        composable(Route.Verification) { backStackEntry ->
+                            val email = backStackEntry.arguments?.getString("email")!!
+
                             VerificationScreen(
-                                email = "kuddus12@diu.edu.bd",
+                                email = email,
                                 viewModel = viewModel(),
-                                navigateToProfileEdit = { }
+                                navigateToSignIn = {
+                                    navController.navigate(Route.SignIn) {
+                                        popUpTo(Route.Verification) { inclusive = true }
+                                    }
+                                }
                             )
                         }
 
@@ -136,7 +142,8 @@ object Route {
     const val Splash = "Splash"
     const val SignUp = "SignUp"
     const val SignIn = "SignIn"
-    const val Verification = "Verification"
+    const val Verification = "verification/{email}"
+    fun verificationRoute(email: String) = "verification/$email"
     const val ForgotPassword = "ForgotPassword"
 
     const val Home = "Home"

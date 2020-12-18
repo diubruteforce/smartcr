@@ -10,7 +10,10 @@ class SplashViewModel : BaseViewModel<Boolean, StringFailSideEffectState>(
     initialSideEffect = TypedSideEffectState.Uninitialized
 ) {
     fun isAuthenticated() = AuthRepository.isAuthenticated
+
     fun isEmailVerified() = AuthRepository.isEmailVerified
+
+    fun getUserEmail(): String = AuthRepository.userEmail
 
     fun hasProfileData(): Boolean = false
 }

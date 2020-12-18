@@ -14,6 +14,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.AmbientFocusManager
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
@@ -107,6 +108,7 @@ private fun SignUpScreenContent(
             state = state.passwordState,
             onValueChange = onPasswordChange,
             focusRequester = passwordFocusRequester,
+            imeAction = ImeAction.Next,
             onImeActionPerformed = { rePasswordFocusRequester.requestFocus() }
         )
 
