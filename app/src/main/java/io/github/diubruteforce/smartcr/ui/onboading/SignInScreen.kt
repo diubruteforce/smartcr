@@ -33,6 +33,8 @@ import kotlinx.coroutines.flow.StateFlow
 fun SignInScreen(
     viewModel: SignInViewModel,
     navigateToHome: () -> Unit,
+    navigateToProfileEdit: () -> Unit,
+    navigateToVerification: (String) -> Unit,
     navigateToSignUp: () -> Unit,
     navigateToForgotPassword: () -> Unit,
 ) {
@@ -40,7 +42,17 @@ fun SignInScreen(
 
     SideEffect(
         sideEffectState = sideEffect,
-        onSuccess = { navigateToHome.invoke() },
+        onSuccess = {
+            if (viewModel.isEmailVerified()) {
+                if (viewModel.hasProfileData()) {
+                    navigateToHome.invoke()
+                } else {
+                    navigateToProfileEdit.invoke()
+                }
+            } else {
+                navigateToVerification.invoke(viewModel.getUserEmail())
+            }
+        },
         onFailAlertDismissRequest = viewModel::clearSideEffect,
         denialText = stringResource(id = R.string.reset),
         affirmationText = stringResource(id = R.string.try_again)

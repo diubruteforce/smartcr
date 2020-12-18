@@ -1,17 +1,20 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
-import io.github.diubruteforce.smartcr.model.ui.*
+import io.github.diubruteforce.smartcr.data.repository.AuthRepository
+import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
+import io.github.diubruteforce.smartcr.model.ui.EmptySuccessState
+import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
+import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.ui.common.TextFieldState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
-import kotlinx.coroutines.delay
-import kotlin.random.Random
+import timber.log.Timber
 
 data class SignInState(
     val diuEmailState: TextFieldState = TextFieldState.DiuEmailState,
     val passwordState: TextFieldState = TextFieldState.PasswordState
 )
 
-class SignInViewModel : BaseViewModel<SignInState, EmptySideEffectState>(
+class SignInViewModel : BaseViewModel<SignInState, StringFailSideEffectState>(
     initialState = SignInState(),
     initialSideEffect = TypedSideEffectState.Uninitialized
 ) {
@@ -26,25 +29,37 @@ class SignInViewModel : BaseViewModel<SignInState, EmptySideEffectState>(
     }
 
     fun signIn() = withState {
-        val diuIdState = diuEmailState.validate()
+        val diuEmailState = diuEmailState.validate()
         val passwordState = passwordState.validate()
 
-        val isError = diuIdState.isError || passwordState.isError
+        val isError = diuEmailState.isError || passwordState.isError
 
-        setState { copy(diuEmailState = diuIdState, passwordState = passwordState) }
+        setState { copy(diuEmailState = diuEmailState, passwordState = passwordState) }
 
         if (isError.not()) {
             setSideEffect { EmptyLoadingState }
 
             launchInViewModelScope {
-                delay(2000)
+                try {
+                    AuthRepository.signIn(
+                        email = diuEmailState.value,
+                        password = passwordState.value
+                    )
 
-                if (Random.nextInt() % 2 == 1) {
                     setSideEffect { EmptySuccessState }
-                } else {
-                    setSideEffect { EmptyFailState }
+                } catch (ex: Exception) {
+                    Timber.e(ex)
+                    setSideEffect {
+                        TypedSideEffectState.Fail(ex.message ?: "Something went wrong")
+                    }
                 }
             }
         }
     }
+
+    fun isEmailVerified() = AuthRepository.isEmailVerified
+
+    fun getUserEmail(): String = AuthRepository.userEmail
+
+    fun hasProfileData(): Boolean = false
 }

@@ -44,7 +44,9 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 },
                                 navigateToProfileEdit = {
-
+                                    navController.navigate(Route.Home) {
+                                        popUpTo(Route.Splash) { inclusive = true }
+                                    }
                                 },
                                 navigateToHome = {
                                     navController.navigate(Route.Home) {
@@ -57,7 +59,21 @@ class MainActivity : AppCompatActivity() {
                         composable(Route.SignIn) {
                             SignInScreen(
                                 viewModel = viewModel(),
-                                navigateToHome = { navController.navigate(Route.Home) },
+                                navigateToVerification = {
+                                    navController.navigate(Route.verificationRoute(it)) {
+                                        popUpTo(Route.SignIn) { inclusive = true }
+                                    }
+                                },
+                                navigateToProfileEdit = {
+                                    navController.navigate(Route.Home) {
+                                        popUpTo(Route.SignIn) { inclusive = true }
+                                    }
+                                },
+                                navigateToHome = {
+                                    navController.navigate(Route.Home) {
+                                        popUpTo(Route.SignIn) { inclusive = true }
+                                    }
+                                },
                                 navigateToForgotPassword = { navController.navigate(Route.ForgotPassword) },
                                 navigateToSignUp = { navController.navigate(Route.SignUp) }
                             )
