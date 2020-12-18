@@ -12,10 +12,7 @@ import androidx.navigation.compose.*
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import io.github.diubruteforce.smartcr.ui.home.HomeScreen
-import io.github.diubruteforce.smartcr.ui.onboading.SignInScreen
-import io.github.diubruteforce.smartcr.ui.onboading.SignUpScreen
-import io.github.diubruteforce.smartcr.ui.onboading.SplashScreen
-import io.github.diubruteforce.smartcr.ui.onboading.VerificationScreen
+import io.github.diubruteforce.smartcr.ui.onboading.*
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 
 @AndroidEntryPoint
@@ -30,7 +27,10 @@ class MainActivity : AppCompatActivity() {
                 ProvideWindowInsets() {
                     val navController = rememberNavController()
 
-                    NavHost(navController = navController, startDestination = Route.Verification) {
+                    NavHost(
+                        navController = navController,
+                        startDestination = Route.ForgotPassword
+                    ) {
                         // region: OnBoarding Screens
                         composable(Route.Splash) {
                             SplashScreen(
@@ -67,6 +67,17 @@ class MainActivity : AppCompatActivity() {
                                 email = "kuddus12@diu.edu.bd",
                                 viewModel = viewModel(),
                                 navigateToProfileEdit = { }
+                            )
+                        }
+
+                        composable(Route.ForgotPassword) {
+                            ForgotScreen(
+                                viewModel = viewModel(),
+                                navigateToSignIn = {
+                                    navController.navigate(Route.SignIn) {
+                                        popUpTo(Route.ForgotPassword) { inclusive = true }
+                                    }
+                                }
                             )
                         }
                         // endregion
@@ -108,6 +119,7 @@ object Route {
     const val SignUp = "SignUp"
     const val SignIn = "SignIn"
     const val Verification = "Verification"
+    const val ForgotPassword = "ForgotPassword"
 
     const val Home = "Home"
 }

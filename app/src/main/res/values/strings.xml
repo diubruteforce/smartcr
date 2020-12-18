@@ -26,4 +26,7 @@
     <string name="i_have_verified">I have verified</string>
     <string name="check_your_email_for_verification">Check your email  for verification link</string>
     <string name="we_have_sent_you_an_email">You have to verify your DIU student status before using this app. We have sent you an email at %1$s</string>
+    <string name="request_reset">Request Password Reset</string>
+    <string name="email_sent">Email Sent</string>
+    <string name="email_sent_message">If you have an account associated with the email you will get an email to reset your password.</string>
 </resources>

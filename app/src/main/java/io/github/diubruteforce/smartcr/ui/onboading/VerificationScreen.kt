@@ -49,7 +49,6 @@ private fun VerificationScreenContent(
     checkVerificationStatus: () -> Unit,
     sendVerificationEmail: () -> Unit
 ) {
-
     Column(
         modifier = Modifier.fillMaxSize()
             .padding(horizontal = Margin.big)
