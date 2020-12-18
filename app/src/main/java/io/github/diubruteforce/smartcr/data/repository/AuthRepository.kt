@@ -14,11 +14,11 @@ object AuthRepository {
     val userEmail: String get() = user?.email ?: ""
     val isEmailVerified: Boolean get() = user?.isEmailVerified ?: false
 
-    suspend fun sendVerificationEmail(): Void =
+    suspend fun sendVerificationEmail(): Void? =
         user!!.sendEmailVerification().await()
 
 
-    suspend fun requestPasswordReset(email: String): Void =
+    suspend fun requestPasswordReset(email: String): Void? =
         firebaseAuth.sendPasswordResetEmail(email).await()
 
 

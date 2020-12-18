@@ -99,7 +99,7 @@ private fun SignInScreenContent(
 
         Text(
             text = stringResource(id = R.string.stay_sign_in),
-            style = MaterialTheme.typography.caption,
+            style = MaterialTheme.typography.body2,
             color = MaterialTheme.colors.grayText
         )
 

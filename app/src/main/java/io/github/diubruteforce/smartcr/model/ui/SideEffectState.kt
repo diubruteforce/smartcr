@@ -14,3 +14,5 @@ val EmptySuccessState = TypedSideEffectState.Success(2)
 val EmptyFailState = TypedSideEffectState.Fail(3)
 
 typealias StringFailSideEffectState = TypedSideEffectState<Any, Any, String>
+
+const val GeneralError = "Something went wrong"
