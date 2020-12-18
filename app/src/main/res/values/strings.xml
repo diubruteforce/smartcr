@@ -17,4 +17,8 @@
     <string name="next">Next</string>
     <string name="already_have_an_account">Already Have an Account?</string>
     <string name="re_enter_your_password">Re-Enter Your Password</string>
+    <string name="error">Error</string>
+    <string name="something_went_wrong">Something went wrong</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>

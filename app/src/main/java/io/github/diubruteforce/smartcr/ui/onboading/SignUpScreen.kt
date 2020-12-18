@@ -21,21 +21,36 @@ import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.ui.common.DiuEmail
 import io.github.diubruteforce.smartcr.ui.common.LargeButton
 import io.github.diubruteforce.smartcr.ui.common.Password
+import io.github.diubruteforce.smartcr.ui.common.SideEffect
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.grayText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @Composable
-fun SignUpScreen() {
+fun SignUpScreen(
+    viewModel: SignUpViewModel,
+    navigateToSignIn: () -> Unit,
+    navigateToEmailVerification: () -> Unit
+) {
+
+    val sideEffect = viewModel.sideEffect.collectAsState().value
+
+    SideEffect(
+        sideEffectState = sideEffect,
+        onSuccess = { navigateToEmailVerification.invoke() },
+        onFailAlertDismissRequest = viewModel::clearSideEffect
+    )
+
     SignUpScreenContent(
-        stateFlow = MutableStateFlow(SignUpState()),
-        navigateToSignIn = { },
-        register = { },
-        onDiuEmailChange = { },
-        onPasswordChange = { }
+        stateFlow = viewModel.state,
+        navigateToSignIn = navigateToSignIn,
+        signUp = viewModel::signUp,
+        onDiuEmailChange = viewModel::onDiuEmailChange,
+        onPasswordChange = viewModel::onPasswordChange,
+        onRePasswordChange = viewModel::onRePasswordChange
     )
 }
 
@@ -44,9 +59,10 @@ fun SignUpScreen() {
 private fun SignUpScreenContent(
     stateFlow: StateFlow<SignUpState>,
     navigateToSignIn: () -> Unit,
-    register: () -> Unit,
+    signUp: () -> Unit,
     onDiuEmailChange: (String) -> Unit,
-    onPasswordChange: (String) -> Unit
+    onPasswordChange: (String) -> Unit,
+    onRePasswordChange: (String) -> Unit
 ) {
     Column(
         modifier = Modifier.fillMaxSize()
@@ -98,13 +114,13 @@ private fun SignUpScreenContent(
         Spacer(modifier = Modifier.height(Margin.tiny))
 
         Password(
-            state = state.passwordState,
-            onValueChange = onPasswordChange,
+            state = state.rePasswordState,
+            onValueChange = onRePasswordChange,
             placeHolder = stringResource(id = R.string.re_enter_your_password),
             focusRequester = rePasswordFocusRequester,
             onImeActionPerformed = {
                 focusManager.clearFocus(forcedClear = true)
-                register.invoke()
+                signUp.invoke()
             }
         )
 
@@ -112,7 +128,7 @@ private fun SignUpScreenContent(
 
         LargeButton(
             text = stringResource(id = R.string.next),
-            onClick = register
+            onClick = signUp
         )
 
         if (!ime.isVisible) {

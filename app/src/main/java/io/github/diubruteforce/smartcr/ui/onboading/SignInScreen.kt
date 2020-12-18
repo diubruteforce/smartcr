@@ -1,7 +1,10 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
@@ -14,11 +17,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
-import io.github.diubruteforce.smartcr.model.ui.TypedSideEffect
 import io.github.diubruteforce.smartcr.ui.common.DiuEmail
 import io.github.diubruteforce.smartcr.ui.common.LargeButton
-import io.github.diubruteforce.smartcr.ui.common.Loading
 import io.github.diubruteforce.smartcr.ui.common.Password
+import io.github.diubruteforce.smartcr.ui.common.SideEffect
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 import io.github.diubruteforce.smartcr.ui.theme.grayText
@@ -34,53 +36,15 @@ fun SignInScreen(
     navigateToSignUp: () -> Unit,
     navigateToForgotPassword: () -> Unit,
 ) {
-    // region: SideEffect
-    when (viewModel.sideEffect.collectAsState().value) {
-        TypedSideEffect.Uninitialized -> {
-        }
-        is TypedSideEffect.Loading -> Loading()
-        is TypedSideEffect.Success -> navigateToHome.invoke()
-        is TypedSideEffect.Fail -> {
-            AlertDialog(
-                onDismissRequest = viewModel::clearSideEffect,
-                title = {
-                    Text(
-                        text = stringResource(id = R.string.wrong_credential),
-                        style = MaterialTheme.typography.h5
-                    )
-                },
-                text = {
-                    Text(text = stringResource(id = R.string.wrong_credential_message))
-                },
-                buttons = {
-                    Row(
-                        modifier = Modifier.padding(horizontal = Margin.normal)
-                            .padding(bottom = Margin.normal)
-                    ) {
-                        TextButton(
-                            modifier = Modifier.weight(1f),
-                            onClick = navigateToForgotPassword,
-                            colors = ButtonDefaults.textButtonColors(
-                                contentColor = MaterialTheme.colors.error
-                            )
-                        ) {
-                            Text(text = stringResource(id = R.string.reset))
-                        }
+    val sideEffect = viewModel.sideEffect.collectAsState().value
 
-                        Spacer(modifier = Modifier.width(Margin.normal))
-
-                        OutlinedButton(
-                            modifier = Modifier.weight(1f),
-                            onClick = viewModel::clearSideEffect
-                        ) {
-                            Text(text = stringResource(id = R.string.try_again))
-                        }
-                    }
-                }
-            )
-        }
-    }
-    // endregion
+    SideEffect(
+        sideEffectState = sideEffect,
+        onSuccess = { navigateToHome.invoke() },
+        onFailAlertDismissRequest = viewModel::clearSideEffect,
+        denialText = stringResource(id = R.string.reset),
+        affirmationText = stringResource(id = R.string.try_again)
+    )
 
     SignInScreenContent(
         stateFlow = viewModel.state,

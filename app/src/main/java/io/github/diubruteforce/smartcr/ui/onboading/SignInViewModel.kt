@@ -11,9 +11,9 @@ data class SignInState(
     val passwordState: TextFieldState = TextFieldState.PasswordState
 )
 
-class SignInViewModel : BaseViewModel<SignInState, EmptySideEffect>(
+class SignInViewModel : BaseViewModel<SignInState, EmptySideEffectState>(
     initialState = SignInState(),
-    initialSideEffect = TypedSideEffect.Uninitialized
+    initialSideEffect = TypedSideEffectState.Uninitialized
 ) {
     fun onDiuEmailChange(newDiuId: String) = withState {
         val newDiuEmailState = diuEmailState.copy(value = newDiuId)
@@ -25,7 +25,7 @@ class SignInViewModel : BaseViewModel<SignInState, EmptySideEffect>(
         setState { copy(passwordState = newPasswordState) }
     }
 
-    fun clearSideEffect() = setSideEffect { TypedSideEffect.Uninitialized }
+    fun clearSideEffect() = setSideEffect { TypedSideEffectState.Uninitialized }
 
     fun signIn() = withState {
         val diuIdState = diuEmailState.validate()
@@ -36,15 +36,15 @@ class SignInViewModel : BaseViewModel<SignInState, EmptySideEffect>(
         setState { copy(diuEmailState = diuIdState, passwordState = passwordState) }
 
         if (isError.not()) {
-            setSideEffect { EmptyLoading }
+            setSideEffect { EmptyLoadingState }
 
             launchInViewModelScope {
                 delay(2000)
 
                 if (Random.nextInt() % 2 == 1) {
-                    setSideEffect { EmptySuccess }
+                    setSideEffect { EmptySuccessState }
                 } else {
-                    setSideEffect { EmptyFail }
+                    setSideEffect { EmptyFailState }
                 }
             }
         }

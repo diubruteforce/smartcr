@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
                     val navController = rememberNavController()
 
                     NavHost(navController = navController, startDestination = Route.SignIn) {
+                        // region: OnBoarding Screens
                         composable(Route.Splash) {
                             SplashScreen(
                                 navigateToOnBoarding = { navController.navigate(Route.SignIn) },
@@ -42,21 +43,26 @@ class MainActivity : AppCompatActivity() {
                                 viewModel = viewModel(),
                                 navigateToHome = { navController.navigate(Route.Home) },
                                 navigateToForgotPassword = { },
-                                navigateToSignUp = {
-                                    navController.navigate(Route.SignUp) {
-                                        popUpTo(Route.SignIn) {
-                                            inclusive = true
-                                        }
-                                    }
-                                }
+                                navigateToSignUp = { navController.navigate(Route.SignUp) }
                             )
                         }
 
-                        composable(Route.SignUp){
-                            SignUpScreen()
-                        }
+                        composable(Route.SignUp) {
+                            SignUpScreen(
+                                viewModel = viewModel(),
+                                navigateToSignIn = {
+                                    navController.navigate(Route.SignIn) {
+                                        popUpTo(Route.SignIn) { inclusive = true }
+                                    }
+                                },
+                                navigateToEmailVerification = {
 
-                        composable(Route.Home){
+                                }
+                            )
+                        }
+                        // endregion
+
+                        composable(Route.Home) {
                             HomeScreen(navigateToOnBoarding = { navController.navigate(Route.SignIn) })
                         }
                     }
@@ -66,6 +72,10 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /*
+    * Currently it is not possible to use both Hilt and
+    * NavGraph viewModel() at a time to get ViewModel
+    * */
     @Composable
     inline fun <reified VM : ViewModel> hiltViewModel() =
         viewModel<VM>(factory = defaultViewModelProviderFactory)

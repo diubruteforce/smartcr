@@ -29,6 +29,7 @@ import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.grayText
 import io.github.diubruteforce.smartcr.utils.extension.DiuEmailValidator
 import io.github.diubruteforce.smartcr.utils.extension.DiuIdValidator
+import io.github.diubruteforce.smartcr.utils.extension.NonEmptyValidator
 import io.github.diubruteforce.smartcr.utils.extension.PasswordValidator
 import timber.log.Timber
 
@@ -59,6 +60,13 @@ data class TextFieldState(
             value = "",
             errorText = "Must be more than 6 letter",
             validator = Regex.PasswordValidator,
+            isError = false
+        )
+
+        val RePasswordState = TextFieldState(
+            value = "",
+            errorText = "Your password and confirmation password do not match.",
+            validator = Regex.NonEmptyValidator,
             isError = false
         )
     }
