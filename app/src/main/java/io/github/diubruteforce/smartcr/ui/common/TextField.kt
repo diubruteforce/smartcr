@@ -27,10 +27,7 @@ import androidx.compose.ui.unit.sp
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.grayText
-import io.github.diubruteforce.smartcr.utils.extension.DiuEmailValidator
-import io.github.diubruteforce.smartcr.utils.extension.DiuIdValidator
-import io.github.diubruteforce.smartcr.utils.extension.NonEmptyValidator
-import io.github.diubruteforce.smartcr.utils.extension.PasswordValidator
+import io.github.diubruteforce.smartcr.utils.extension.*
 import timber.log.Timber
 
 data class TextFieldState(
@@ -42,6 +39,13 @@ data class TextFieldState(
     fun validate(): TextFieldState = this.copy(isError = !validator.matches(value))
 
     companion object {
+        val FullNameState = TextFieldState(
+            value = "",
+            errorText = "Name must be more than 3 letters",
+            validator = Regex.NameValidator,
+            isError = false
+        )
+
         val DiuIdState = TextFieldState(
             value = "",
             errorText = "Invalid Student Id",
@@ -53,6 +57,13 @@ data class TextFieldState(
             value = "",
             errorText = "Invalid DIU Email",
             validator = Regex.DiuEmailValidator,
+            isError = false
+        )
+
+        val PhoneState = TextFieldState(
+            value = "",
+            errorText = "Invalid phone number",
+            validator = Regex.PhoneValidator,
             isError = false
         )
 
@@ -73,6 +84,34 @@ data class TextFieldState(
 }
 
 @Composable
+fun FullName(
+    modifier: Modifier = Modifier,
+    state: TextFieldState,
+    onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    imeAction: ImeAction = ImeAction.Next,
+    onImeActionPerformed: (ImeAction) -> Unit = {}
+) {
+    CRInputLayout(
+        modifier = modifier,
+        isError = state.isError,
+        errorText = state.errorText
+    ) {
+        CRTextField(
+            value = state.value,
+            onValueChange = onValueChange,
+            placeHolder = stringResource(id = R.string.enter_diu_email),
+            focusRequester = focusRequester,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = imeAction
+            ),
+            onImeActionPerformed = onImeActionPerformed,
+        )
+    }
+}
+
+@Composable
 fun DiuEmail(
     modifier: Modifier = Modifier,
     state: TextFieldState,
@@ -81,7 +120,7 @@ fun DiuEmail(
     imeAction: ImeAction = ImeAction.Next,
     onImeActionPerformed: (ImeAction) -> Unit = {}
 ) {
-    CRTextFieldLayout(
+    CRInputLayout(
         modifier = modifier,
         isError = state.isError,
         errorText = state.errorText
@@ -101,6 +140,34 @@ fun DiuEmail(
 }
 
 @Composable
+fun PhoneNumber(
+    modifier: Modifier = Modifier,
+    state: TextFieldState,
+    onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester,
+    imeAction: ImeAction = ImeAction.Next,
+    onImeActionPerformed: (ImeAction) -> Unit = {}
+) {
+    CRInputLayout(
+        modifier = modifier,
+        isError = state.isError,
+        errorText = state.errorText
+    ) {
+        CRTextField(
+            value = state.value,
+            onValueChange = onValueChange,
+            placeHolder = stringResource(id = R.string.enter_your_name),
+            focusRequester = focusRequester,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Phone,
+                imeAction = imeAction
+            ),
+            onImeActionPerformed = onImeActionPerformed,
+        )
+    }
+}
+
+@Composable
 fun DiuId(
     modifier: Modifier = Modifier,
     state: TextFieldState,
@@ -109,7 +176,7 @@ fun DiuId(
     imeAction: ImeAction = ImeAction.Next,
     onImeActionPerformed: (ImeAction) -> Unit = {}
 ) {
-    CRTextFieldLayout(
+    CRInputLayout(
         modifier = modifier,
         isError = state.isError,
         errorText = state.errorText
@@ -138,7 +205,7 @@ fun Password(
     imeAction: ImeAction = ImeAction.Done,
     onImeActionPerformed: (ImeAction) -> Unit = {}
 ) {
-    CRTextFieldLayout(
+    CRInputLayout(
         modifier = modifier,
         isError = state.isError,
         errorText = state.errorText
@@ -159,7 +226,7 @@ fun Password(
 }
 
 @Composable
-fun CRTextFieldLayout(
+private fun CRInputLayout(
     modifier: Modifier = Modifier,
     isError: Boolean,
     errorText: String,
@@ -182,7 +249,7 @@ fun CRTextFieldLayout(
 }
 
 @Composable
-fun CRTextField(
+private fun CRTextField(
     modifier: Modifier = Modifier,
     value: String,
     onValueChange: (String) -> Unit,

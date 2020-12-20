@@ -11,6 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
 import io.github.diubruteforce.smartcr.ui.home.HomeScreen
 import io.github.diubruteforce.smartcr.ui.onboading.*
+import io.github.diubruteforce.smartcr.ui.profile.student.StudentEditScreen
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 
 @AndroidEntryPoint
@@ -27,7 +28,7 @@ class MainActivity : AppCompatActivity() {
 
                     NavHost(
                         navController = navController,
-                        startDestination = Route.Splash
+                        startDestination = Route.StudentProfileEdit
                     ) {
                         // region: OnBoarding Screens
                         composable(Route.Splash) {
@@ -44,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 },
                                 navigateToProfileEdit = {
-                                    navController.navigate(Route.Home) {
+                                    navController.navigate(Route.StudentProfileEdit) {
                                         popUpTo(Route.Splash) { inclusive = true }
                                     }
                                 },
@@ -65,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                                     }
                                 },
                                 navigateToProfileEdit = {
-                                    navController.navigate(Route.Home) {
+                                    navController.navigate(Route.StudentProfileEdit) {
                                         popUpTo(Route.SignIn) { inclusive = true }
                                     }
                                 },
@@ -124,6 +125,18 @@ class MainActivity : AppCompatActivity() {
                         composable(Route.Home) {
                             HomeScreen(navigateToOnBoarding = { navController.navigate(Route.SignIn) })
                         }
+
+                        // region: Student Profile
+                        composable(Route.StudentProfileEdit) {
+                            StudentEditScreen(
+                                viewModel = viewModel(),
+                                onBackPress = null,
+                                onNavigateToHome = {
+                                    navController.navigate(Route.Home) { launchSingleTop = true }
+                                }
+                            )
+                        }
+                        // endregion
                     }
 
                 }
@@ -163,4 +176,6 @@ object Route {
     const val ForgotPassword = "ForgotPassword"
 
     const val Home = "Home"
+
+    const val StudentProfileEdit = "StudentProfileEdit"
 }
