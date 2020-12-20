@@ -1,5 +1,6 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
+import androidx.hilt.lifecycle.ViewModelInject
 import io.github.diubruteforce.smartcr.data.repository.AuthRepository
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
 import io.github.diubruteforce.smartcr.model.ui.InputState
@@ -12,7 +13,9 @@ data class SignUpState(
     val rePasswordState: InputState = InputState.RePasswordState,
 )
 
-class SignUpViewModel : BaseViewModel<SignUpState, TypedSideEffectState<Any, String, String>>(
+class SignUpViewModel @ViewModelInject constructor(
+    private val authRepository: AuthRepository
+) : BaseViewModel<SignUpState, TypedSideEffectState<Any, String, String>>(
     initialState = SignUpState(),
     initialSideEffect = TypedSideEffectState.Uninitialized
 ) {
@@ -55,7 +58,7 @@ class SignUpViewModel : BaseViewModel<SignUpState, TypedSideEffectState<Any, Str
 
             launchInViewModelScope {
                 try {
-                    AuthRepository.createNewUser(
+                    authRepository.createNewUser(
                         email = diuEmailState.value,
                         password = passwordState.value
                     )

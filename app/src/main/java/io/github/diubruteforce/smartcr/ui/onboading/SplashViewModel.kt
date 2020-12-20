@@ -1,19 +1,22 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
+import androidx.hilt.lifecycle.ViewModelInject
 import io.github.diubruteforce.smartcr.data.repository.AuthRepository
 import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
 
-class SplashViewModel : BaseViewModel<Boolean, StringFailSideEffectState>(
+class SplashViewModel @ViewModelInject constructor(
+    private val authRepository: AuthRepository
+) : BaseViewModel<Boolean, StringFailSideEffectState>(
     initialState = false,
     initialSideEffect = TypedSideEffectState.Uninitialized
 ) {
-    fun isAuthenticated() = AuthRepository.isAuthenticated
+    fun isAuthenticated() = authRepository.isAuthenticated
 
-    fun isEmailVerified() = AuthRepository.isEmailVerified
+    fun isEmailVerified() = authRepository.isEmailVerified
 
-    fun getUserEmail(): String = AuthRepository.userEmail
+    fun getUserEmail(): String = authRepository.userEmail
 
     fun hasProfileData(): Boolean = false
 }

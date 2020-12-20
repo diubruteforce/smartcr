@@ -1,5 +1,6 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
+import androidx.hilt.lifecycle.ViewModelInject
 import io.github.diubruteforce.smartcr.data.repository.AuthRepository
 import io.github.diubruteforce.smartcr.model.ui.*
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
@@ -10,7 +11,9 @@ data class SignInState(
     val passwordState: InputState = InputState.PasswordState
 )
 
-class SignInViewModel : BaseViewModel<SignInState, StringFailSideEffectState>(
+class SignInViewModel @ViewModelInject constructor(
+    private val authRepository: AuthRepository
+) : BaseViewModel<SignInState, StringFailSideEffectState>(
     initialState = SignInState(),
     initialSideEffect = TypedSideEffectState.Uninitialized
 ) {
@@ -37,7 +40,7 @@ class SignInViewModel : BaseViewModel<SignInState, StringFailSideEffectState>(
 
             launchInViewModelScope {
                 try {
-                    AuthRepository.signIn(
+                    authRepository.signIn(
                         email = diuEmailState.value,
                         password = passwordState.value
                     )
@@ -53,9 +56,9 @@ class SignInViewModel : BaseViewModel<SignInState, StringFailSideEffectState>(
         }
     }
 
-    fun isEmailVerified() = AuthRepository.isEmailVerified
+    fun isEmailVerified() = authRepository.isEmailVerified
 
-    fun getUserEmail(): String = AuthRepository.userEmail
+    fun getUserEmail(): String = authRepository.userEmail
 
     fun hasProfileData(): Boolean = false
 }

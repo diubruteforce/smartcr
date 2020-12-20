@@ -3,10 +3,12 @@ package io.github.diubruteforce.smartcr.data.repository
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import dagger.Reusable
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-
-object AuthRepository {
+@Reusable
+class AuthRepository @Inject constructor() {
     private val firebaseAuth = Firebase.auth
     private val user get() = firebaseAuth.currentUser
 

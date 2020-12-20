@@ -3,16 +3,24 @@ package io.github.diubruteforce.smartcr
 import android.content.res.Resources
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.AmbientLifecycleOwner
 import androidx.compose.ui.platform.setContent
 import androidx.compose.ui.viewinterop.viewModel
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.ViewModel
 import androidx.navigation.compose.*
+import androidx.savedstate.SavedStateRegistryOwner
 import dagger.hilt.android.AndroidEntryPoint
 import dev.chrisbanes.accompanist.insets.ProvideWindowInsets
+import io.github.diubruteforce.smartcr.di.AppSavedStateViewModelFactory
+import io.github.diubruteforce.smartcr.di.ViewModelAssistedFactoryMap
 import io.github.diubruteforce.smartcr.ui.home.HomeScreen
 import io.github.diubruteforce.smartcr.ui.onboading.*
 import io.github.diubruteforce.smartcr.ui.profile.student.StudentEditScreen
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -23,17 +31,17 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             SmartCRTheme {
-                ProvideWindowInsets() {
+                ProvideWindowInsets {
                     val navController = rememberNavController()
 
                     NavHost(
                         navController = navController,
-                        startDestination = Route.StudentProfileEdit
+                        startDestination = Route.Splash
                     ) {
                         // region: OnBoarding Screens
                         composable(Route.Splash) {
                             SplashScreen(
-                                viewModel = viewModel(),
+                                viewModel = hiltViewModel(),
                                 navigateToOnBoarding = {
                                     navController.navigate(Route.SignIn) {
                                         popUpTo(Route.Splash) { inclusive = true }
@@ -59,7 +67,7 @@ class MainActivity : AppCompatActivity() {
 
                         composable(Route.SignIn) {
                             SignInScreen(
-                                viewModel = viewModel(),
+                                viewModel = hiltViewModel(),
                                 navigateToVerification = {
                                     navController.navigate(Route.verificationRoute(it)) {
                                         popUpTo(Route.SignIn) { inclusive = true }
@@ -82,7 +90,7 @@ class MainActivity : AppCompatActivity() {
 
                         composable(Route.SignUp) {
                             SignUpScreen(
-                                viewModel = viewModel(),
+                                viewModel = hiltViewModel(),
                                 navigateToSignIn = {
                                     navController.navigate(Route.SignIn) {
                                         popUpTo(Route.SignIn) { inclusive = true }
@@ -101,7 +109,7 @@ class MainActivity : AppCompatActivity() {
 
                             VerificationScreen(
                                 email = email,
-                                viewModel = viewModel(),
+                                viewModel = hiltViewModel(),
                                 navigateToSignIn = {
                                     navController.navigate(Route.SignIn) {
                                         popUpTo(Route.Verification) { inclusive = true }
@@ -112,7 +120,7 @@ class MainActivity : AppCompatActivity() {
 
                         composable(Route.ForgotPassword) {
                             ForgotScreen(
-                                viewModel = viewModel(),
+                                viewModel = hiltViewModel(),
                                 navigateToSignIn = {
                                     navController.navigate(Route.SignIn) {
                                         popUpTo(Route.ForgotPassword) { inclusive = true }
@@ -129,7 +137,7 @@ class MainActivity : AppCompatActivity() {
                         // region: Student Profile
                         composable(Route.StudentProfileEdit) {
                             StudentEditScreen(
-                                viewModel = viewModel(),
+                                viewModel = hiltViewModel(),
                                 onBackPress = null,
                                 onNavigateToHome = {
                                     navController.navigate(Route.Home) { launchSingleTop = true }
@@ -144,14 +152,28 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // region: Hilt+ComposeNavigation Integration
     /*
     * Currently it is not possible to use both Hilt and
     * NavGraph viewModel() at a time to get ViewModel
     *
-    @Composable
-    inline fun <reified VM : ViewModel> hiltViewModel() =
-        viewModel<VM>(factory = defaultViewModelProviderFactory)
+    * This is an workaround to solve the problem
     */
+    @Inject
+    lateinit var viewModelAssistedFactories: ViewModelAssistedFactoryMap
+
+    @Composable
+    private inline fun <reified VM : ViewModel> hiltViewModel(): VM {
+        val savedStateRegistryOwner = AmbientLifecycleOwner.current as SavedStateRegistryOwner
+
+        val factory = remember {
+            AppSavedStateViewModelFactory(savedStateRegistryOwner, viewModelAssistedFactories)
+        }
+
+        return viewModel(factory = factory)
+    }
+    // endregion
+
 
     /*
     * This method is called by fragment to get the theme

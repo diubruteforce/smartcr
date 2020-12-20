@@ -1,5 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.profile.student
 
+import androidx.hilt.lifecycle.ViewModelInject
+import io.github.diubruteforce.smartcr.data.repository.AuthRepository
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
@@ -19,11 +21,12 @@ data class StudentEditState(
 
 enum class StudentEditSuccess { Loaded, Saved }
 
-class StudentEditViewModel :
-    BaseViewModel<StudentEditState, TypedSideEffectState<Any, StudentEditSuccess, String>>(
-        initialState = StudentEditState(),
-        initialSideEffect = EmptyLoadingState
-    ) {
+class StudentEditViewModel @ViewModelInject constructor(
+    private val authRepository: AuthRepository
+) : BaseViewModel<StudentEditState, TypedSideEffectState<Any, StudentEditSuccess, String>>(
+    initialState = StudentEditState(),
+    initialSideEffect = EmptyLoadingState
+) {
     fun changeFullName(newName: String) = withState {
         val newState = fullName.copy(value = newName)
         setState { copy(fullName = newState) }

@@ -1,5 +1,6 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
+import androidx.hilt.lifecycle.ViewModelInject
 import io.github.diubruteforce.smartcr.data.repository.AuthRepository
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
 import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
@@ -9,7 +10,9 @@ import timber.log.Timber
 
 object VerificationState
 
-class VerificationViewModel : BaseViewModel<VerificationState, StringFailSideEffectState>(
+class VerificationViewModel @ViewModelInject constructor(
+    private val authRepository: AuthRepository
+) : BaseViewModel<VerificationState, StringFailSideEffectState>(
     initialState = VerificationState,
     initialSideEffect = TypedSideEffectState.Uninitialized
 ) {
@@ -17,7 +20,7 @@ class VerificationViewModel : BaseViewModel<VerificationState, StringFailSideEff
         setSideEffect { EmptyLoadingState }
 
         launchInViewModelScope {
-            AuthRepository.signOut()
+            authRepository.signOut()
             setSideEffect { TypedSideEffectState.Fail("To get started sign in.") }
         }
     }
@@ -27,7 +30,7 @@ class VerificationViewModel : BaseViewModel<VerificationState, StringFailSideEff
 
         launchInViewModelScope {
             try {
-                AuthRepository.sendVerificationEmail()
+                authRepository.sendVerificationEmail()
             } catch (ex: Exception) {
                 Timber.e(ex)
             } finally {
