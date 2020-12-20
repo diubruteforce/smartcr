@@ -3,7 +3,10 @@ package io.github.diubruteforce.smartcr.ui.common
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -15,7 +18,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focusRequester
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -23,76 +25,21 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import io.github.diubruteforce.smartcr.R
+import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.grayText
-import io.github.diubruteforce.smartcr.utils.extension.*
-import timber.log.Timber
-
-data class TextFieldState(
-    val value: String,
-    val errorText: String,
-    val isError: Boolean,
-    private val validator: Regex,
-) {
-    fun validate(): TextFieldState = this.copy(isError = !validator.matches(value))
-
-    companion object {
-        val FullNameState = TextFieldState(
-            value = "",
-            errorText = "Name must be more than 3 letters",
-            validator = Regex.NameValidator,
-            isError = false
-        )
-
-        val DiuIdState = TextFieldState(
-            value = "",
-            errorText = "Invalid Student Id",
-            validator = Regex.DiuIdValidator,
-            isError = false
-        )
-
-        val DiuEmailState = TextFieldState(
-            value = "",
-            errorText = "Invalid DIU Email",
-            validator = Regex.DiuEmailValidator,
-            isError = false
-        )
-
-        val PhoneState = TextFieldState(
-            value = "",
-            errorText = "Invalid phone number",
-            validator = Regex.PhoneValidator,
-            isError = false
-        )
-
-        val PasswordState = TextFieldState(
-            value = "",
-            errorText = "Must be more than 6 letter",
-            validator = Regex.PasswordValidator,
-            isError = false
-        )
-
-        val RePasswordState = TextFieldState(
-            value = "",
-            errorText = "Your password and confirmation password do not match.",
-            validator = Regex.NonEmptyValidator,
-            isError = false
-        )
-    }
-}
 
 @Composable
 fun FullName(
     modifier: Modifier = Modifier,
-    state: TextFieldState,
+    state: InputState,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Next,
     onImeActionPerformed: (ImeAction) -> Unit = {}
 ) {
-    CRInputLayout(
+    InputLayout(
         modifier = modifier,
         isError = state.isError,
         errorText = state.errorText
@@ -114,13 +61,13 @@ fun FullName(
 @Composable
 fun DiuEmail(
     modifier: Modifier = Modifier,
-    state: TextFieldState,
+    state: InputState,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Next,
     onImeActionPerformed: (ImeAction) -> Unit = {}
 ) {
-    CRInputLayout(
+    InputLayout(
         modifier = modifier,
         isError = state.isError,
         errorText = state.errorText
@@ -142,13 +89,13 @@ fun DiuEmail(
 @Composable
 fun PhoneNumber(
     modifier: Modifier = Modifier,
-    state: TextFieldState,
+    state: InputState,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Next,
     onImeActionPerformed: (ImeAction) -> Unit = {}
 ) {
-    CRInputLayout(
+    InputLayout(
         modifier = modifier,
         isError = state.isError,
         errorText = state.errorText
@@ -170,13 +117,13 @@ fun PhoneNumber(
 @Composable
 fun DiuId(
     modifier: Modifier = Modifier,
-    state: TextFieldState,
+    state: InputState,
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Next,
     onImeActionPerformed: (ImeAction) -> Unit = {}
 ) {
-    CRInputLayout(
+    InputLayout(
         modifier = modifier,
         isError = state.isError,
         errorText = state.errorText
@@ -198,14 +145,14 @@ fun DiuId(
 @Composable
 fun Password(
     modifier: Modifier = Modifier,
-    state: TextFieldState,
+    state: InputState,
     placeHolder: String = stringResource(id = R.string.enter_your_password),
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Done,
     onImeActionPerformed: (ImeAction) -> Unit = {}
 ) {
-    CRInputLayout(
+    InputLayout(
         modifier = modifier,
         isError = state.isError,
         errorText = state.errorText
@@ -221,29 +168,6 @@ fun Password(
             ),
             onImeActionPerformed = onImeActionPerformed,
             visualTransformation = PasswordVisualTransformation()
-        )
-    }
-}
-
-@Composable
-private fun CRInputLayout(
-    modifier: Modifier = Modifier,
-    isError: Boolean,
-    errorText: String,
-    content: @Composable () -> Unit
-) {
-    val errorColor = if (isError) MaterialTheme.colors.error else Color.Transparent
-
-    Timber.d("error: $isError errorText: $errorText")
-
-    Column(modifier = modifier) {
-        content()
-
-        Text(
-            text = errorText,
-            color = errorColor,
-            style = MaterialTheme.typography.body2.copy(fontSize = 12.sp),
-            modifier = Modifier.padding(start = Margin.small, bottom = Margin.tiny),
         )
     }
 }

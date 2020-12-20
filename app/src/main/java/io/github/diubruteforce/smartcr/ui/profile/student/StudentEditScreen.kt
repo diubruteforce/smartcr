@@ -51,8 +51,8 @@ private fun StudentEditScreenContent(
     onEmailClick: () -> Unit,
     onPhoneChange: (String) -> Unit,
     selectDepartment: () -> Unit,
-    selectLevel: (Int?) -> Unit,
-    selectTerm: (Int?) -> Unit,
+    selectLevel: () -> Unit,
+    selectTerm: () -> Unit,
     changeImage: () -> Unit,
     saveStudentProfile: () -> Unit,
     onBackPress: (() -> Unit)?
@@ -87,13 +87,14 @@ private fun StudentEditScreenContent(
 
         ScrollableColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(Margin.big),
-            verticalArrangement = Arrangement.spacedBy(Margin.normal)
+            contentPadding = PaddingValues(Margin.normal)
         ) {
             Text(
                 text = stringResource(id = R.string.personal_info),
                 style = MaterialTheme.typography.h5
             )
+
+            Spacer(modifier = Modifier.size(Margin.normal))
 
             FullName(
                 state = state.fullName,
@@ -112,13 +113,11 @@ private fun StudentEditScreenContent(
             )
 
             CRSelection(
-                text = state.diuEmail,
+                state = state.diuEmail,
                 placeHolder = stringResource(id = R.string.enter_diu_email),
                 icon = null,
                 onClick = onEmailClick,
             )
-
-            Spacer(modifier = Modifier.size(Margin.small))
 
             PhoneNumber(
                 state = state.phoneNumber,
@@ -131,34 +130,36 @@ private fun StudentEditScreenContent(
             )
 
             CRSelection(
-                text = state.gender,
+                state = state.gender,
                 placeHolder = stringResource(id = R.string.select_your_gender),
                 onClick = selectGender,
             )
 
-            Spacer(modifier = Modifier.size(Margin.normal))
+            Spacer(modifier = Modifier.size(Margin.big))
 
             Text(
                 text = stringResource(id = R.string.academic_info),
                 style = MaterialTheme.typography.h5
             )
 
+            Spacer(modifier = Modifier.size(Margin.normal))
+
             CRSelection(
-                text = state.department,
+                state = state.department,
                 placeHolder = stringResource(id = R.string.select_your_department),
                 onClick = selectDepartment,
             )
 
             CRSelection(
-                text = state.level?.toString(),
+                state = state.level,
                 placeHolder = stringResource(id = R.string.select_your_level),
-                onClick = { selectLevel.invoke(state.level) },
+                onClick = { selectLevel.invoke() },
             )
 
             CRSelection(
-                text = state.term?.toString(),
+                state = state.term,
                 placeHolder = stringResource(id = R.string.select_your_term),
-                onClick = { selectTerm.invoke(state.term) },
+                onClick = { selectTerm.invoke() },
             )
 
             LargeButton(text = stringResource(id = R.string.save), onClick = saveStudentProfile)

@@ -1,17 +1,13 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
 import io.github.diubruteforce.smartcr.data.repository.AuthRepository
-import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
-import io.github.diubruteforce.smartcr.model.ui.EmptySuccessState
-import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
-import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
-import io.github.diubruteforce.smartcr.ui.common.TextFieldState
+import io.github.diubruteforce.smartcr.model.ui.*
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
 import timber.log.Timber
 
 data class SignInState(
-    val diuEmailState: TextFieldState = TextFieldState.DiuEmailState,
-    val passwordState: TextFieldState = TextFieldState.PasswordState
+    val diuEmailState: InputState = InputState.DiuEmailState,
+    val passwordState: InputState = InputState.PasswordState
 )
 
 class SignInViewModel : BaseViewModel<SignInState, StringFailSideEffectState>(

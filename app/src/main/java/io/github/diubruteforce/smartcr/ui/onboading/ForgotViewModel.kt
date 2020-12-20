@@ -2,11 +2,10 @@ package io.github.diubruteforce.smartcr.ui.onboading
 
 import io.github.diubruteforce.smartcr.data.repository.AuthRepository
 import io.github.diubruteforce.smartcr.model.ui.*
-import io.github.diubruteforce.smartcr.ui.common.TextFieldState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
 
-class ForgotViewModel : BaseViewModel<TextFieldState, StringFailSideEffectState>(
-    initialState = TextFieldState.DiuEmailState,
+class ForgotViewModel : BaseViewModel<InputState, StringFailSideEffectState>(
+    initialState = InputState.DiuEmailState,
     initialSideEffect = TypedSideEffectState.Uninitialized
 ) {
     fun onEmailChange(newEmail: String) = withState {

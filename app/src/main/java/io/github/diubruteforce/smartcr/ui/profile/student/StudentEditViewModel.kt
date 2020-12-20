@@ -1,20 +1,20 @@
 package io.github.diubruteforce.smartcr.ui.profile.student
 
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
+import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
-import io.github.diubruteforce.smartcr.ui.common.TextFieldState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
 
 data class StudentEditState(
-    val fullName: TextFieldState = TextFieldState.FullNameState,
-    val diuId: TextFieldState = TextFieldState.DiuIdState,
-    val diuEmail: String? = null,
+    val fullName: InputState = InputState.FullNameState,
+    val diuId: InputState = InputState.DiuIdState,
+    val diuEmail: InputState = InputState.NotEmptyState,
     val imageUrl: String? = "https://zoha131.github.io/images/profile.jpg",
-    val gender: String? = null,
-    val phoneNumber: TextFieldState = TextFieldState.PhoneState,
-    val department: String? = null,
-    val level: Int? = null,
-    val term: Int? = null,
+    val gender: InputState = InputState.NotEmptyState,
+    val phoneNumber: InputState = InputState.PhoneState,
+    val department: InputState = InputState.NotEmptyState,
+    val level: InputState = InputState.NotEmptyState,
+    val term: InputState = InputState.NotEmptyState,
 )
 
 enum class StudentEditSuccess { Loaded, Saved }
