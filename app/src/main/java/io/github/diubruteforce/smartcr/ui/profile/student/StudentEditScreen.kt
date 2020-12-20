@@ -87,14 +87,15 @@ private fun StudentEditScreenContent(
 
         ScrollableColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(Margin.normal)
+            contentPadding = PaddingValues(Margin.normal),
+            verticalArrangement = Arrangement.spacedBy(Margin.tiny)
         ) {
             Text(
                 text = stringResource(id = R.string.personal_info),
                 style = MaterialTheme.typography.h5
             )
 
-            Spacer(modifier = Modifier.size(Margin.normal))
+            Spacer(modifier = Modifier.size(Margin.small))
 
             FullName(
                 state = state.fullName,
@@ -135,14 +136,14 @@ private fun StudentEditScreenContent(
                 onClick = selectGender,
             )
 
-            Spacer(modifier = Modifier.size(Margin.big))
+            Spacer(modifier = Modifier.size(Margin.normal))
 
             Text(
                 text = stringResource(id = R.string.academic_info),
                 style = MaterialTheme.typography.h5
             )
 
-            Spacer(modifier = Modifier.size(Margin.normal))
+            Spacer(modifier = Modifier.size(Margin.small))
 
             CRSelection(
                 state = state.department,
