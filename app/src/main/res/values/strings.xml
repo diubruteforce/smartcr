@@ -41,4 +41,10 @@
     <string name="student_profile">Student Profile</string>
     <string name="change_image">Change Image</string>
     <string name="enter_your_name">Enter your full name</string>
+    <string name="prohibited">Prohibited</string>
+    <string name="diu_email">Email</string>
+    <string name="gender">Gender</string>
+    <string name="department">Department</string>
+    <string name="level">Level</string>
+    <string name="term">Term</string>
 </resources>

@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             SmartCRTheme {
-                ProvideWindowInsets {
+                ProvideWindowInsets(consumeWindowInsets = false) {
                     val navController = rememberNavController()
 
                     NavHost(

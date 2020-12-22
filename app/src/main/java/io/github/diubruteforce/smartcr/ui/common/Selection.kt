@@ -8,7 +8,7 @@ import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowRight
+import androidx.compose.material.icons.outlined.KeyboardArrowDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -24,7 +24,7 @@ fun CRSelection(
     modifier: Modifier = Modifier,
     state: InputState,
     placeHolder: String,
-    icon: ImageVector? = Icons.Outlined.KeyboardArrowRight,
+    icon: ImageVector? = Icons.Outlined.KeyboardArrowDown,
     onClick: () -> Unit
 ) {
     InputLayout(isError = state.isError, errorText = state.errorText) {
@@ -47,20 +47,19 @@ fun CRSelection(
                     .padding(start = Margin.medium, end = Margin.medium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                if (state.value.isEmpty()) {
-                    Text(
-                        text = placeHolder,
-                        style = MaterialTheme.typography.body1,
-                        color = MaterialTheme.colors.grayText
-                    )
-                } else {
-                    Text(
-                        text = state.value,
-                        style = MaterialTheme.typography.body1
-                    )
-                }
 
-                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = placeHolder.take(20),
+                    style = MaterialTheme.typography.body1,
+                    color = MaterialTheme.colors.grayText
+                )
+
+                Spacer(modifier = modifier.weight(1f))
+
+                Text(
+                    text = state.value,
+                    style = MaterialTheme.typography.body1
+                )
 
                 if (icon != null) {
                     Icon(

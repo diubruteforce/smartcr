@@ -4,41 +4,165 @@ import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.DepartureBoard
+import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.AmbientFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
+import io.github.diubruteforce.smartcr.R.string.select_your_level
+import io.github.diubruteforce.smartcr.model.data.Gender
+import io.github.diubruteforce.smartcr.ui.bottomsheet.ListBottomSheet
 import io.github.diubruteforce.smartcr.ui.common.*
 import io.github.diubruteforce.smartcr.ui.theme.Margin
+import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBottomSheetState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
+sealed class StudentEditSheet {
+    object Email : StudentEditSheet()
+    object Gender : StudentEditSheet()
+    object Department : StudentEditSheet()
+    object Level : StudentEditSheet()
+    object Term : StudentEditSheet()
+}
+
+@OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun StudentEditScreen(
     viewModel: StudentEditViewModel,
     onBackPress: (() -> Unit)?,
     onNavigateToHome: () -> Unit
 ) {
-    StudentEditScreenContent(
-        stateFlow = viewModel.state,
-        onFullNameChange = viewModel::changeFullName,
-        onDiuIdChange = viewModel::changeDiuId,
-        selectGender = { /*TODO*/ },
-        onEmailClick = { /*TODO*/ },
-        onPhoneChange = viewModel::changePhoneNumber,
-        selectDepartment = { /*TODO*/ },
-        selectLevel = { /*TODO*/ },
-        selectTerm = { /*TODO*/ },
-        changeImage = {},
-        saveStudentProfile = {},
-        onBackPress = onBackPress
+    val sheetState = rememberBackPressAwareBottomSheetState()
+    val scope = rememberCoroutineScope()
+
+    var studentEditSheet by remember { mutableStateOf<StudentEditSheet>(StudentEditSheet.Gender) }
+    val sideEffectState = viewModel.sideEffect.collectAsState().value
+
+    SideEffect(
+        sideEffectState = sideEffectState,
+        onSuccess = { onNavigateToHome.invoke() },
+        onFailAlertDismissRequest = viewModel::clearSideEffect
     )
+
+    ModalBottomSheetLayout(
+        sheetState = sheetState,
+        sheetContent = {
+            when (studentEditSheet) {
+                StudentEditSheet.Gender -> {
+                    ListBottomSheet(
+                        title = stringResource(id = R.string.select_your_gender),
+                        icon = vectorResource(id = R.drawable.gender),
+                        onClose = { sheetState.hide() },
+                        list = Gender.values().toList(),
+                        onItemClick = {
+                            sheetState.hide()
+                            viewModel.changeGender(it)
+                        }
+                    )
+                }
+                StudentEditSheet.Email -> {
+                    ListBottomSheet(
+                        title = stringResource(id = R.string.prohibited),
+                        icon = Icons.Outlined.Error,
+                        onClose = { sheetState.hide() },
+                        list = listOf("You can't change email."),
+                        onItemClick = { sheetState.hide() }
+                    )
+                }
+                StudentEditSheet.Department -> {
+                    ListBottomSheet(
+                        title = stringResource(id = R.string.select_your_department),
+                        icon = Icons.Outlined.DepartureBoard,
+                        onClose = { sheetState.hide() },
+                        list = (1..4).toList(),
+                        onItemClick = {
+                            sheetState.hide()
+                            viewModel.changeDepartment(it)
+                        }
+                    )
+                }
+                StudentEditSheet.Level -> {
+                    ListBottomSheet(
+                        title = stringResource(id = select_your_level),
+                        icon = Icons.Outlined.DepartureBoard,
+                        onClose = { sheetState.hide() },
+                        list = (1..4).toList(),
+                        onItemClick = {
+                            sheetState.hide()
+                            viewModel.changeLevel(it)
+                        }
+                    )
+                }
+                StudentEditSheet.Term -> {
+                    ListBottomSheet(
+                        title = stringResource(id = R.string.select_your_term),
+                        icon = Icons.Outlined.DepartureBoard,
+                        onClose = { sheetState.hide() },
+                        list = (1..3).toList(),
+                        onItemClick = {
+                            sheetState.hide()
+                            viewModel.changeTerm(it)
+                        }
+                    )
+                }
+            }
+        }
+    ) {
+        StudentEditScreenContent(
+            stateFlow = viewModel.state,
+            onFullNameChange = viewModel::changeFullName,
+            onDiuIdChange = viewModel::changeDiuId,
+            selectGender = {
+                scope.launch {
+                    studentEditSheet = StudentEditSheet.Gender
+                    delay(10)
+                    sheetState.show()
+                }
+            },
+            onEmailClick = {
+                scope.launch {
+                    studentEditSheet = StudentEditSheet.Email
+                    delay(10)
+                    sheetState.show()
+                }
+            },
+            onPhoneChange = viewModel::changePhoneNumber,
+            selectDepartment = {
+                scope.launch {
+                    studentEditSheet = StudentEditSheet.Department
+                    delay(10)
+                    sheetState.show()
+                }
+            },
+            selectLevel = {
+                scope.launch {
+                    studentEditSheet = StudentEditSheet.Level
+                    delay(10)
+                    sheetState.show()
+                }
+            },
+            selectTerm = {
+                scope.launch {
+                    studentEditSheet = StudentEditSheet.Term
+                    delay(10)
+                    sheetState.show()
+                }
+            },
+            changeImage = {},
+            saveStudentProfile = viewModel::saveProfile,
+            onBackPress = onBackPress
+        )
+    }
 }
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -115,7 +239,7 @@ private fun StudentEditScreenContent(
 
             CRSelection(
                 state = state.diuEmail,
-                placeHolder = stringResource(id = R.string.enter_diu_email),
+                placeHolder = stringResource(id = R.string.diu_email),
                 icon = null,
                 onClick = onEmailClick,
             )
@@ -132,7 +256,7 @@ private fun StudentEditScreenContent(
 
             CRSelection(
                 state = state.gender,
-                placeHolder = stringResource(id = R.string.select_your_gender),
+                placeHolder = stringResource(id = R.string.gender),
                 onClick = selectGender,
             )
 
@@ -147,19 +271,19 @@ private fun StudentEditScreenContent(
 
             CRSelection(
                 state = state.department,
-                placeHolder = stringResource(id = R.string.select_your_department),
+                placeHolder = stringResource(id = R.string.department),
                 onClick = selectDepartment,
             )
 
             CRSelection(
                 state = state.level,
-                placeHolder = stringResource(id = R.string.select_your_level),
+                placeHolder = stringResource(id = R.string.level),
                 onClick = { selectLevel.invoke() },
             )
 
             CRSelection(
                 state = state.term,
-                placeHolder = stringResource(id = R.string.select_your_term),
+                placeHolder = stringResource(id = R.string.term),
                 onClick = { selectTerm.invoke() },
             )
 

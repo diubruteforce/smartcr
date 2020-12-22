@@ -47,7 +47,7 @@ fun FullName(
         CRTextField(
             value = state.value,
             onValueChange = onValueChange,
-            placeHolder = stringResource(id = R.string.enter_diu_email),
+            placeHolder = stringResource(id = R.string.enter_your_name),
             focusRequester = focusRequester,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,
@@ -103,7 +103,7 @@ fun PhoneNumber(
         CRTextField(
             value = state.value,
             onValueChange = onValueChange,
-            placeHolder = stringResource(id = R.string.enter_your_name),
+            placeHolder = stringResource(id = R.string.enter_your_phone_number),
             focusRequester = focusRequester,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
