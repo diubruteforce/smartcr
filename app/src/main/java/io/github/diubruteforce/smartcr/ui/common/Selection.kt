@@ -50,6 +50,7 @@ fun CRSelection(
 
                 Text(
                     text = placeHolder.take(20),
+                    maxLines = 1,
                     style = MaterialTheme.typography.body1,
                     color = MaterialTheme.colors.grayText
                 )
@@ -58,6 +59,7 @@ fun CRSelection(
 
                 Text(
                     text = state.value,
+                    maxLines = 1,
                     style = MaterialTheme.typography.body1
                 )
 

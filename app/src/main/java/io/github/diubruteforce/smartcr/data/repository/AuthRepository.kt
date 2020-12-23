@@ -15,14 +15,13 @@ class AuthRepository @Inject constructor() {
     val isAuthenticated: Boolean get() = user != null
     val userEmail: String get() = user?.email ?: ""
     val isEmailVerified: Boolean get() = user?.isEmailVerified ?: false
+    val userid: String get() = user?.uid ?: ""
 
     suspend fun sendVerificationEmail(): Void? =
         user!!.sendEmailVerification().await()
 
-
     suspend fun requestPasswordReset(email: String): Void? =
         firebaseAuth.sendPasswordResetEmail(email).await()
-
 
     suspend fun createNewUser(email: String, password: String): AuthResult {
         val response = firebaseAuth.createUserWithEmailAndPassword(email, password).await()

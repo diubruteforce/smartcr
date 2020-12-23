@@ -21,6 +21,7 @@ import io.github.diubruteforce.smartcr.model.data.Gender
 import io.github.diubruteforce.smartcr.ui.bottomsheet.ListBottomSheet
 import io.github.diubruteforce.smartcr.ui.common.*
 import io.github.diubruteforce.smartcr.ui.theme.Margin
+import io.github.diubruteforce.smartcr.utils.extension.getMainActivity
 import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBottomSheetState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -47,10 +48,25 @@ fun StudentEditScreen(
 
     var studentEditSheet by remember { mutableStateOf<StudentEditSheet>(StudentEditSheet.Gender) }
     val sideEffectState = viewModel.sideEffect.collectAsState().value
+    val state = viewModel.state.collectAsState().value
+
+    val mainActivity = getMainActivity()
 
     SideEffect(
         sideEffectState = sideEffectState,
-        onSuccess = { onNavigateToHome.invoke() },
+        onSuccess = {
+            when (it) {
+                StudentEditSuccess.Loaded -> {
+
+                }
+                StudentEditSuccess.ImageSaved -> {
+
+                }
+                StudentEditSuccess.ProfileSaved -> {
+                    onNavigateToHome.invoke()
+                }
+            }
+        },
         onFailAlertDismissRequest = viewModel::clearSideEffect
     )
 
@@ -84,7 +100,7 @@ fun StudentEditScreen(
                         title = stringResource(id = R.string.select_your_department),
                         icon = Icons.Outlined.DepartureBoard,
                         onClose = { sheetState.hide() },
-                        list = (1..4).toList(),
+                        list = state.departmentList,
                         onItemClick = {
                             sheetState.hide()
                             viewModel.changeDepartment(it)
@@ -158,7 +174,9 @@ fun StudentEditScreen(
                     sheetState.show()
                 }
             },
-            changeImage = {},
+            changeImage = {
+                mainActivity.pickImage { viewModel.uploadImage(it) }
+            },
             saveStudentProfile = viewModel::saveProfile,
             onBackPress = onBackPress
         )
@@ -188,7 +206,7 @@ private fun StudentEditScreenContent(
 
         ProfileTopAppBar(
             title = stringResource(id = R.string.student_profile),
-            imageUrl = state.imageUrl ?: "",
+            imageUrl = state.imageUrl,
             navigationIcon = {
                 onBackPress?.let {
                     IconButton(onClick = it) {

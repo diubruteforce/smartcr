@@ -1,32 +1,70 @@
 package io.github.diubruteforce.smartcr.ui.profile.student
 
+import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
-import io.github.diubruteforce.smartcr.data.repository.AuthRepository
+import io.github.diubruteforce.smartcr.data.repository.ProfileRepository
+import io.github.diubruteforce.smartcr.model.data.Department
 import io.github.diubruteforce.smartcr.model.data.Gender
+import io.github.diubruteforce.smartcr.model.data.Student
+import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
+import io.github.diubruteforce.smartcr.model.ui.GeneralError
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
+import timber.log.Timber
 
 data class StudentEditState(
     val fullName: InputState = InputState.FullNameState,
     val diuId: InputState = InputState.DiuIdState,
-    val diuEmail: InputState = InputState.NotEmptyState.copy(value = "kudduseboyati14-8848@diu.edu.bd"),
-    val imageUrl: String? = "https://zoha131.github.io/images/profile.jpg",
+    val diuEmail: InputState = InputState.NotEmptyState,
+    val imageUrl: String = "",
     val gender: InputState = InputState.NotEmptyState,
     val phoneNumber: InputState = InputState.PhoneState,
     val department: InputState = InputState.NotEmptyState,
     val level: InputState = InputState.NotEmptyState,
     val term: InputState = InputState.NotEmptyState,
+    val departmentList: List<Department> = emptyList()
 )
 
-enum class StudentEditSuccess { Loaded, Saved } //Student Earlier Profile load and Department Load
+enum class StudentEditSuccess { Loaded, ProfileSaved, ImageSaved } //Student Earlier Profile load and Department Load
 
 class StudentEditViewModel @ViewModelInject constructor(
-    private val authRepository: AuthRepository
+    private val profileRepository: ProfileRepository
 ) : BaseViewModel<StudentEditState, TypedSideEffectState<Any, StudentEditSuccess, String>>(
     initialState = StudentEditState(),
     initialSideEffect = TypedSideEffectState.Uninitialized
 ) {
+    private var storedDepartment: Department? = null
+
+    init {
+        setSideEffect { EmptyLoadingState }
+
+        launchInViewModelScope {
+            val departmentList = profileRepository.getAllDepartment()
+            val profile = profileRepository.getUserProfile()
+
+            storedDepartment = departmentList.find { it.codeName == profile.departmentCode }
+
+            withState {
+                setState {
+                    copy(
+                        fullName = fullName.copy(value = profile.fullName),
+                        diuId = diuId.copy(value = profile.diuId),
+                        diuEmail = diuEmail.copy(value = profile.diuEmail),
+                        imageUrl = profile.profileUrl,
+                        gender = gender.copy(value = profile.gender),
+                        phoneNumber = phoneNumber.copy(value = profile.phone),
+                        department = department.copy(value = profile.departmentCode),
+                        level = level.copy(value = profile.level),
+                        term = term.copy(value = profile.term),
+                        departmentList = departmentList
+                    )
+                }
+            }
+            setSideEffect { TypedSideEffectState.Success(StudentEditSuccess.Loaded) }
+        }
+    }
+
     fun changeFullName(newName: String) = withState {
         val newState = fullName.copy(value = newName)
         setState { copy(fullName = newState) }
@@ -47,8 +85,9 @@ class StudentEditViewModel @ViewModelInject constructor(
         setState { copy(gender = newState) }
     }
 
-    fun changeDepartment(newDepartment: Int) = withState {
-        val newState = department.copy(value = newDepartment.toString())
+    fun changeDepartment(newDepartment: Department) = withState {
+        storedDepartment = newDepartment
+        val newState = department.copy(value = newDepartment.codeName)
         setState { copy(department = newState) }
     }
 
@@ -60,6 +99,22 @@ class StudentEditViewModel @ViewModelInject constructor(
     fun changeTerm(newTerm: Int) = withState {
         val newState = term.copy(value = newTerm.toString())
         setState { copy(term = newState) }
+    }
+
+    fun uploadImage(uri: Uri?) = withState {
+        Timber.tag("UploadProfile").d("viewModel called $uri")
+        if (uri != null) {
+            setSideEffect { EmptyLoadingState }
+
+            launchInViewModelScope {
+                val imageUrl = profileRepository.uploadProfileImage(uri)
+
+                setState { copy(imageUrl = imageUrl) }
+                setSideEffect { TypedSideEffectState.Success(StudentEditSuccess.ImageSaved) }
+            }
+        } else {
+            setSideEffect { TypedSideEffectState.Fail("Unable to upload to image.") }
+        }
     }
 
     fun saveProfile() = withState {
@@ -87,8 +142,36 @@ class StudentEditViewModel @ViewModelInject constructor(
                 newPhone.isError || newGender.isError ||
                 newDepartment.isError || newLevel.isError || newTerm.isError
 
-        if (isError.not()) {
+        val storedDepartment = storedDepartment
+        if (isError.not() && storedDepartment != null) {
+            setSideEffect { EmptyLoadingState }
 
+            try {
+                launchInViewModelScope {
+                    val student = Student(
+                        fullName = fullName.value,
+                        diuId = diuId.value,
+                        diuEmail = diuEmail.value,
+                        phone = phoneNumber.value,
+                        gender = gender.value,
+                        departmentCode = storedDepartment.codeName,
+                        departmentId = storedDepartment.id,
+                        departmentName = storedDepartment.name,
+                        term = term.value,
+                        level = level.value,
+                        profileUrl = imageUrl,
+                        batch = diuId.value.take(3)
+                    )
+                    profileRepository.saveUserProfile(student)
+                }
+
+                setSideEffect { TypedSideEffectState.Success(StudentEditSuccess.ProfileSaved) }
+            } catch (ex: Exception) {
+                Timber.e(ex)
+                setSideEffect { TypedSideEffectState.Fail(ex.message ?: GeneralError) }
+            }
+        } else {
+            setSideEffect { TypedSideEffectState.Fail("Some of your inputs are invalid. Please enter right information.") }
         }
     }
 }
