@@ -30,4 +30,21 @@
     <string name="email_sent">Email Sent</string>
     <string name="email_sent_message">If you have an account associated with the email you will get an email to reset your password.</string>
     <string name="awesome">Awesome!</string>
+    <string name="personal_info">Personal Info</string>
+    <string name="select_your_gender">Select your gender</string>
+    <string name="select_your_department">Select your department</string>
+    <string name="select_your_term">Select your term</string>
+    <string name="select_your_level">Select your level</string>
+    <string name="academic_info">Academic Info</string>
+    <string name="enter_your_phone_number">Enter your phone number</string>
+    <string name="save">Save</string>
+    <string name="student_profile">Student Profile</string>
+    <string name="change_image">Change Image</string>
+    <string name="enter_your_name">Enter your full name</string>
+    <string name="prohibited">Prohibited</string>
+    <string name="diu_email">Email</string>
+    <string name="gender">Gender</string>
+    <string name="department">Department</string>
+    <string name="level">Level</string>
+    <string name="term">Term</string>
 </resources>

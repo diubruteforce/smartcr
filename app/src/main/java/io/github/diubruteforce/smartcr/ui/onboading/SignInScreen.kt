@@ -43,14 +43,11 @@ fun SignInScreen(
     SideEffect(
         sideEffectState = sideEffect,
         onSuccess = {
-            if (viewModel.isEmailVerified()) {
-                if (viewModel.hasProfileData()) {
-                    navigateToHome.invoke()
-                } else {
-                    navigateToProfileEdit.invoke()
-                }
-            } else {
-                navigateToVerification.invoke(viewModel.getUserEmail())
+            when (it) {
+                SignInSuccess.EMAIL_NOT_VERIFIED ->
+                    navigateToVerification.invoke(viewModel.getUserEmail())
+                SignInSuccess.NO_PROFILE_DATA -> navigateToProfileEdit.invoke()
+                SignInSuccess.ALL_GOOD -> navigateToHome.invoke()
             }
         },
         onFailAlertDismissRequest = viewModel::clearSideEffect,

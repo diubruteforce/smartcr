@@ -16,7 +16,11 @@ import androidx.compose.ui.text.style.TextAlign
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
-import io.github.diubruteforce.smartcr.ui.common.*
+import io.github.diubruteforce.smartcr.model.ui.InputState
+import io.github.diubruteforce.smartcr.ui.common.CRAlertDialog
+import io.github.diubruteforce.smartcr.ui.common.DiuEmail
+import io.github.diubruteforce.smartcr.ui.common.LargeButton
+import io.github.diubruteforce.smartcr.ui.common.SideEffect
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -58,7 +62,7 @@ fun ForgotScreen(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun ForgotScreenContent(
-    stateFlow: StateFlow<TextFieldState>,
+    stateFlow: StateFlow<InputState>,
     onEmailChange: (String) -> Unit,
     requestResetPassword: () -> Unit
 ) {
