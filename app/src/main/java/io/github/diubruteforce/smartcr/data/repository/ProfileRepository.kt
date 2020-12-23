@@ -5,6 +5,8 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import io.github.diubruteforce.smartcr.model.data.Student
+import io.github.diubruteforce.smartcr.utils.extension.DiuEmailValidator
+import io.github.diubruteforce.smartcr.utils.extension.DiuIdValidator
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -47,4 +49,16 @@ class ProfileRepository @Inject constructor(
     }
 
     suspend fun getAllDepartment() = classRepository.getAllDepartment()
+
+    suspend fun hasProfileData(): Boolean {
+        val response = db.collection(profilePath).document(authRepository.userid).get().await()
+
+        val student = response.toObject(Student::class.java)?.copy(id = response.id)
+
+        return if (student == null) false
+        else {
+            Regex.DiuEmailValidator.matches(student.diuEmail) ||
+                    Regex.DiuIdValidator.matches(student.diuId)
+        }
+    }
 }

@@ -28,7 +28,7 @@ class ForgotViewModel @ViewModelInject constructor(
                     authRepository.requestPasswordReset(newEmailState.value)
                     setSideEffect { EmptySuccessState }
                 } catch (ex: Exception) {
-                    setSideEffect { TypedSideEffectState.Fail(ex.message ?: GeneralError) }
+                    setSideEffect { TypedSideEffectState.Fail(ex.message ?: String.Error) }
                 }
             }
         }

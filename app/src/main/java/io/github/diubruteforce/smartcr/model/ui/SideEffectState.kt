@@ -15,4 +15,4 @@ val EmptyFailState = TypedSideEffectState.Fail(3)
 
 typealias StringFailSideEffectState = TypedSideEffectState<Any, Any, String>
 
-const val GeneralError = "Something went wrong"
+val String.Companion.Error get() = "Something went wrong"

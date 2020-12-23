@@ -7,7 +7,7 @@ import io.github.diubruteforce.smartcr.model.data.Department
 import io.github.diubruteforce.smartcr.model.data.Gender
 import io.github.diubruteforce.smartcr.model.data.Student
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
-import io.github.diubruteforce.smartcr.model.ui.GeneralError
+import io.github.diubruteforce.smartcr.model.ui.Error
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
@@ -26,7 +26,7 @@ data class StudentEditState(
     val departmentList: List<Department> = emptyList()
 )
 
-enum class StudentEditSuccess { Loaded, ProfileSaved, ImageSaved } //Student Earlier Profile load and Department Load
+enum class StudentEditSuccess { Loaded, ProfileSaved, ImageSaved }
 
 class StudentEditViewModel @ViewModelInject constructor(
     private val profileRepository: ProfileRepository
@@ -168,7 +168,7 @@ class StudentEditViewModel @ViewModelInject constructor(
                 setSideEffect { TypedSideEffectState.Success(StudentEditSuccess.ProfileSaved) }
             } catch (ex: Exception) {
                 Timber.e(ex)
-                setSideEffect { TypedSideEffectState.Fail(ex.message ?: GeneralError) }
+                setSideEffect { TypedSideEffectState.Fail(ex.message ?: String.Error) }
             }
         } else {
             setSideEffect { TypedSideEffectState.Fail("Some of your inputs are invalid. Please enter right information.") }
