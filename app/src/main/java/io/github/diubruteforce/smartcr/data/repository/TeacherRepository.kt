@@ -1,6 +1,7 @@
 package io.github.diubruteforce.smartcr.data.repository
 
 import android.net.Uri
+import com.google.firebase.Timestamp
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -29,7 +30,10 @@ class TeacherRepository @Inject constructor(
         val downloadUri = storageRepository.uploadProfileImage(imagePath)
 
         val userProfile = mapOf(
-            "profileUrl" to downloadUri.toString()
+            "profileUrl" to downloadUri.toString(),
+            "imageUpdatedOn" to Timestamp.now(),
+            "imageUpdaterId" to profileRepository.userid,
+            "imageUpdaterEmail" to profileRepository.userEmail
         )
 
         val userId = teacherId
