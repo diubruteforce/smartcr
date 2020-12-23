@@ -6,8 +6,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import io.github.diubruteforce.smartcr.di.hiltViewModel
-import io.github.diubruteforce.smartcr.ui.home.HomeScreen
 import io.github.diubruteforce.smartcr.ui.profile.student.StudentEditScreen
+import io.github.diubruteforce.smartcr.ui.smartcr.SmartCRScreen
+import io.github.diubruteforce.smartcr.ui.smartcr.menu.Menu
 
 @Composable
 fun SmartCRApp() {
@@ -15,7 +16,7 @@ fun SmartCRApp() {
 
     NavHost(
         navController = navController,
-        startDestination = MainRoute.Auth.route
+        startDestination = MainRoute.SmartCR.route
     ) {
         authNavigation(
             navController = navController,
@@ -23,7 +24,28 @@ fun SmartCRApp() {
         )
 
         composable(MainRoute.SmartCR.route) {
-            HomeScreen(navigateToOnBoarding = { navController.navigate(MainRoute.Auth.uri()) })
+            SmartCRScreen(
+                onMenuClick = { menu ->
+                    when (menu) {
+                        Menu.FIND_FACULTY -> {
+                        }
+                        Menu.FIND_COURSE -> {
+                        }
+                        Menu.GET_RESOURCE -> {
+                        }
+                        Menu.EXTRA_CLASS -> {
+                        }
+                        Menu.EXAM_ROUTINE -> {
+                        }
+                        Menu.FEES_SCHEDULE -> {
+                        }
+                        Menu.YOUR_PROFILE -> {
+                        }
+                        Menu.APP_SETTING -> {
+                        }
+                    }
+                }
+            )
         }
 
         composable(MainRoute.StudentProfileEdit.route) {

@@ -18,7 +18,7 @@ import androidx.navigation.NavBackStackEntry
 *
 * In future I may write kotlin compiler plugin to do this
 * */
-class NoArgRoute(private val path: String) {
+open class NoArgRoute(private val path: String) {
     val route = path
     fun uri() = path
 }

@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.ui.theme.Margin
+import io.github.diubruteforce.smartcr.ui.theme.grayBorder
 import io.github.diubruteforce.smartcr.ui.theme.grayText
 
 @Composable
@@ -187,7 +188,7 @@ private fun CRTextField(
     Card(
         shape = RoundedCornerShape(16.dp),
         elevation = 4.dp,
-        border = BorderStroke(1.dp, MaterialTheme.colors.onBackground.copy(alpha = 0.08f)),
+        border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder),
         modifier = modifier.clickable(indication = null) {
             focusRequester.requestFocus()
         }

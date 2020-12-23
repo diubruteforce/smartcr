@@ -47,4 +47,12 @@
     <string name="department">Department</string>
     <string name="level">Level</string>
     <string name="term">Term</string>
+    <string name="find_faculty">Find Faculty</string>
+    <string name="find_course">Find Course</string>
+    <string name="get_resource">Get Resource</string>
+    <string name="extra_class">Extra Class</string>
+    <string name="exam_routine">Exam Routine</string>
+    <string name="fees_schedule">Fees Schedule</string>
+    <string name="your_profile">Your Profile</string>
+    <string name="app_setting">App Setting</string>
 </resources>
