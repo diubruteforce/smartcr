@@ -35,6 +35,7 @@ import io.github.diubruteforce.smartcr.ui.theme.grayText
 fun FullName(
     modifier: Modifier = Modifier,
     state: InputState,
+    placeHolder: String = stringResource(id = R.string.enter_your_name),
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Next,
@@ -48,7 +49,7 @@ fun FullName(
         CRTextField(
             value = state.value,
             onValueChange = onValueChange,
-            placeHolder = stringResource(id = R.string.enter_your_name),
+            placeHolder = placeHolder,
             focusRequester = focusRequester,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Text,

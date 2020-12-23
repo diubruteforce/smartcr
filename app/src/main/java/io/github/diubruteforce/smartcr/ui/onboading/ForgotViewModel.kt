@@ -1,12 +1,12 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
 import androidx.hilt.lifecycle.ViewModelInject
-import io.github.diubruteforce.smartcr.data.repository.AuthRepository
+import io.github.diubruteforce.smartcr.data.repository.ProfileRepository
 import io.github.diubruteforce.smartcr.model.ui.*
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
 
 class ForgotViewModel @ViewModelInject constructor(
-    private val authRepository: AuthRepository
+    private val profileRepository: ProfileRepository
 ) : BaseViewModel<InputState, StringFailSideEffectState>(
     initialState = InputState.DiuEmailState,
     initialSideEffect = TypedSideEffectState.Uninitialized
@@ -25,7 +25,7 @@ class ForgotViewModel @ViewModelInject constructor(
 
             launchInViewModelScope {
                 try {
-                    authRepository.requestPasswordReset(newEmailState.value)
+                    profileRepository.requestPasswordReset(newEmailState.value)
                     setSideEffect { EmptySuccessState }
                 } catch (ex: Exception) {
                     setSideEffect { TypedSideEffectState.Fail(ex.message ?: String.Error) }

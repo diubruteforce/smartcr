@@ -1,4 +1,4 @@
-package io.github.diubruteforce.smartcr.ui.profile.student
+package io.github.diubruteforce.smartcr.ui.student
 
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-sealed class StudentEditSheet {
+private sealed class StudentEditSheet {
     object Email : StudentEditSheet()
     object Gender : StudentEditSheet()
     object Department : StudentEditSheet()

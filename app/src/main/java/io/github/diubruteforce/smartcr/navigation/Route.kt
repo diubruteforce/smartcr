@@ -29,3 +29,10 @@ class SingleArgRoute(private val path: String, private val argName: String) {
     fun getArgument(backStackEntry: NavBackStackEntry): String =
         backStackEntry.arguments?.getString(argName)!!
 }
+
+class SingleOptionalArgRoute(private val path: String, private val argName: String) {
+    val route = "$path?$argName={$argName}"
+    fun uri(arg: String) = "$path/$arg"
+    fun getArgument(backStackEntry: NavBackStackEntry): String? =
+        backStackEntry.arguments?.getString(argName)
+}

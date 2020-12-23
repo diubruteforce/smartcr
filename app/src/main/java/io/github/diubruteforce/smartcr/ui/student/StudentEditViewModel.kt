@@ -1,4 +1,4 @@
-package io.github.diubruteforce.smartcr.ui.profile.student
+package io.github.diubruteforce.smartcr.ui.student
 
 import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
@@ -102,7 +102,6 @@ class StudentEditViewModel @ViewModelInject constructor(
     }
 
     fun uploadImage(uri: Uri?) = withState {
-        Timber.tag("UploadProfile").d("viewModel called $uri")
         if (uri != null) {
             setSideEffect { EmptyLoadingState }
 
@@ -145,9 +144,8 @@ class StudentEditViewModel @ViewModelInject constructor(
         val storedDepartment = storedDepartment
         if (isError.not() && storedDepartment != null) {
             setSideEffect { EmptyLoadingState }
-
-            try {
-                launchInViewModelScope {
+            launchInViewModelScope {
+                try {
                     val student = Student(
                         fullName = fullName.value,
                         diuId = diuId.value,
@@ -163,12 +161,13 @@ class StudentEditViewModel @ViewModelInject constructor(
                         batch = diuId.value.take(3)
                     )
                     profileRepository.saveUserProfile(student)
-                }
 
-                setSideEffect { TypedSideEffectState.Success(StudentEditSuccess.ProfileSaved) }
-            } catch (ex: Exception) {
-                Timber.e(ex)
-                setSideEffect { TypedSideEffectState.Fail(ex.message ?: String.Error) }
+
+                    setSideEffect { TypedSideEffectState.Success(StudentEditSuccess.ProfileSaved) }
+                } catch (ex: Exception) {
+                    Timber.e(ex)
+                    setSideEffect { TypedSideEffectState.Fail(ex.message ?: String.Error) }
+                }
             }
         } else {
             setSideEffect { TypedSideEffectState.Fail("Some of your inputs are invalid. Please enter right information.") }

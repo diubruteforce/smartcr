@@ -1,12 +1,6 @@
 package io.github.diubruteforce.smartcr.data.repository
 
-import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
-import dagger.Reusable
-import kotlinx.coroutines.tasks.await
-import javax.inject.Inject
-
+/*
 @Reusable
 class AuthRepository @Inject constructor() {
     private val firebaseAuth = Firebase.auth
@@ -35,4 +29,4 @@ class AuthRepository @Inject constructor() {
         firebaseAuth.signInWithEmailAndPassword(email, password).await()
 
     fun signOut(): Unit = firebaseAuth.signOut()
-}
+}*/

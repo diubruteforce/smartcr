@@ -59,5 +59,12 @@ data class InputState(
             validator = Regex.NonEmptyValidator,
             isError = false
         )
+
+        val EmptyState = InputState(
+            value = "",
+            errorText = "This field can be empty",
+            validator = Regex.EmptyValidator,
+            isError = false
+        )
     }
 }
