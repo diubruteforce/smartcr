@@ -24,7 +24,7 @@ class NoArgRoute(private val path: String) {
 }
 
 class SingleArgRoute(private val path: String, private val argName: String) {
-    val route = "$path/$argName"
+    val route = "$path/{$argName}"
     fun uri(arg: String) = "$path/$arg"
     fun getArgument(backStackEntry: NavBackStackEntry): String =
         backStackEntry.arguments?.getString(argName)!!

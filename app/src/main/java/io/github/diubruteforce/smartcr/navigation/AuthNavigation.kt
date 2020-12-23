@@ -9,11 +9,12 @@ import androidx.navigation.compose.popUpTo
 import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.ui.onboading.*
 
-fun NavGraphBuilder.authNavigation(navController: NavHostController, startDestination: String) {
+fun NavGraphBuilder.authNavigation(navController: NavHostController, route: String) {
     navigation(
-        route = startDestination,
+        route = route,
         startDestination = AuthRoute.Splash.route
     ) {
+        // region: Splash
         composable(AuthRoute.Splash.route) {
             SplashScreen(
                 viewModel = hiltViewModel(),
@@ -39,7 +40,9 @@ fun NavGraphBuilder.authNavigation(navController: NavHostController, startDestin
                 }
             )
         }
+        // endregion
 
+        // region: SignIn
         composable(AuthRoute.SignIn.route) {
             SignInScreen(
                 viewModel = hiltViewModel(),
@@ -62,7 +65,9 @@ fun NavGraphBuilder.authNavigation(navController: NavHostController, startDestin
                 navigateToSignUp = { navController.navigate(AuthRoute.SignUp.uri()) }
             )
         }
+        // endregion
 
+        // region: SignUp
         composable(AuthRoute.SignUp.route) {
             SignUpScreen(
                 viewModel = hiltViewModel(),
@@ -78,9 +83,11 @@ fun NavGraphBuilder.authNavigation(navController: NavHostController, startDestin
                 }
             )
         }
+        // endregion
 
+        // region: Verification
         composable(AuthRoute.Verification.route) { backStackEntry ->
-            val email = backStackEntry.arguments?.getString("email")!!
+            val email = AuthRoute.Verification.getArgument(backStackEntry)
 
             VerificationScreen(
                 email = email,
@@ -92,7 +99,9 @@ fun NavGraphBuilder.authNavigation(navController: NavHostController, startDestin
                 }
             )
         }
+        // endregion
 
+        // region: ForgotPassword
         composable(AuthRoute.ForgotPassword.route) {
             ForgotScreen(
                 viewModel = hiltViewModel(),
@@ -103,6 +112,7 @@ fun NavGraphBuilder.authNavigation(navController: NavHostController, startDestin
                 }
             )
         }
+        // endregion
     }
 }
 

@@ -19,7 +19,7 @@ fun SmartCRApp() {
     ) {
         authNavigation(
             navController = navController,
-            startDestination = MainRoute.Auth.route
+            route = MainRoute.Auth.route
         )
 
         composable(MainRoute.SmartCR.route) {
