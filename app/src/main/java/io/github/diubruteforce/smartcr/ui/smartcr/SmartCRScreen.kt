@@ -14,8 +14,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.vectorResource
 import androidx.navigation.compose.*
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
+import io.github.diubruteforce.smartcr.R
+import io.github.diubruteforce.smartcr.ui.common.Empty
 import io.github.diubruteforce.smartcr.ui.common.InsetAwareTopAppBar
 import io.github.diubruteforce.smartcr.ui.smartcr.home.HomeScreen
 import io.github.diubruteforce.smartcr.ui.smartcr.menu.Menu
@@ -70,7 +73,13 @@ fun SmartCRScreen(
                 HomeScreen(navigateToOnBoarding = { /*TODO*/ })
             }
             composable(HomeRoute.EVENT.route) {
-                HomeScreen(navigateToOnBoarding = { /*TODO*/ })
+                Empty(
+                    title = "New Semester!",
+                    message = "DIU DIU DIU DIU DIU DIU DIU DIU DIU DIU DIU DIU",
+                    image = vectorResource(id = R.drawable.new_class),
+                    actionTitle = "Join Section",
+                    onAction = {}
+                )
             }
             composable(HomeRoute.TODO.route) {
                 HomeScreen(navigateToOnBoarding = { /*TODO*/ })
