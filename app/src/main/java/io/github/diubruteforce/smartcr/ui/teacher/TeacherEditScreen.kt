@@ -38,7 +38,6 @@ private sealed class TeacherEditSheet {
 fun TeacherEditScreen(
     viewModel: TeacherEditViewModel,
     teacherId: String?,
-    navigateToTeacherList: () -> Unit,
     onBackPress: (() -> Unit)
 ) {
     val mainActivity = getMainActivity()
@@ -55,7 +54,7 @@ fun TeacherEditScreen(
 
     SideEffect(
         sideEffectState = sideEffect,
-        onSuccess = { navigateToTeacherList.invoke() },
+        onSuccess = { onBackPress.invoke() },
         onFailAlertDismissRequest = viewModel::clearSideEffect
     )
 
@@ -161,7 +160,7 @@ private fun TeacherEditScreenContent(
         val state = stateFlow.collectAsState().value
 
         ProfileTopAppBar(
-            title = stringResource(id = R.string.student_profile),
+            title = stringResource(id = R.string.teacher_profile),
             imageUrl = state.profileUrl,
             navigationIcon = {
                 onBackPress?.let {

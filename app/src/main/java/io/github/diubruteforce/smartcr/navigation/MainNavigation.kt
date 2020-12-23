@@ -55,7 +55,6 @@ fun SmartCRApp() {
             TeacherEditScreen(
                 viewModel = hiltViewModel(),
                 teacherId = teacherId,
-                navigateToTeacherList = { /*TODO*/ },
                 onBackPress = navController::navigateUp
             )
         }
