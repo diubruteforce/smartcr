@@ -1,11 +1,16 @@
 package io.github.diubruteforce.smartcr.di
 
 import android.annotation.SuppressLint
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.AmbientLifecycleOwner
+import androidx.compose.ui.viewinterop.viewModel
 import androidx.hilt.lifecycle.ViewModelAssistedFactory
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.savedstate.SavedStateRegistryOwner
+import io.github.diubruteforce.smartcr.utils.extension.getMainActivity
 import javax.inject.Provider
 
 /*
@@ -35,4 +40,22 @@ class AppSavedStateViewModelFactory(
 
         return viewModelAssistedFactory.create(handle) as T
     }
+}
+
+/*
+* Currently it is not possible to use both Hilt and
+* NavGraph viewModel() at a time to get ViewModel
+*
+* This is an workaround to solve the problem
+* */
+@Composable
+inline fun <reified VM : ViewModel> hiltViewModel(): VM {
+    val savedStateRegistryOwner = AmbientLifecycleOwner.current as SavedStateRegistryOwner
+    val viewModelAssistedFactories = getMainActivity().viewModelAssistedFactories
+
+    val factory = remember {
+        AppSavedStateViewModelFactory(savedStateRegistryOwner, viewModelAssistedFactories)
+    }
+
+    return viewModel(factory = factory)
 }
