@@ -33,14 +33,14 @@ fun CRSelection(
         val interactionState = remember { InteractionState() }
 
         Card(
-            shape = RoundedCornerShape(CornerRadius.normal),
-            elevation = 4.dp,
-            border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder),
             modifier = modifier.clickable(
                 onClick = onClick,
                 interactionState = interactionState,
                 indication = null
-            )
+            ),
+            shape = RoundedCornerShape(CornerRadius.normal),
+            elevation = 4.dp,
+            border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder)
         ) {
             Row(
                 modifier = Modifier.fillMaxWidth()
