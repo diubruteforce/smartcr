@@ -16,7 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import io.github.diubruteforce.smartcr.model.ui.InputState
+import io.github.diubruteforce.smartcr.ui.theme.CornerRadius
 import io.github.diubruteforce.smartcr.ui.theme.Margin
+import io.github.diubruteforce.smartcr.ui.theme.grayBorder
 import io.github.diubruteforce.smartcr.ui.theme.grayText
 
 @Composable
@@ -31,9 +33,9 @@ fun CRSelection(
         val interactionState = remember { InteractionState() }
 
         Card(
-            shape = RoundedCornerShape(16.dp),
+            shape = RoundedCornerShape(CornerRadius.normal),
             elevation = 4.dp,
-            border = BorderStroke(1.dp, MaterialTheme.colors.onBackground.copy(alpha = 0.08f)),
+            border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder),
             modifier = modifier.clickable(
                 onClick = onClick,
                 interactionState = interactionState,

@@ -5,7 +5,9 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import io.github.diubruteforce.smartcr.model.data.CounselingHourState
 import io.github.diubruteforce.smartcr.model.data.Teacher
+import io.github.diubruteforce.smartcr.utils.extension.whereActiveData
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -17,6 +19,7 @@ class TeacherRepository @Inject constructor(
     private val db = Firebase.firestore
     private val profilePath = "teachers"
     private val historyPath = "history"
+    private val counselingPath = "counseling"
 
     private var teacherId: String? = null
 
@@ -59,6 +62,17 @@ class TeacherRepository @Inject constructor(
         return teacher ?: Teacher()
     }
 
+    suspend fun canSave(diuEmail: String): Boolean {
+        val response = db.collection(profilePath)
+            .whereEqualTo("diuEmail", diuEmail)
+            .get()
+            .await()
+
+
+        return if (response.isEmpty) true
+        else teacherId == response.first().id
+    }
+
     suspend fun saveTeacherProfile(teacher: Teacher) {
         val teacherId = this.teacherId
 
@@ -79,5 +93,16 @@ class TeacherRepository @Inject constructor(
             .collection(historyPath)
             .add(newTeacher)
             .await()
+    }
+
+    suspend fun getCounselingHours(teacherId: String): List<CounselingHourState> {
+        val result = db.collection(profilePath)
+            .document(teacherId)
+            .collection(counselingPath)
+            .whereActiveData()
+            .get()
+            .await()
+
+        return result.map { it.toObject(CounselingHourState::class.java).copy(id = it.id) }
     }
 }

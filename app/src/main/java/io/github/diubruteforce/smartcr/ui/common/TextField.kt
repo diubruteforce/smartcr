@@ -27,6 +27,7 @@ import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.ui.InputState
+import io.github.diubruteforce.smartcr.ui.theme.CornerRadius
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.grayBorder
 import io.github.diubruteforce.smartcr.ui.theme.grayText
@@ -35,7 +36,7 @@ import io.github.diubruteforce.smartcr.ui.theme.grayText
 fun FullName(
     modifier: Modifier = Modifier,
     state: InputState,
-    placeHolder: String = stringResource(id = R.string.enter_your_name),
+    placeHolder: String = stringResource(id = R.string.enter_full_name),
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Next,
@@ -105,7 +106,7 @@ fun PhoneNumber(
         CRTextField(
             value = state.value,
             onValueChange = onValueChange,
-            placeHolder = stringResource(id = R.string.enter_your_phone_number),
+            placeHolder = stringResource(id = R.string.enter_phone_number),
             focusRequester = focusRequester,
             keyboardOptions = KeyboardOptions(
                 keyboardType = KeyboardType.Phone,
@@ -187,7 +188,7 @@ private fun CRTextField(
     focusRequester: FocusRequester
 ) {
     Card(
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(CornerRadius.normal),
         elevation = 4.dp,
         border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder),
         modifier = modifier.clickable(indication = null) {

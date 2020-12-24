@@ -13,12 +13,11 @@ import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
 import io.github.diubruteforce.smartcr.utils.extension.OptionalPhoneValidator
-import timber.log.Timber
 
 data class TeacherEditState(
     val fullName: InputState = InputState.FullNameState,
     val initial: InputState = InputState.EmptyState,
-    val diuEmail: InputState = InputState.NotEmptyState,
+    val diuEmail: InputState = InputState.DiuEmailState,
     val profileUrl: String = "",
     val gender: InputState = InputState.NotEmptyState,
     val phone: InputState = InputState.PhoneState.copy(validator = Regex.OptionalPhoneValidator),
@@ -32,9 +31,8 @@ enum class TeacherEditSuccess { Loaded, ProfileSaved, ImageSaved }
 
 class TeacherEditViewModel @ViewModelInject constructor(
     private val teacherRepository: TeacherRepository
-) : BaseViewModel<TeacherEditState, TypedSideEffectState<Any, TeacherEditSuccess, String>>(
-    initialState = TeacherEditState(),
-    initialSideEffect = TypedSideEffectState.Uninitialized
+) : BaseViewModel<TeacherEditState, Any, TeacherEditSuccess, String>(
+    initialState = TeacherEditState()
 ) {
     private var storedDepartment: Department? = null
 
@@ -160,32 +158,36 @@ class TeacherEditViewModel @ViewModelInject constructor(
         if (isError.not() && storedDepartment != null) {
             setSideEffect { EmptyLoadingState }
             launchInViewModelScope {
-                try {
-                    val teacher = Teacher(
-                        fullName = fullName.value,
-                        profileUrl = profileUrl,
-                        initial = initial.value,
-                        diuEmail = diuEmail.value,
-                        gender = gender.value,
-                        phone = phone.value,
-                        departmentId = storedDepartment.id,
-                        departmentCode = storedDepartment.codeName,
-                        departmentName = storedDepartment.name,
-                        room = room.value,
-                        designation = designation.value,
-                    )
-
-                    teacherRepository.saveTeacherProfile(teacher)
-
-
-                    setSideEffect { TypedSideEffectState.Success(TeacherEditSuccess.ProfileSaved) }
-                } catch (ex: Exception) {
-                    Timber.e(ex)
-                    setSideEffect { TypedSideEffectState.Fail(ex.message ?: String.Error) }
+                val canSave = teacherRepository.canSave(diuEmail.value)
+                if (canSave.not()) {
+                    setSideEffect { TypedSideEffectState.Fail("We already have a teacher with the same email in our database.") }
+                    return@launchInViewModelScope
                 }
+
+                val teacher = Teacher(
+                    fullName = fullName.value,
+                    profileUrl = profileUrl,
+                    initial = initial.value,
+                    diuEmail = diuEmail.value,
+                    gender = gender.value,
+                    phone = phone.value,
+                    departmentId = storedDepartment.id,
+                    departmentCode = storedDepartment.codeName,
+                    departmentName = storedDepartment.name,
+                    room = room.value,
+                    designation = designation.value,
+                )
+
+                teacherRepository.saveTeacherProfile(teacher)
+
+                setSideEffect { TypedSideEffectState.Success(TeacherEditSuccess.ProfileSaved) }
             }
         } else {
             setSideEffect { TypedSideEffectState.Fail("Some of your inputs are invalid. Please enter right information.") }
         }
+    }
+
+    override fun onCoroutineException(exception: Throwable) {
+        setSideEffect { TypedSideEffectState.Fail(exception.message ?: String.Error) }
     }
 }

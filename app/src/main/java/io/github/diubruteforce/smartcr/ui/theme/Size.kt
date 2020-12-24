@@ -18,3 +18,8 @@ object IconSize {
     val big = 32.dp
     val mega = 48.dp
 }
+
+object CornerRadius {
+    val small = 8.dp
+    val normal = 16.dp
+}

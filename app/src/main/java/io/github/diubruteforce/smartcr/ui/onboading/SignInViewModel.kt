@@ -7,7 +7,6 @@ import io.github.diubruteforce.smartcr.model.ui.Error
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
-import timber.log.Timber
 
 data class SignInState(
     val diuEmailState: InputState = InputState.DiuEmailState,
@@ -20,9 +19,8 @@ enum class SignInSuccess {
 
 class SignInViewModel @ViewModelInject constructor(
     private val profileRepository: ProfileRepository
-) : BaseViewModel<SignInState, TypedSideEffectState<Any, SignInSuccess, String>>(
-    initialState = SignInState(),
-    initialSideEffect = TypedSideEffectState.Uninitialized
+) : BaseViewModel<SignInState, Any, SignInSuccess, String>(
+    initialState = SignInState()
 ) {
     fun onDiuEmailChange(newDiuId: String) = withState {
         val newDiuEmailState = diuEmailState.copy(value = newDiuId)
@@ -46,39 +44,31 @@ class SignInViewModel @ViewModelInject constructor(
             setSideEffect { EmptyLoadingState }
 
             launchInViewModelScope {
-                try {
-                    profileRepository.signIn(
-                        email = diuEmailState.value,
-                        password = passwordState.value
-                    )
+                profileRepository.signIn(
+                    email = diuEmailState.value,
+                    password = passwordState.value
+                )
 
-                    val success = when {
-                        profileRepository.isEmailVerified.not() -> {
-                            SignInSuccess.EMAIL_NOT_VERIFIED
-                        }
-                        profileRepository.hasProfileData().not() -> {
-                            SignInSuccess.NO_PROFILE_DATA
-                        }
-                        else -> {
-                            SignInSuccess.ALL_GOOD
-                        }
+                val success = when {
+                    profileRepository.isEmailVerified.not() -> {
+                        SignInSuccess.EMAIL_NOT_VERIFIED
                     }
-
-                    setSideEffect { TypedSideEffectState.Success(success) }
-
-                } catch (ex: Exception) {
-                    Timber.e(ex)
-                    setSideEffect {
-                        TypedSideEffectState.Fail(ex.message ?: String.Error)
+                    profileRepository.hasProfileData().not() -> {
+                        SignInSuccess.NO_PROFILE_DATA
+                    }
+                    else -> {
+                        SignInSuccess.ALL_GOOD
                     }
                 }
+
+                setSideEffect { TypedSideEffectState.Success(success) }
             }
         }
     }
 
-    fun isEmailVerified() = profileRepository.isEmailVerified
-
     fun getUserEmail(): String = profileRepository.userEmail
 
-    suspend fun hasProfileData(): Boolean = profileRepository.hasProfileData()
+    override fun onCoroutineException(exception: Throwable) {
+        TypedSideEffectState.Fail(exception.message ?: String.Error)
+    }
 }

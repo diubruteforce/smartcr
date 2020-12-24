@@ -3,6 +3,7 @@ package io.github.diubruteforce.smartcr.ui.onboading
 import androidx.hilt.lifecycle.ViewModelInject
 import io.github.diubruteforce.smartcr.data.repository.ProfileRepository
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
+import io.github.diubruteforce.smartcr.model.ui.Error
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
@@ -15,9 +16,8 @@ data class SignUpState(
 
 class SignUpViewModel @ViewModelInject constructor(
     private val profileRepository: ProfileRepository
-) : BaseViewModel<SignUpState, TypedSideEffectState<Any, String, String>>(
-    initialState = SignUpState(),
-    initialSideEffect = TypedSideEffectState.Uninitialized
+) : BaseViewModel<SignUpState, Any, String, String>(
+    initialState = SignUpState()
 ) {
     fun onDiuEmailChange(newDiuId: String) = withState {
         val newDiuEmailState = diuEmailState.copy(value = newDiuId)
@@ -57,21 +57,17 @@ class SignUpViewModel @ViewModelInject constructor(
             setSideEffect { EmptyLoadingState }
 
             launchInViewModelScope {
-                try {
-                    profileRepository.createNewUser(
-                        email = diuEmailState.value,
-                        password = passwordState.value
-                    )
+                profileRepository.createNewUser(
+                    email = diuEmailState.value,
+                    password = passwordState.value
+                )
 
-                    setSideEffect { TypedSideEffectState.Success(diuEmailState.value) }
-                } catch (ex: Exception) {
-                    setSideEffect {
-                        TypedSideEffectState.Fail(
-                            ex.message ?: "Something went wrong"
-                        )
-                    }
-                }
+                setSideEffect { TypedSideEffectState.Success(diuEmailState.value) }
             }
         }
+    }
+
+    override fun onCoroutineException(exception: Throwable) {
+        TypedSideEffectState.Fail(exception.message ?: String.Error)
     }
 }

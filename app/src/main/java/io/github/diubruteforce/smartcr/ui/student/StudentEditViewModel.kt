@@ -11,7 +11,6 @@ import io.github.diubruteforce.smartcr.model.ui.Error
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
-import timber.log.Timber
 
 data class StudentEditState(
     val fullName: InputState = InputState.FullNameState,
@@ -30,9 +29,8 @@ enum class StudentEditSuccess { Loaded, ProfileSaved, ImageSaved }
 
 class StudentEditViewModel @ViewModelInject constructor(
     private val profileRepository: ProfileRepository
-) : BaseViewModel<StudentEditState, TypedSideEffectState<Any, StudentEditSuccess, String>>(
-    initialState = StudentEditState(),
-    initialSideEffect = TypedSideEffectState.Uninitialized
+) : BaseViewModel<StudentEditState, Any, StudentEditSuccess, String>(
+    initialState = StudentEditState()
 ) {
     private var storedDepartment: Department? = null
 
@@ -145,32 +143,31 @@ class StudentEditViewModel @ViewModelInject constructor(
         if (isError.not() && storedDepartment != null) {
             setSideEffect { EmptyLoadingState }
             launchInViewModelScope {
-                try {
-                    val student = Student(
-                        fullName = fullName.value,
-                        diuId = diuId.value,
-                        diuEmail = diuEmail.value,
-                        phone = phoneNumber.value,
-                        gender = gender.value,
-                        departmentCode = storedDepartment.codeName,
-                        departmentId = storedDepartment.id,
-                        departmentName = storedDepartment.name,
-                        term = term.value,
-                        level = level.value,
-                        profileUrl = imageUrl,
-                        batch = diuId.value.take(3)
-                    )
-                    profileRepository.saveUserProfile(student)
+                val student = Student(
+                    fullName = fullName.value,
+                    diuId = diuId.value,
+                    diuEmail = diuEmail.value,
+                    phone = phoneNumber.value,
+                    gender = gender.value,
+                    departmentCode = storedDepartment.codeName,
+                    departmentId = storedDepartment.id,
+                    departmentName = storedDepartment.name,
+                    term = term.value,
+                    level = level.value,
+                    profileUrl = imageUrl,
+                    batch = diuId.value.take(3)
+                )
+                profileRepository.saveUserProfile(student)
 
 
-                    setSideEffect { TypedSideEffectState.Success(StudentEditSuccess.ProfileSaved) }
-                } catch (ex: Exception) {
-                    Timber.e(ex)
-                    setSideEffect { TypedSideEffectState.Fail(ex.message ?: String.Error) }
-                }
+                setSideEffect { TypedSideEffectState.Success(StudentEditSuccess.ProfileSaved) }
             }
         } else {
             setSideEffect { TypedSideEffectState.Fail("Some of your inputs are invalid. Please enter right information.") }
         }
+    }
+
+    override fun onCoroutineException(exception: Throwable) {
+        setSideEffect { TypedSideEffectState.Fail(exception.message ?: String.Error) }
     }
 }
