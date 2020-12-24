@@ -74,4 +74,7 @@
     <string name="facult_profile">Faculty Profile</string>
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
+    <string name="are_you_sure">Are you sure?</string>
+    <string name="counseling_hour_delete">You are going to delete this counseling hour. If you delete this other students can\'t view this.</string>
+    <string name="teacher_profile_delete">If you delete this teacher profile no other student can view this.</string>
 </resources>

@@ -22,7 +22,7 @@ data class TeacherDetailState(
 )
 
 enum class TeacherDetailSuccess {
-    ProfileLoaded, CounselingSaved
+    ProfileLoaded, CounselingSaved, ProfileDeleted
 }
 
 class TeacherDetailViewModel @ViewModelInject constructor(
@@ -51,8 +51,16 @@ class TeacherDetailViewModel @ViewModelInject constructor(
         }
     }
 
-    fun deleteProfile(teacherId: String) {
+    fun deleteProfile() = withState {
+        require(teacher != null)
 
+        setSideEffect { EmptyLoadingState }
+
+        launchInViewModelScope {
+            teacherRepository.deleteTeacherProfile(teacher)
+
+            setSideEffect { TypedSideEffectState.Success(TeacherDetailSuccess.ProfileDeleted) }
+        }
     }
 
     fun startEditCounselingHour(state: CounselingHourState) = withState {
@@ -112,6 +120,18 @@ class TeacherDetailViewModel @ViewModelInject constructor(
 
         launchInViewModelScope {
             teacherRepository.saveCounselingHour(counselingHour)
+            val counselingHourList = teacherRepository.getCounselingHours(teacher?.id!!)
+
+            setState { copy(isEditMode = false, counselingHours = counselingHourList) }
+            setSideEffect { TypedSideEffectState.Success(TeacherDetailSuccess.CounselingSaved) }
+        }
+    }
+
+    fun deleteCounselingHour(state: CounselingHourState) = withState {
+        setSideEffect { EmptyLoadingState }
+
+        launchInViewModelScope {
+            teacherRepository.deleteCounselingHour(state)
             val counselingHourList = teacherRepository.getCounselingHours(teacher?.id!!)
 
             setState { copy(isEditMode = false, counselingHours = counselingHourList) }

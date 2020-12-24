@@ -17,7 +17,7 @@ class TeacherRepository @Inject constructor(
     private val classRepository: ClassRepository
 ) {
     private val db = Firebase.firestore
-    private val profilePath = "teachers"
+    private val teacherProfilePath = "teachers"
     private val historyPath = "history"
     private val counselingPath = "counseling"
 
@@ -42,9 +42,10 @@ class TeacherRepository @Inject constructor(
         val userId = teacherId
 
         if (userId != null) {
-            db.collection(profilePath).document(userId).set(userProfile, SetOptions.merge()).await()
+            db.collection(teacherProfilePath).document(userId).set(userProfile, SetOptions.merge())
+                .await()
         } else {
-            teacherId = db.collection(profilePath).add(userProfile).await().id
+            teacherId = db.collection(teacherProfilePath).add(userProfile).await().id
         }
 
         return downloadUri.toString()
@@ -55,7 +56,7 @@ class TeacherRepository @Inject constructor(
 
         this.teacherId = teacherId
 
-        val response = db.collection(profilePath).document(teacherId).get().await()
+        val response = db.collection(teacherProfilePath).document(teacherId).get().await()
 
         val teacher = response.toObject(Teacher::class.java)?.copy(id = response.id)
 
@@ -63,7 +64,7 @@ class TeacherRepository @Inject constructor(
     }
 
     suspend fun canSave(diuEmail: String): Boolean {
-        val response = db.collection(profilePath)
+        val response = db.collection(teacherProfilePath)
             .whereEqualTo("diuEmail", diuEmail)
             .get()
             .await()
@@ -82,22 +83,44 @@ class TeacherRepository @Inject constructor(
         )
 
         if (teacherId != null) {
-            db.collection(profilePath).document(teacherId).set(newTeacher, SetOptions.merge())
+            db.collection(teacherProfilePath)
+                .document(teacherId)
+                .set(newTeacher, SetOptions.merge())
                 .await()
         } else {
-            this.teacherId = db.collection(profilePath).add(newTeacher).await().id
+            this.teacherId = db.collection(teacherProfilePath).add(newTeacher).await().id
         }
 
         // Keeping the history
-        db.collection(profilePath)
+        db.collection(teacherProfilePath)
             .document(this.teacherId!!)
             .collection(historyPath)
             .add(newTeacher)
             .await()
     }
 
+    suspend fun deleteTeacherProfile(teacher: Teacher) {
+        val newTeacher = teacher.copy(
+            isActive = false,
+            updaterId = profileRepository.userid,
+            updaterEmail = profileRepository.userEmail
+        )
+
+        db.collection(teacherProfilePath)
+            .document(newTeacher.id)
+            .set(newTeacher)
+            .await()
+
+        // Keeping the history
+        db.collection(teacherProfilePath)
+            .document(newTeacher.id)
+            .collection(historyPath)
+            .add(newTeacher)
+            .await()
+    }
+
     suspend fun getCounselingHours(teacherId: String): List<CounselingHourState> {
-        val result = db.collection(profilePath)
+        val result = db.collection(teacherProfilePath)
             .document(teacherId)
             .collection(counselingPath)
             .whereActiveData()
@@ -119,7 +142,7 @@ class TeacherRepository @Inject constructor(
         var counselingHourId = newCounselingHour.id
 
         if (counselingHour.id.isEmpty()) {
-            val response = db.collection(profilePath)
+            val response = db.collection(teacherProfilePath)
                 .document(teacherId)
                 .collection(counselingPath)
                 .add(newCounselingHour)
@@ -127,7 +150,7 @@ class TeacherRepository @Inject constructor(
 
             counselingHourId = response.id
         } else {
-            db.collection(profilePath)
+            db.collection(teacherProfilePath)
                 .document(teacherId)
                 .collection(counselingPath)
                 .document(newCounselingHour.id)
@@ -136,12 +159,35 @@ class TeacherRepository @Inject constructor(
         }
 
         // Keeping the history
-        db.collection(profilePath)
+        db.collection(teacherProfilePath)
             .document(teacherId)
             .collection(counselingPath)
             .document(counselingHourId)
             .collection(historyPath)
             .add(newCounselingHour.copy(id = counselingHourId))
 
+    }
+
+    suspend fun deleteCounselingHour(counselingHour: CounselingHourState) {
+        val teacherId = teacherId
+        require(teacherId != null)
+
+        val newCounselingHour = counselingHour.copy(isActive = false)
+
+        db.collection(teacherProfilePath)
+            .document(teacherId)
+            .collection(counselingPath)
+            .document(counselingHour.id)
+            .set(newCounselingHour)
+            .await()
+
+        // Keeping the history
+        db.collection(teacherProfilePath)
+            .document(teacherId)
+            .collection(counselingPath)
+            .document(counselingHour.id)
+            .collection(historyPath)
+            .add(newCounselingHour)
+            .await()
     }
 }

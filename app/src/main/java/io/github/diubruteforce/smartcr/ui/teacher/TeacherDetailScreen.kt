@@ -10,9 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.onActive
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -41,15 +39,50 @@ fun TeacherDetailScreen(
     val sideEffect = viewModel.sideEffect.collectAsState().value
     val mainActivity = getMainActivity()
 
+    var deleteCounselingHour by remember { mutableStateOf<CounselingHourState?>(null) }
+    var deleteTeacherProfile by remember { mutableStateOf<String?>(null) }
+
     onActive {
         viewModel.loadInitialData(teacherId)
     }
 
     SideEffect(
         sideEffectState = sideEffect,
-        onSuccess = { },
+        onSuccess = {
+            if (it == TeacherDetailSuccess.ProfileDeleted) onBackPress.invoke()
+        },
         onFailAlertDismissRequest = viewModel::clearSideEffect
     )
+
+    if (deleteCounselingHour != null) {
+        CRAlertDialog(
+            title = stringResource(id = R.string.are_you_sure),
+            message = stringResource(id = R.string.counseling_hour_delete),
+            onDenial = {
+                viewModel.deleteCounselingHour(deleteCounselingHour!!)
+                deleteCounselingHour = null
+            },
+            denialText = stringResource(id = R.string.delete),
+            onAffirmation = { deleteCounselingHour = null },
+            affirmationText = stringResource(id = R.string.cancel),
+            onDismissRequest = { deleteCounselingHour = null }
+        )
+    }
+
+    if (deleteTeacherProfile != null) {
+        CRAlertDialog(
+            title = stringResource(id = R.string.are_you_sure),
+            message = stringResource(id = R.string.teacher_profile_delete),
+            onDenial = {
+                viewModel.deleteProfile()
+                deleteTeacherProfile = null
+            },
+            denialText = stringResource(id = R.string.delete),
+            onAffirmation = { deleteTeacherProfile = null },
+            affirmationText = stringResource(id = R.string.cancel),
+            onDismissRequest = { deleteTeacherProfile = null }
+        )
+    }
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
@@ -69,10 +102,10 @@ fun TeacherDetailScreen(
         TeacherDetailScreenContent(
             stateFlow = viewModel.state,
             onProfileEdit = navigateToTeacherEdit,
-            onProfileDelete = viewModel::deleteProfile,
+            onProfileDelete = { deleteTeacherProfile = it },
             onCall = { /*TODO*/ },
             onCounselingHourEdit = viewModel::startEditCounselingHour,
-            onCounselingHourDelete = { /*TODO*/ },
+            onCounselingHourDelete = { deleteCounselingHour = it },
             onCounselingHourAdd = viewModel::startAddCounselingHour,
             changeDay = sheetState::show,
             changeStartTime = {
