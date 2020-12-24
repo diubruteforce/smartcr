@@ -14,7 +14,8 @@ data class CounselingHourState(
     val day: String = "Saturday"
 ) : EditableModel() {
     companion object {
-        fun timeToString(hour: Int, minute: Int, meridiem: String) = "$hour:$minute $meridiem"
+        fun timeToString(hour: Int, minute: Int, meridiem: String) =
+            "%02d:%02d %s".format(hour, minute, meridiem)
 
         fun separateTime(time: String): Triple<Int, Int, String> {
             val array = time.split(":")

@@ -88,6 +88,7 @@ class TeacherRepository @Inject constructor(
             this.teacherId = db.collection(profilePath).add(newTeacher).await().id
         }
 
+        // Keeping the history
         db.collection(profilePath)
             .document(this.teacherId!!)
             .collection(historyPath)
@@ -104,5 +105,43 @@ class TeacherRepository @Inject constructor(
             .await()
 
         return result.map { it.toObject(CounselingHourState::class.java).copy(id = it.id) }
+    }
+
+    suspend fun saveCounselingHour(counselingHour: CounselingHourState) {
+        val teacherId = teacherId
+        require(teacherId != null)
+
+        val newCounselingHour = counselingHour.copy(
+            updaterId = profileRepository.userid,
+            updaterEmail = profileRepository.userEmail,
+            updatedOn = Timestamp.now()
+        )
+        var counselingHourId = newCounselingHour.id
+
+        if (counselingHour.id.isEmpty()) {
+            val response = db.collection(profilePath)
+                .document(teacherId)
+                .collection(counselingPath)
+                .add(newCounselingHour)
+                .await()
+
+            counselingHourId = response.id
+        } else {
+            db.collection(profilePath)
+                .document(teacherId)
+                .collection(counselingPath)
+                .document(newCounselingHour.id)
+                .set(newCounselingHour, SetOptions.merge())
+                .await()
+        }
+
+        // Keeping the history
+        db.collection(profilePath)
+            .document(teacherId)
+            .collection(counselingPath)
+            .document(counselingHourId)
+            .collection(historyPath)
+            .add(newCounselingHour.copy(id = counselingHourId))
+
     }
 }

@@ -72,4 +72,6 @@
     <string name="counseling_hour">Counseling Hour</string>
     <string name="select_day">Select Day</string>
     <string name="facult_profile">Faculty Profile</string>
+    <string name="start_time">Start Time</string>
+    <string name="end_time">End Time</string>
 </resources>
