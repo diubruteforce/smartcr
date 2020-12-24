@@ -71,4 +71,5 @@
     <string name="time">Time</string>
     <string name="counseling_hour">Counseling Hour</string>
     <string name="select_day">Select Day</string>
+    <string name="facult_profile">Faculty Profile</string>
 </resources>

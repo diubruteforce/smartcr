@@ -27,75 +27,80 @@ fun ProfileTopAppBar(
     imageUrl: String,
     imageCaption: @Composable () -> Unit
 ) {
-    ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
-        val ime = AmbientWindowInsets.current.ime
-        val (bgRef, contentRef) = createRefs()
+    Card(
+        shape = RoundedCornerShape(0.dp),
+        elevation = 8.dp
+    ) {
+        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+            val ime = AmbientWindowInsets.current.ime
+            val (bgRef, contentRef) = createRefs()
 
-        if (ime.isVisible.not()) {
-            Image(
+            if (ime.isVisible.not()) {
+                Image(
+                    modifier = Modifier
+                        .constrainAs(bgRef) {
+                            linkTo(start = parent.start, end = parent.end)
+                            linkTo(top = parent.top, bottom = parent.bottom)
+
+                            width = Dimension.fillToConstraints
+                            height = Dimension.fillToConstraints
+                        },
+                    contentScale = ContentScale.Crop,
+                    bitmap = imageResource(id = R.drawable.profile_bg)
+                )
+            }
+
+            Column(
                 modifier = Modifier
-                    .constrainAs(bgRef) {
+                    .constrainAs(contentRef) {
                         linkTo(start = parent.start, end = parent.end)
                         linkTo(top = parent.top, bottom = parent.bottom)
 
                         width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
                     },
-                contentScale = ContentScale.Crop,
-                bitmap = imageResource(id = R.drawable.profile_bg)
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .constrainAs(contentRef) {
-                    linkTo(start = parent.start, end = parent.end)
-                    linkTo(top = parent.top, bottom = parent.bottom)
-
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                },
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            InsetAwareTopAppBar(
-                backgroundColor = if (ime.isVisible) MaterialTheme.colors.surface else Color.Transparent,
-                elevation = if (ime.isVisible) 4.dp else 0.dp
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                navigationIcon?.invoke()
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = title
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                actions.invoke(this)
-            }
-
-            if (ime.isVisible.not()) {
-                Spacer(modifier = Modifier.size(Margin.medium))
-
-                Card(
-                    modifier = Modifier.fillMaxWidth(0.3f).aspectRatio(1f),
-                    backgroundColor = Color.LightGray,
-                    shape = RoundedCornerShape(8.dp),
-                    elevation = 8.dp
+                InsetAwareTopAppBar(
+                    backgroundColor = if (ime.isVisible) MaterialTheme.colors.surface else Color.Transparent,
+                    elevation = if (ime.isVisible) 4.dp else 0.dp
                 ) {
-                    CoilImage(
-                        data = imageUrl,
-                        fadeIn = true,
-                        contentScale = ContentScale.Crop
+                    navigationIcon?.invoke()
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = title
                     )
+
+                    Spacer(modifier = Modifier.weight(1f))
+
+                    actions.invoke(this)
                 }
 
-                Spacer(modifier = Modifier.size(Margin.normal))
+                if (ime.isVisible.not()) {
+                    Spacer(modifier = Modifier.size(Margin.medium))
 
-                imageCaption.invoke()
+                    Card(
+                        modifier = Modifier.fillMaxWidth(0.3f).aspectRatio(1f),
+                        backgroundColor = Color.LightGray,
+                        shape = RoundedCornerShape(8.dp),
+                        elevation = 8.dp
+                    ) {
+                        CoilImage(
+                            data = imageUrl,
+                            fadeIn = true,
+                            contentScale = ContentScale.Crop
+                        )
+                    }
 
-                Spacer(modifier = Modifier.size(Margin.normal))
+                    Spacer(modifier = Modifier.size(Margin.normal))
+
+                    imageCaption.invoke()
+
+                    Spacer(modifier = Modifier.size(Margin.normal))
+                }
             }
         }
     }

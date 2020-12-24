@@ -1,13 +1,18 @@
 package io.github.diubruteforce.smartcr.ui.teacher
 
 import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.Edit
+import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.onActive
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,20 +22,34 @@ import io.github.diubruteforce.smartcr.model.data.CounselingHourState
 import io.github.diubruteforce.smartcr.model.data.Week
 import io.github.diubruteforce.smartcr.ui.bottomsheet.ListBottomSheet
 import io.github.diubruteforce.smartcr.ui.common.CounselingHour
+import io.github.diubruteforce.smartcr.ui.common.ProfileTopAppBar
+import io.github.diubruteforce.smartcr.ui.common.SideEffect
 import io.github.diubruteforce.smartcr.ui.common.TeacherProfileCard
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBottomSheetState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun TeacherDetailScreen(
     viewModel: TeacherDetailViewModel,
+    teacherId: String,
     navigateToTeacherEdit: (String) -> Unit,
     onBackPress: () -> Unit
 ) {
     val sheetState = rememberBackPressAwareBottomSheetState()
+    val sideEffect = viewModel.sideEffect.collectAsState().value
+
+    onActive {
+        viewModel.loadInitialData(teacherId)
+    }
+
+    SideEffect(
+        sideEffectState = sideEffect,
+        onSuccess = { },
+        onFailAlertDismissRequest = viewModel::clearSideEffect
+    )
 
     ModalBottomSheetLayout(
         sheetState = sheetState,
@@ -51,7 +70,8 @@ fun TeacherDetailScreen(
             onCall = { /*TODO*/ },
             onCounselingHourEdit = { /*TODO*/ },
             onCounselingHourDelete = { /*TODO*/ },
-            onCounselingHourAdd = { /*TODO*/ }
+            onCounselingHourAdd = { /*TODO*/ },
+            onBackPress = onBackPress
         )
     }
 }
@@ -65,11 +85,28 @@ private fun TeacherDetailScreenContent(
     onCall: (String) -> Unit,
     onCounselingHourEdit: (CounselingHourState) -> Unit,
     onCounselingHourDelete: (CounselingHourState) -> Unit,
-    onCounselingHourAdd: () -> Unit
+    onCounselingHourAdd: () -> Unit,
+    onBackPress: () -> Unit
 ) {
     val state = stateFlow.collectAsState().value
 
-    Scaffold {
+    Scaffold(
+        topBar = {
+            ProfileTopAppBar(
+                title = stringResource(id = R.string.facult_profile),
+                navigationIcon = {
+                    IconButton(onClick = onBackPress) {
+                        Icon(imageVector = Icons.Outlined.KeyboardArrowLeft)
+                    }
+                },
+                actions = { IconButton(onClick = { }) {} },
+                imageUrl = state.teacher?.profileUrl ?: "",
+                imageCaption = {
+                    Text(text = state.teacher?.fullName ?: "")
+                }
+            )
+        }
+    ) {
         ScrollableColumn(
             modifier = Modifier.navigationBarsWithImePadding(),
             verticalArrangement = Arrangement.spacedBy(Margin.normal),
@@ -84,17 +121,21 @@ private fun TeacherDetailScreenContent(
                 )
             }
 
-            Spacer(modifier = Modifier.size(Margin.normal))
-
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(text = stringResource(id = R.string.counseling_hour))
+                Text(
+                    text = stringResource(id = R.string.counseling_hour),
+                    style = MaterialTheme.typography.h5
+                )
 
                 Spacer(modifier = Modifier.weight(1f))
 
                 IconButton(onClick = onCounselingHourAdd) {
-                    Icon(imageVector = Icons.Outlined.Edit)
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        tint = MaterialTheme.colors.primary
+                    )
                 }
             }
 

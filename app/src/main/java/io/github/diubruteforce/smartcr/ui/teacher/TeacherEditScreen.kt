@@ -54,7 +54,7 @@ fun TeacherEditScreen(
 
     SideEffect(
         sideEffectState = sideEffect,
-        onSuccess = { onBackPress.invoke() },
+        onSuccess = { if (it == TeacherEditSuccess.ProfileSaved) onBackPress.invoke() },
         onFailAlertDismissRequest = viewModel::clearSideEffect
     )
 
