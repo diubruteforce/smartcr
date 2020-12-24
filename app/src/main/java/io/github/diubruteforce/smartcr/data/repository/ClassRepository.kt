@@ -16,7 +16,7 @@ class ClassRepository @Inject constructor() {
 
         return result.documents.mapNotNull {
             it.toObject(Department::class.java)?.copy(id = it.id)
-        }
+        }.sortedBy { it.name }
     }
 
 }

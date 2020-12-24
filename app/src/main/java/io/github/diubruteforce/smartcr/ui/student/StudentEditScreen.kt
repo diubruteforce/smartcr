@@ -91,7 +91,7 @@ fun StudentEditScreen(
                         title = stringResource(id = R.string.prohibited),
                         icon = Icons.Outlined.Error,
                         onClose = { sheetState.hide() },
-                        list = listOf("You can't change email."),
+                        list = listOf("You can't change your email."),
                         onItemClick = { sheetState.hide() }
                     )
                 }
@@ -259,7 +259,10 @@ private fun StudentEditScreenContent(
                 state = state.diuEmail,
                 placeHolder = stringResource(id = R.string.diu_email),
                 icon = null,
-                onClick = onEmailClick,
+                onClick = {
+                    onEmailClick.invoke()
+                    focusManager.clearFocus()
+                },
             )
 
             PhoneNumber(
@@ -275,7 +278,10 @@ private fun StudentEditScreenContent(
             CRSelection(
                 state = state.gender,
                 placeHolder = stringResource(id = R.string.gender),
-                onClick = selectGender,
+                onClick = {
+                    selectGender.invoke()
+                    focusManager.clearFocus()
+                },
             )
 
             Spacer(modifier = Modifier.size(Margin.normal))
@@ -290,19 +296,28 @@ private fun StudentEditScreenContent(
             CRSelection(
                 state = state.department,
                 placeHolder = stringResource(id = R.string.department),
-                onClick = selectDepartment,
+                onClick = {
+                    selectDepartment.invoke()
+                    focusManager.clearFocus()
+                }
             )
 
             CRSelection(
                 state = state.level,
                 placeHolder = stringResource(id = R.string.level),
-                onClick = { selectLevel.invoke() },
+                onClick = {
+                    selectLevel.invoke()
+                    focusManager.clearFocus()
+                },
             )
 
             CRSelection(
                 state = state.term,
                 placeHolder = stringResource(id = R.string.term),
-                onClick = { selectTerm.invoke() },
+                onClick = {
+                    selectTerm.invoke()
+                    focusManager.clearFocus()
+                },
             )
 
             LargeButton(text = stringResource(id = R.string.save), onClick = saveStudentProfile)

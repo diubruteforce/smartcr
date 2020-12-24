@@ -4,7 +4,7 @@ import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.DepartureBoard
+import androidx.compose.material.icons.outlined.Book
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -77,7 +77,7 @@ fun TeacherEditScreen(
                 TeacherEditSheet.Department -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.select_department),
-                        icon = Icons.Outlined.DepartureBoard,
+                        icon = Icons.Outlined.Book,
                         onClose = sheetState::hide,
                         list = state.departmentList,
                         onItemClick = {
@@ -88,8 +88,8 @@ fun TeacherEditScreen(
                 }
                 TeacherEditSheet.Designation -> {
                     ListBottomSheet(
-                        title = stringResource(id = R.string.select_gender),
-                        icon = vectorResource(id = R.drawable.gender),
+                        title = stringResource(id = R.string.select_designation),
+                        icon = Icons.Outlined.Book,
                         onClose = sheetState::hide,
                         list = Designation.values().toList(),
                         onItemClick = {
@@ -243,19 +243,28 @@ private fun TeacherEditScreenContent(
             CRSelection(
                 state = state.gender,
                 placeHolder = stringResource(id = R.string.gender),
-                onClick = selectGender,
+                onClick = {
+                    selectGender.invoke()
+                    focusManager.clearFocus()
+                },
             )
 
             CRSelection(
                 state = state.designation,
                 placeHolder = stringResource(id = R.string.designation),
-                onClick = selectDesignation,
+                onClick = {
+                    selectDesignation.invoke()
+                    focusManager.clearFocus()
+                },
             )
 
             CRSelection(
                 state = state.department,
                 placeHolder = stringResource(id = R.string.department),
-                onClick = selectDepartment,
+                onClick = {
+                    selectDepartment.invoke()
+                    focusManager.clearFocus()
+                },
             )
 
             LargeButton(text = stringResource(id = R.string.save), onClick = saveTeacherProfile)
