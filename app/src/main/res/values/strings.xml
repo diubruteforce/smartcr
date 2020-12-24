@@ -64,7 +64,7 @@
     <string name="teacher_profile">Teacher Profile</string>
     <string name="call">Call</string>
     <string name="phone">Phone</string>
-    <string name="enter_phone_number">Enter phon number</string>
+    <string name="enter_phone_number">Enter phone number</string>
     <string name="enter_full_name">Enter full name</string>
     <string name="edit">Edit</string>
     <string name="delete">Delete</string>
@@ -78,4 +78,6 @@
     <string name="counseling_hour_delete">You are going to delete this counseling hour. If you delete this other students can\'t view this.</string>
     <string name="teacher_profile_delete">If you delete this teacher profile no other student can view this.</string>
     <string name="select_designation">Select Designation</string>
+    <string name="faculty">Faculty</string>
+    <string name="search_teacher">Search Teacher</string>
 </resources>

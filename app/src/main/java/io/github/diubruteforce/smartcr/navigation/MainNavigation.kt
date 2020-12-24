@@ -11,6 +11,7 @@ import io.github.diubruteforce.smartcr.ui.smartcr.menu.Menu
 import io.github.diubruteforce.smartcr.ui.student.StudentEditScreen
 import io.github.diubruteforce.smartcr.ui.teacher.TeacherDetailScreen
 import io.github.diubruteforce.smartcr.ui.teacher.TeacherEditScreen
+import io.github.diubruteforce.smartcr.ui.teacher.TeacherListScreen
 
 @Composable
 fun SmartCRApp() {
@@ -18,7 +19,7 @@ fun SmartCRApp() {
 
     NavHost(
         navController = navController,
-        startDestination = MainRoute.TeacherDetail.route
+        startDestination = MainRoute.SmartCR.route
     ) {
         authNavigation(
             navController = navController,
@@ -30,6 +31,7 @@ fun SmartCRApp() {
                 onMenuClick = { menu ->
                     when (menu) {
                         Menu.FIND_FACULTY -> {
+                            navController.navigate(MainRoute.TeacherList.uri())
                         }
                         Menu.FIND_COURSE -> {
                         }
@@ -61,13 +63,28 @@ fun SmartCRApp() {
         }
 
         composable(MainRoute.TeacherDetail.route) {
+            val teacherId = MainRoute.TeacherDetail.getArgument(it)
+
             TeacherDetailScreen(
                 viewModel = hiltViewModel(),
-                teacherId = "UGhs8jbfewBeeDfuQuDa",
+                teacherId = teacherId,
                 navigateToTeacherEdit = {
                     navController.navigate(MainRoute.TeacherProfileEdit.uri(it))
                 },
                 onBackPress = navController::navigateUp
+            )
+        }
+
+        composable(MainRoute.TeacherList.route) {
+            TeacherListScreen(
+                viewModel = hiltViewModel(),
+                onBackPress = navController::navigateUp,
+                navigateToTeacherDetail = {
+                    navController.navigate(MainRoute.TeacherDetail.uri(it))
+                },
+                addNewTeacher = {
+                    navController.navigate(MainRoute.TeacherProfileEdit.uri())
+                }
             )
         }
 
@@ -89,4 +106,5 @@ object MainRoute {
     val StudentProfileEdit = NoArgRoute("StudentProfileEdit")
     val TeacherProfileEdit = SingleOptionalArgRoute("TeacherProfileEdit", "teacherId")
     val TeacherDetail = SingleArgRoute("TeacherDetail", "teacherId")
+    val TeacherList = NoArgRoute("TeacherList")
 }

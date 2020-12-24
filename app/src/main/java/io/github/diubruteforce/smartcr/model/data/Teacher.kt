@@ -19,5 +19,6 @@ data class Teacher(
     val departmentCode: String = "",
     val departmentName: String = "",
     val room: String = "",
-    val designation: String = ""
+    val designation: String = "",
+    val link: String = ""
 ) : EditableModel()

@@ -4,6 +4,7 @@ import android.net.Uri
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import io.github.diubruteforce.smartcr.model.data.CounselingHourState
 import io.github.diubruteforce.smartcr.model.data.Teacher
@@ -52,7 +53,7 @@ class TeacherRepository @Inject constructor(
     }
 
     suspend fun getTeacherProfile(teacherId: String?): Teacher {
-        if (teacherId == null) return Teacher()
+        if (teacherId == null || teacherId.isEmpty()) return Teacher()
 
         this.teacherId = teacherId
 
@@ -82,7 +83,7 @@ class TeacherRepository @Inject constructor(
             updaterEmail = profileRepository.userEmail
         )
 
-        if (teacherId != null) {
+        if (teacherId != null && teacherId.isNotEmpty()) {
             db.collection(teacherProfilePath)
                 .document(teacherId)
                 .set(newTeacher, SetOptions.merge())
@@ -95,7 +96,7 @@ class TeacherRepository @Inject constructor(
         db.collection(teacherProfilePath)
             .document(this.teacherId!!)
             .collection(historyPath)
-            .add(newTeacher)
+            .add(newTeacher.copy(id = this.teacherId!!))
             .await()
     }
 
@@ -189,5 +190,14 @@ class TeacherRepository @Inject constructor(
             .collection(historyPath)
             .add(newCounselingHour)
             .await()
+    }
+
+    suspend fun getAllTeacher(): List<Teacher> {
+        return db.collection(teacherProfilePath)
+            .whereActiveData()
+            .get()
+            .await()
+            .map { it.toObject<Teacher>().copy(id = it.id) }
+            .sortedBy { it.fullName }
     }
 }

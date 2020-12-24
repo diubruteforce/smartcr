@@ -10,12 +10,13 @@ import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.savedinstancestate.savedInstanceState
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
-import androidx.navigation.compose.*
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.ui.common.Empty
@@ -28,9 +29,7 @@ import io.github.diubruteforce.smartcr.ui.smartcr.menu.MenuScreen
 fun SmartCRScreen(
     onMenuClick: (Menu) -> Unit
 ) {
-    val navController = rememberNavController()
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.arguments?.getString(KEY_ROUTE)
+    var currentScreen by savedInstanceState { HomeRoute.HOME }
 
     Scaffold(
         modifier = Modifier.fillMaxSize().navigationBarsWithImePadding(),
@@ -39,7 +38,7 @@ fun SmartCRScreen(
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = currentRoute ?: HomeRoute.HOME.route
+                    text = HomeRoute.HOME.route
                 )
                 Spacer(modifier = Modifier.weight(1f))
             }
@@ -52,27 +51,21 @@ fun SmartCRScreen(
                     BottomNavigationItem(
                         icon = { Icon(screen.imageVector) },
                         label = { Text(screen.route) },
-                        selected = currentRoute == screen.route,
+                        selected = currentScreen == screen,
                         selectedContentColor = MaterialTheme.colors.primary,
                         unselectedContentColor = Color.Gray,
                         alwaysShowLabels = false,
-                        onClick = {
-                            navController.popBackStack(navController.graph.startDestination, false)
-
-                            if (currentRoute != screen.route) {
-                                navController.navigate(screen.route)
-                            }
-                        }
+                        onClick = { currentScreen = screen }
                     )
                 }
             }
         }
     ) {
-        NavHost(navController, startDestination = HomeRoute.HOME.route) {
-            composable(HomeRoute.HOME.route) {
+        when (currentScreen) {
+            HomeRoute.HOME -> {
                 HomeScreen(navigateToOnBoarding = { /*TODO*/ })
             }
-            composable(HomeRoute.EVENT.route) {
+            HomeRoute.EVENT -> {
                 Empty(
                     title = "New Semester!",
                     message = "DIU DIU DIU DIU DIU DIU DIU DIU DIU DIU DIU DIU",
@@ -81,10 +74,10 @@ fun SmartCRScreen(
                     onAction = {}
                 )
             }
-            composable(HomeRoute.TODO.route) {
+            HomeRoute.TODO -> {
                 HomeScreen(navigateToOnBoarding = { /*TODO*/ })
             }
-            composable(HomeRoute.MENU.route) {
+            HomeRoute.MENU -> {
                 MenuScreen(onMenuClick = onMenuClick)
             }
         }

@@ -19,9 +19,10 @@ fun LabelText(
     ) {
         Text(
             text = label,
-            fontWeight = FontWeight.Medium
+            fontWeight = FontWeight.Medium,
+            maxLines = 1
         )
 
-        Text(text = ": $text")
+        Text(text = ": $text", maxLines = 1)
     }
 }
