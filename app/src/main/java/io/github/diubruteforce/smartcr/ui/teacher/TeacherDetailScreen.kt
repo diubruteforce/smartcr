@@ -103,7 +103,7 @@ fun TeacherDetailScreen(
             stateFlow = viewModel.state,
             onProfileEdit = navigateToTeacherEdit,
             onProfileDelete = { deleteTeacherProfile = it },
-            onCall = { /*TODO*/ },
+            onCall = { mainActivity.makeCall(it) },
             onCounselingHourEdit = viewModel::startEditCounselingHour,
             onCounselingHourDelete = { deleteCounselingHour = it },
             onCounselingHourAdd = viewModel::startAddCounselingHour,
@@ -170,7 +170,6 @@ private fun TeacherDetailScreenContent(
             )
         ) {
             if (state.isEditMode) {
-
                 Text(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     text = state.editTitle,

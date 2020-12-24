@@ -36,6 +36,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // region: Call
+    fun makeCall(phoneNumber: String) {
+        val uri = Uri.parse("tel:$phoneNumber")
+        val intent = Intent(Intent.ACTION_DIAL, uri)
+
+        startActivity(intent)
+    }
+
     // region: ImagePicker
     private lateinit var onImagePicked: (uri: Uri?) -> Unit
 
