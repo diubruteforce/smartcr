@@ -88,4 +88,8 @@ class ProfileRepository @Inject constructor(
                     Regex.DiuIdValidator.matches(student.diuId)
         }
     }
+
+    suspend fun deleteProfile() {
+        firebaseAuth.currentUser?.delete()?.await()
+    }
 }

@@ -14,6 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import io.github.diubruteforce.smartcr.R
+import io.github.diubruteforce.smartcr.model.data.Student
 import io.github.diubruteforce.smartcr.model.data.Teacher
 import io.github.diubruteforce.smartcr.ui.theme.CornerRadius
 import io.github.diubruteforce.smartcr.ui.theme.Margin
@@ -112,6 +113,69 @@ fun TeacherProfileCard(
                 ) {
                     Text(text = stringResource(id = R.string.call).toUpperCase(Locale.getDefault()))
                 }
+            }
+        }
+    )
+}
+
+@Composable
+fun StudentProfileCard(
+    modifier: Modifier = Modifier,
+    student: Student,
+    onEdit: (String) -> Unit,
+    onDelete: (String) -> Unit
+) {
+    ProfileCard(
+        modifier = modifier,
+        onEdit = { onEdit.invoke(student.id) },
+        onDelete = { onDelete.invoke(student.id) },
+        content = {
+            LabelText(
+                label = stringResource(id = R.string.department),
+                text = student.departmentCode
+            )
+
+            LabelText(
+                label = stringResource(id = R.string.student_id),
+                text = student.diuId
+            )
+
+            LabelText(
+                label = stringResource(id = R.string.diu_email),
+                text = student.diuEmail
+            )
+
+            LabelText(
+                label = stringResource(id = R.string.phone),
+                text = student.phone
+            )
+
+            LabelText(
+                label = stringResource(id = R.string.gender),
+                text = student.gender
+            )
+
+            LabelText(
+                label = stringResource(id = R.string.term),
+                text = student.term
+            )
+
+            LabelText(
+                label = stringResource(id = R.string.level),
+                text = student.level
+            )
+        },
+        sideContent = {
+            OutlinedButton(
+                shape = RoundedCornerShape(
+                    topLeft = 16.dp,
+                    topRight = 0.dp,
+                    bottomRight = 0.dp,
+                    bottomLeft = 16.dp
+                ),
+                onClick = { }
+            ) {
+                Text(text = "BATCH ${student.batch}")
             }
         }
     )

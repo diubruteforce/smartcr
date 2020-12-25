@@ -80,4 +80,7 @@
     <string name="select_designation">Select Designation</string>
     <string name="faculty">Faculty</string>
     <string name="search_teacher">Search Teacher</string>
+    <string name="student_id">Student ID</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="profile_delete">If you delete your profile then you can\'t use this app anymore. And you will lose all of your data</string>
 </resources>
