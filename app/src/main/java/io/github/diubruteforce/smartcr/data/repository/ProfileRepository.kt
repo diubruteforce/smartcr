@@ -6,14 +6,14 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import dagger.Reusable
 import io.github.diubruteforce.smartcr.model.data.Student
 import io.github.diubruteforce.smartcr.utils.extension.DiuEmailValidator
 import io.github.diubruteforce.smartcr.utils.extension.DiuIdValidator
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
+import javax.inject.Singleton
 
-@Reusable
+@Singleton
 class ProfileRepository @Inject constructor(
     private val storageRepository: StorageRepository,
 ) {

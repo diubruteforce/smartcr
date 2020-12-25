@@ -6,7 +6,9 @@ import com.google.firebase.storage.ktx.storage
 import kotlinx.coroutines.tasks.await
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class StorageRepository @Inject constructor() {
     private val storage = Firebase.storage
     private val profileFolder = "profile"
