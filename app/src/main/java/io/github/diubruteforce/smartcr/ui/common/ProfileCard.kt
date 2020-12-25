@@ -156,13 +156,13 @@ fun StudentProfileCard(
             )
 
             LabelText(
-                label = stringResource(id = R.string.term),
-                text = student.term
+                label = stringResource(id = R.string.level),
+                text = student.level
             )
 
             LabelText(
-                label = stringResource(id = R.string.level),
-                text = student.level
+                label = stringResource(id = R.string.term),
+                text = student.term
             )
         },
         sideContent = {

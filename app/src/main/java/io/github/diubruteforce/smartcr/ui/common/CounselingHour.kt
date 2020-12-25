@@ -36,23 +36,25 @@ fun CounselingHour(
             Spacer(modifier = Modifier.size(Margin.normal))
 
             LabelText(
+                modifier = Modifier.weight(2f),
                 label = stringResource(id = R.string.time),
                 text = "${state.startTime} - ${state.endTime}"
             )
 
-            Spacer(modifier = Modifier.weight(1f))
-
             Card(
+                modifier = Modifier.weight(1f),
                 shape = RoundedCornerShape(CornerRadius.normal),
                 elevation = 0.dp,
                 backgroundColor = MaterialTheme.colors.primary
             ) {
-                Box {
+                Box(modifier = Modifier.fillMaxSize()) {
                     Text(
-                        modifier = Modifier.padding(Margin.normal),
+                        modifier = Modifier.align(Alignment.Center)
+                            .padding(vertical = Margin.normal),
                         text = state.day,
                         style = MaterialTheme.typography.h6,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
                     )
 
                     UpdateDeleteMenu(
