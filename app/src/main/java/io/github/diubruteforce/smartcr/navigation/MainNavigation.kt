@@ -102,9 +102,12 @@ fun SmartCRApp() {
 
         // region: StudentProfileEdit
         composable(MainRoute.StudentProfileEdit.route) {
+            val isFirstTime = MainRoute.StudentProfileEdit.getArgument(it) == null
+            val onBackPress: (() -> Unit)? = if (isFirstTime) null else navController::navigateUp
+
             StudentEditScreen(
                 viewModel = hiltViewModel(),
-                onBackPress = null,
+                onBackPress = onBackPress,
                 onNavigateToHome = {
                     navController.navigate(MainRoute.SmartCR.uri()) { launchSingleTop = true }
                 }
@@ -120,7 +123,7 @@ fun SmartCRApp() {
                     navController.navigate(MainRoute.Auth.route)
                 },
                 navigateToProfileEdit = {
-                    navController.navigate(MainRoute.StudentProfileEdit.route)
+                    navController.navigate(MainRoute.StudentProfileEdit.uri("backPress"))
                 },
                 onBackPress = navController::navigateUp
             )
@@ -142,7 +145,7 @@ fun SmartCRApp() {
 object MainRoute {
     val Auth = NoArgRoute("Auth")
     val SmartCR = NoArgRoute("SmartCR")
-    val StudentProfileEdit = NoArgRoute("StudentProfileEdit")
+    val StudentProfileEdit = SingleOptionalArgRoute("StudentProfileEdit", "first")
     val StudentProfileDetail = NoArgRoute("StudentProfileDetail")
     val TeacherProfileEdit = SingleOptionalArgRoute("TeacherProfileEdit", "teacherId")
     val TeacherDetail = SingleArgRoute("TeacherDetail", "teacherId")

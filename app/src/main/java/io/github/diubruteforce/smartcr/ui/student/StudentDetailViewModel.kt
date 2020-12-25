@@ -21,7 +21,7 @@ class StudentDetailViewModel @ViewModelInject constructor(
 ) : BaseViewModel<StudentDetailState, Any, StudentDetailSuccess, String>(
     initialState = StudentDetailState()
 ) {
-    init {
+    fun loadData() {
         launchInViewModelScope {
             setSideEffect { EmptyLoadingState }
 

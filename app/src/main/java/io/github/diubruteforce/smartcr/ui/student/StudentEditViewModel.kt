@@ -36,7 +36,7 @@ class StudentEditViewModel @ViewModelInject constructor(
 ) {
     private var storedDepartment: Department? = null
 
-    init {
+    fun loadData() {
         setSideEffect { EmptyLoadingState }
 
         launchInViewModelScope {

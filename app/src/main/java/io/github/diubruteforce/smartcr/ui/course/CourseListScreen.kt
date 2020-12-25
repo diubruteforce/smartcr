@@ -84,7 +84,7 @@ private fun CourseListScreenContent(
             contentPadding = PaddingValues(Margin.normal)
         ) {
             state.courses.forEach { entry ->
-                val totalCredit = entry.value.fold(0) { value, course ->
+                val totalCredit = entry.value.fold(0.0) { value, course ->
                     value + course.credit
                 }
 

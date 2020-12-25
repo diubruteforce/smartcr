@@ -20,7 +20,7 @@ class TeacherListViewModel @ViewModelInject constructor(
 ) {
     private var allTeacher: List<Teacher> = emptyList()
 
-    init {
+    fun loadData() {
         launchInViewModelScope {
             setSideEffect { EmptyLoadingState }
 

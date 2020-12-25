@@ -52,6 +52,10 @@ fun StudentEditScreen(
 
     val mainActivity = getMainActivity()
 
+    onActive {
+        viewModel.loadData()
+    }
+
     SideEffect(
         sideEffectState = sideEffectState,
         onSuccess = {
@@ -63,7 +67,8 @@ fun StudentEditScreen(
 
                 }
                 StudentEditSuccess.ProfileSaved -> {
-                    onNavigateToHome.invoke()
+                    if (onBackPress != null) onBackPress.invoke()
+                    else onNavigateToHome.invoke()
                 }
             }
         },

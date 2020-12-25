@@ -31,6 +31,10 @@ fun StudentDetailScreen(
     val sideEffect = viewModel.sideEffect.collectAsState().value
     var deleteProfile by remember { mutableStateOf(false) }
 
+    onActive {
+        viewModel.loadData()
+    }
+
     SideEffect(
         sideEffectState = sideEffect,
         onSuccess = {

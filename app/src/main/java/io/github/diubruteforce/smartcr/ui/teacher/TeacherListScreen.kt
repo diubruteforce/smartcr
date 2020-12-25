@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.onActive
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -38,6 +39,10 @@ fun TeacherListScreen(
     addNewTeacher: () -> Unit,
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
+
+    onActive {
+        viewModel.loadData()
+    }
 
     SideEffect(
         sideEffectState = sideEffect,
