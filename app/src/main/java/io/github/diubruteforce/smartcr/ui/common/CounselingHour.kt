@@ -79,7 +79,8 @@ private fun PreviewCounselingHour() {
                 endTime = "12:00 PM",
                 day = "Monday"
             ),
-            onEdit = { /*TODO*/ },
-            onDelete = { /*TODO*/ })
+            onEdit = { },
+            onDelete = { }
+        )
     }
 }

@@ -188,9 +188,9 @@ private fun PreviewTeacherProfileCard() {
         TeacherProfileCard(
             modifier = Modifier.padding(Margin.normal),
             teacher = Teacher().copy(phone = "8787384793247"),
-            onCall = { /*TODO*/ },
-            onEdit = { /*TODO*/ },
-            onDelete = { /*TODO*/ }
+            onCall = { },
+            onEdit = { },
+            onDelete = { }
         )
     }
 }
