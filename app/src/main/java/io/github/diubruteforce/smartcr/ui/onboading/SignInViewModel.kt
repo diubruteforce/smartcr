@@ -69,6 +69,6 @@ class SignInViewModel @ViewModelInject constructor(
     fun getUserEmail(): String = profileRepository.userEmail
 
     override fun onCoroutineException(exception: Throwable) {
-        TypedSideEffectState.Fail(exception.message ?: String.Error)
+        setSideEffect { TypedSideEffectState.Fail(exception.message ?: String.Error) }
     }
 }

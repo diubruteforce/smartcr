@@ -12,15 +12,14 @@ val orange200 = Color(0xFFF0b185)
 val orange500 = Color(0xFFF39200)
 val redError = Color(0xFFe91c1c)
 
-@Composable
+
 val Colors.grayText: Color
-    get() = AmbientContentColor.current.lighten(0.55f)
+    @Composable get() = AmbientContentColor.current.lighten(0.55f)
 
-@Composable
+
 val Colors.grayBackground: Color
-    get() = MaterialTheme.colors.background.darken(0.05f)
+    @Composable get() = MaterialTheme.colors.background.darken(0.05f)
 
 
-@Composable
 val Colors.grayBorder: Color
-    get() = MaterialTheme.colors.onBackground.copy(alpha = 0.08f)
+    @Composable get() = MaterialTheme.colors.onBackground.copy(alpha = 0.08f)

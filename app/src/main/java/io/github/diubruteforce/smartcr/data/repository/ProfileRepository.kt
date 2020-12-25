@@ -16,7 +16,6 @@ import javax.inject.Inject
 @Reusable
 class ProfileRepository @Inject constructor(
     private val storageRepository: StorageRepository,
-    private val classRepository: ClassRepository
 ) {
     private val firebaseAuth = Firebase.auth
     private val user get() = firebaseAuth.currentUser
@@ -74,8 +73,6 @@ class ProfileRepository @Inject constructor(
             .set(student.copy(id = userid), SetOptions.merge())
             .await()
     }
-
-    suspend fun getAllDepartment() = classRepository.getAllDepartment()
 
     suspend fun hasProfileData(): Boolean {
         val response = db.collection(profilePath).document(userid).get().await()

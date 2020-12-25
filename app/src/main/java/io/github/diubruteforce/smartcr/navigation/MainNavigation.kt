@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import io.github.diubruteforce.smartcr.di.hiltViewModel
+import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
 import io.github.diubruteforce.smartcr.ui.smartcr.SmartCRScreen
 import io.github.diubruteforce.smartcr.ui.smartcr.menu.Menu
 import io.github.diubruteforce.smartcr.ui.student.StudentDetailScreen
@@ -36,6 +37,7 @@ fun SmartCRApp() {
                             navController.navigate(MainRoute.TeacherList.uri())
                         }
                         Menu.FIND_COURSE -> {
+                            navController.navigate(MainRoute.CourseList.uri())
                         }
                         Menu.GET_RESOURCE -> {
                         }
@@ -56,6 +58,7 @@ fun SmartCRApp() {
         }
         // endregion
 
+        // region: TeacherProfileEdit
         composable(MainRoute.TeacherProfileEdit.route) {
             val teacherId = MainRoute.TeacherProfileEdit.getArgument(it)
 
@@ -65,7 +68,9 @@ fun SmartCRApp() {
                 onBackPress = navController::navigateUp
             )
         }
+        // endregion
 
+        // region: TeacherDetail
         composable(MainRoute.TeacherDetail.route) {
             val teacherId = MainRoute.TeacherDetail.getArgument(it)
 
@@ -78,7 +83,9 @@ fun SmartCRApp() {
                 onBackPress = navController::navigateUp
             )
         }
+        // endregion
 
+        // region: TeacherList
         composable(MainRoute.TeacherList.route) {
             TeacherListScreen(
                 viewModel = hiltViewModel(),
@@ -91,7 +98,9 @@ fun SmartCRApp() {
                 }
             )
         }
+        // endregion
 
+        // region: StudentProfileEdit
         composable(MainRoute.StudentProfileEdit.route) {
             StudentEditScreen(
                 viewModel = hiltViewModel(),
@@ -101,7 +110,9 @@ fun SmartCRApp() {
                 }
             )
         }
+        // endregion
 
+        // region: StudentProfileDetail
         composable(MainRoute.StudentProfileDetail.route) {
             StudentDetailScreen(
                 viewModel = hiltViewModel(),
@@ -114,6 +125,17 @@ fun SmartCRApp() {
                 onBackPress = navController::navigateUp
             )
         }
+        // endregion
+
+        // region: CourseList
+        composable(MainRoute.CourseList.route) {
+            CourseListScreen(
+                viewModel = hiltViewModel(),
+                navigateToSectionList = { },
+                onBackPress = navController::navigateUp
+            )
+        }
+
     }
 }
 
@@ -125,4 +147,5 @@ object MainRoute {
     val TeacherProfileEdit = SingleOptionalArgRoute("TeacherProfileEdit", "teacherId")
     val TeacherDetail = SingleArgRoute("TeacherDetail", "teacherId")
     val TeacherList = NoArgRoute("TeacherList")
+    val CourseList = NoArgRoute("CourseList")
 }

@@ -2,6 +2,7 @@ package io.github.diubruteforce.smartcr.ui.student
 
 import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
+import io.github.diubruteforce.smartcr.data.repository.ClassRepository
 import io.github.diubruteforce.smartcr.data.repository.ProfileRepository
 import io.github.diubruteforce.smartcr.model.data.Department
 import io.github.diubruteforce.smartcr.model.data.Gender
@@ -28,7 +29,8 @@ data class StudentEditState(
 enum class StudentEditSuccess { Loaded, ProfileSaved, ImageSaved }
 
 class StudentEditViewModel @ViewModelInject constructor(
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val classRepository: ClassRepository
 ) : BaseViewModel<StudentEditState, Any, StudentEditSuccess, String>(
     initialState = StudentEditState()
 ) {
@@ -38,7 +40,7 @@ class StudentEditViewModel @ViewModelInject constructor(
         setSideEffect { EmptyLoadingState }
 
         launchInViewModelScope {
-            val departmentList = profileRepository.getAllDepartment()
+            val departmentList = classRepository.getAllDepartment()
             val profile = profileRepository.getUserProfile()
 
             storedDepartment = departmentList.find { it.codeName == profile.departmentCode }

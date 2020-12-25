@@ -49,7 +49,6 @@ fun CRSelection(
                     .padding(start = Margin.medium, end = Margin.medium),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Text(
                     text = placeHolder.take(20),
                     maxLines = 1,
