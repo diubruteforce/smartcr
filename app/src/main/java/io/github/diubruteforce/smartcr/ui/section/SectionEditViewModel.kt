@@ -9,6 +9,9 @@ import io.github.diubruteforce.smartcr.model.ui.Error
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
+import io.github.diubruteforce.smartcr.utils.extension.filterByQuery
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 data class SectionEditState(
     val sectionName: InputState = InputState.NotEmptyState,
@@ -17,8 +20,16 @@ data class SectionEditState(
     val googleCode: InputState = InputState.EmptyState,
     val blcCode: InputState = InputState.EmptyState,
     val courseOutline: InputState = InputState.EmptyState,
+)
+
+data class SectionEditTeacherState(
     val teacherList: List<Teacher> = emptyList(),
-    val courseList: List<Course> = emptyList()
+    val query: InputState = InputState.NotEmptyState,
+)
+
+data class SectionEditCourseState(
+    val courseList: List<Course> = emptyList(),
+    val query: InputState = InputState.NotEmptyState,
 )
 
 enum class SectionEditSuccess {
@@ -35,34 +46,60 @@ class SectionEditViewModel @ViewModelInject constructor(
     private lateinit var selectedCourse: Course
     private lateinit var selectedInstructor: Instructor
 
-    fun loadDate(sectionId: String?) {
+    private lateinit var allTeacher: List<Teacher>
+    private val _teacherState = MutableStateFlow(SectionEditTeacherState())
+    val teacherState: StateFlow<SectionEditTeacherState> get() = _teacherState
+
+    private lateinit var allCourse: List<Course>
+    private val _courseState = MutableStateFlow(SectionEditCourseState())
+    val courseState: StateFlow<SectionEditCourseState> get() = _courseState
+
+    fun loadDate(sectionId: String?, courseId: String) {
         launchInViewModelScope {
             setSideEffect { EmptyLoadingState }
 
-            sectionData = classRepository.getSectionData(sectionId)
-            selectedCourse = sectionData.course
-            selectedInstructor = sectionData.instructor
+            allTeacher = teacherRepository.getAllTeacher()
+            _teacherState.value = _teacherState.value.copy(teacherList = allTeacher)
 
-            val courseList = classRepository.getCourseList()
-            val teacherList = teacherRepository.getAllTeacher()
+            allCourse = classRepository.getCourseList()
+            _courseState.value = _courseState.value.copy(courseList = allCourse)
+
+            sectionData = classRepository.getSectionData(sectionId)
+            selectedInstructor = sectionData.instructor
+            selectedCourse = sectionData.course
+
+            allCourse.find { it.id == courseId }?.let { selectedCourse = it }
 
             withState {
                 setState {
                     copy(
                         sectionName = sectionName.copy(value = sectionData.name),
-                        instructorName = instructorName.copy(value = sectionData.instructor.name),
-                        courseTitle = courseTitle.copy(value = sectionData.course.courseTitle),
+                        instructorName = instructorName.copy(value = selectedInstructor.name),
+                        courseTitle = courseTitle.copy(value = selectedCourse.courseTitle),
                         googleCode = googleCode.copy(value = sectionData.googleCode),
                         blcCode = blcCode.copy(value = sectionData.blcCode),
                         courseOutline = courseOutline.copy(value = sectionData.courseOutline),
-                        teacherList = teacherList,
-                        courseList = courseList
                     )
                 }
             }
 
             setSideEffect { TypedSideEffectState.Success(SectionEditSuccess.Loaded) }
         }
+    }
+
+    fun searchTeacher(query: String) {
+        val newQuery = _teacherState.value.query.copy(value = query)
+        _teacherState.value = _teacherState.value.copy(
+            teacherList = allTeacher.filterByQuery(query),
+            query = newQuery
+        )
+    }
+
+    fun searchCourse(query: String) {
+        val newQuery = _courseState.value.query.copy(value = query)
+        val courseList = allCourse.filter { it.courseTitle.contains(query, ignoreCase = true) }
+
+        _courseState.value = _courseState.value.copy(courseList = courseList, query = newQuery)
     }
 
     fun changeTeacher(teacher: Teacher) = withState {
@@ -102,7 +139,7 @@ class SectionEditViewModel @ViewModelInject constructor(
     fun changeCourseOutline(outline: String) = withState {
         val newOutline = courseOutline.copy(value = outline)
 
-        setState { copy(courseTitle = newOutline) }
+        setState { copy(courseOutline = newOutline) }
     }
 
     fun saveSection() = withState {
@@ -135,9 +172,23 @@ class SectionEditViewModel @ViewModelInject constructor(
                     courseOutline = courseOutline.value
                 )
 
-                classRepository.saveSection(newSection)
+                val alreadyCreated = classRepository.alreadySectionCreated(
+                    sectionName = newSection.name,
+                    courseId = newSection.course.id
+                )
 
-                setSideEffect { TypedSideEffectState.Success(SectionEditSuccess.Saved) }
+                if (alreadyCreated) {
+                    setSideEffect {
+                        TypedSideEffectState.Fail(
+                            "Someone already created ${newSection.name} for ${newSection.course.courseTitle}"
+                        )
+                    }
+
+                } else {
+                    classRepository.saveSection(newSection)
+
+                    setSideEffect { TypedSideEffectState.Success(SectionEditSuccess.Saved) }
+                }
             }
         }
     }

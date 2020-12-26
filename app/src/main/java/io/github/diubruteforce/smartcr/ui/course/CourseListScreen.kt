@@ -2,19 +2,18 @@ package io.github.diubruteforce.smartcr.ui.course
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.KeyboardArrowLeft
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.onActive
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
+import io.github.diubruteforce.smartcr.ui.common.BackPressTopAppBar
 import io.github.diubruteforce.smartcr.ui.common.CRListItem
-import io.github.diubruteforce.smartcr.ui.common.InsetAwareTopAppBar
 import io.github.diubruteforce.smartcr.ui.common.SideEffect
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -57,25 +56,10 @@ private fun CourseListScreenContent(
 
     Scaffold(
         topBar = {
-            InsetAwareTopAppBar {
-                IconButton(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    onClick = onBackPress
-                ) {
-                    Icon(imageVector = Icons.Outlined.KeyboardArrowLeft)
-                }
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = stringResource(id = R.string.courses)
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                IconButton(onClick = {}) {}
-            }
+            BackPressTopAppBar(
+                onBackPress = onBackPress,
+                title = stringResource(id = R.string.courses)
+            )
         }
     ) {
         LazyColumn(

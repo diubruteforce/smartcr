@@ -3,10 +3,7 @@ package io.github.diubruteforce.smartcr.ui.common
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
@@ -172,6 +169,58 @@ fun Password(
             onImeActionPerformed = onImeActionPerformed,
             visualTransformation = PasswordVisualTransformation()
         )
+    }
+}
+
+@Composable
+fun Description(
+    modifier: Modifier = Modifier,
+    state: InputState,
+    placeHolder: String = stringResource(id = R.string.enter_your_password),
+    onValueChange: (String) -> Unit,
+    focusRequester: FocusRequester
+) {
+    InputLayout(
+        modifier = modifier,
+        isError = state.isError,
+        errorText = state.errorText
+    ) {
+        Card(
+            shape = RoundedCornerShape(CornerRadius.normal),
+            elevation = 4.dp,
+            border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder),
+            modifier = modifier.clickable(indication = null) {
+                focusRequester.requestFocus()
+            }
+        ) {
+            Box(
+                modifier = Modifier.heightIn(min = 112.dp).padding(Margin.normal),
+                contentAlignment = Alignment.TopStart
+            ) {
+                BasicTextField(
+                    modifier = Modifier.fillMaxWidth()
+                        .focusRequester(focusRequester),
+                    value = state.value,
+                    onValueChange = onValueChange,
+                    textStyle = MaterialTheme.typography.body1,
+                    keyboardOptions = KeyboardOptions(
+                        imeAction = ImeAction.Unspecified,
+                        keyboardType = KeyboardType.Text
+                    ),
+                    cursorColor = MaterialTheme.colors.primary
+                )
+
+                if (state.value.isEmpty()) {
+                    Text(
+                        text = placeHolder,
+                        modifier = Modifier,
+                        color = MaterialTheme.colors.grayText,
+                        style = MaterialTheme.typography.body1
+                    )
+                }
+            }
+
+        }
     }
 }
 

@@ -12,6 +12,7 @@ import io.github.diubruteforce.smartcr.model.data.Section
 import io.github.diubruteforce.smartcr.model.data.Student
 import io.github.diubruteforce.smartcr.utils.extension.whereActiveData
 import kotlinx.coroutines.tasks.await
+import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -51,7 +52,7 @@ class ClassRepository @Inject constructor(
         if (_semesterId != null) return _semesterId!!
 
         _semesterId = db.collection(departmentPath)
-            .document(getUserProfile().id)
+            .document(getUserProfile().departmentId)
             .collection(semesterPath)
             .orderBy("time", Query.Direction.DESCENDING)
             .limit(1)
@@ -70,6 +71,7 @@ class ClassRepository @Inject constructor(
             .get()
             .await()
             .map { it.toObject<Course>().copy(id = it.id) }
+            .sortedBy { it.courseTitle }
     }
 
     private suspend fun getSectionCollectionPath() =
@@ -91,12 +93,24 @@ class ClassRepository @Inject constructor(
     suspend fun getSectionData(sectionId: String?): Section {
         if (sectionId == null) return Section()
 
+        Timber.d("Section ID is not null")
+
         val response = getSectionCollectionPath()
             .document(sectionId)
             .get()
             .await()
 
         return response.toObject<Section>()?.copy(id = response.id)!!
+    }
+
+    suspend fun alreadySectionCreated(sectionName: String, courseId: String): Boolean {
+        val section = getSectionCollectionPath()
+            .whereEqualTo("course.id", courseId)
+            .whereEqualTo("name", sectionName)
+            .get()
+            .await()
+
+        return section.isEmpty.not()
     }
 
     suspend fun saveSection(section: Section) {

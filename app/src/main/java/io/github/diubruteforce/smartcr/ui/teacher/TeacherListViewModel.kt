@@ -7,6 +7,7 @@ import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
 import io.github.diubruteforce.smartcr.model.ui.EmptySuccessState
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.utils.base.StringFailSideEffectViewModel
+import io.github.diubruteforce.smartcr.utils.extension.filterByQuery
 
 data class TeacherListState(
     val teacherList: List<Teacher> = emptyList(),
@@ -35,11 +36,7 @@ class TeacherListViewModel @ViewModelInject constructor(
     }
 
     fun changeQuery(newQuery: String) = withState {
-        val newTeacherList = allTeacher.filter {
-            it.fullName.contains(newQuery, true) ||
-                    it.diuEmail.contains(newQuery, true) ||
-                    it.initial.contains(newQuery, true)
-        }.sortedBy { it.fullName }
+        val newTeacherList = allTeacher.filterByQuery(newQuery)
 
         setState { copy(teacherList = newTeacherList, query = query.copy(value = newQuery)) }
     }

@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -103,6 +105,33 @@ fun ProfileTopAppBar(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun BackPressTopAppBar(
+    modifier: Modifier = Modifier,
+    onBackPress: () -> Unit,
+    title: String
+) {
+    InsetAwareTopAppBar(modifier = modifier) {
+        IconButton(
+            modifier = Modifier.align(Alignment.CenterVertically),
+            onClick = onBackPress
+        ) {
+            Icon(imageVector = Icons.Outlined.KeyboardArrowLeft)
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        Text(
+            modifier = Modifier.align(Alignment.CenterVertically),
+            text = title
+        )
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        IconButton(onClick = {}) {}
     }
 }
 

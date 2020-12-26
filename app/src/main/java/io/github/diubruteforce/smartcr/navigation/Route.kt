@@ -36,3 +36,23 @@ class SingleOptionalArgRoute(private val path: String, private val argName: Stri
     fun getArgument(backStackEntry: NavBackStackEntry): String? =
         backStackEntry.arguments?.getString(argName)
 }
+
+class RequiredAndOptionalArgRoute(
+    private val path: String,
+    private val requiredArgName: String,
+    private val optionArgName: String
+) {
+    val route = "$path/{$requiredArgName}?$optionArgName={$optionArgName}"
+
+    fun uri(requiredArg: String, optionArg: String? = null): String {
+        return if (optionArg != null) "$path/$requiredArg?$optionArgName=$optionArg"
+        else "$path/$requiredArg"
+    }
+
+    fun getArgument(backStackEntry: NavBackStackEntry): Pair<String, String?> {
+        val required = backStackEntry.arguments?.getString(requiredArgName)!!
+        val optional = backStackEntry.arguments?.getString(optionArgName)
+
+        return Pair(required, optional)
+    }
+}

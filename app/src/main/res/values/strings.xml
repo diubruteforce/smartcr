@@ -86,4 +86,15 @@
     <string name="courses">Courses</string>
     <string name="leave">Leave</string>
     <string name="join">Join</string>
+    <string name="edit_section">Edit Section</string>
+    <string name="section_name">Section Name</string>
+    <string name="course">Course</string>
+    <string name="instructor">Instructor</string>
+    <string name="google_code">Google Code</string>
+    <string name="blc_code">BLC Code</string>
+    <string name="course_outline">Course Outline</string>
+    <string name="select_instructor">Select Instructor</string>
+    <string name="select_course">Select Course</string>
+    <string name="search_course">Search Course</string>
+    <string name="select_section_name">Select Section Name</string>
 </resources>

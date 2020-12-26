@@ -59,17 +59,9 @@ fun StudentEditScreen(
     SideEffect(
         sideEffectState = sideEffectState,
         onSuccess = {
-            when (it) {
-                StudentEditSuccess.Loaded -> {
-
-                }
-                StudentEditSuccess.ImageSaved -> {
-
-                }
-                StudentEditSuccess.ProfileSaved -> {
-                    if (onBackPress != null) onBackPress.invoke()
-                    else onNavigateToHome.invoke()
-                }
+            if (it == StudentEditSuccess.ProfileSaved) {
+                if (onBackPress != null) onBackPress.invoke()
+                else onNavigateToHome.invoke()
             }
         },
         onFailAlertDismissRequest = viewModel::clearSideEffect
