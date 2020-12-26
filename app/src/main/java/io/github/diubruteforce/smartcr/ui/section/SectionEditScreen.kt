@@ -299,7 +299,7 @@ private fun SectionEditScreenContent(
                 state = state.courseOutline,
                 onValueChange = changeCourseOutline,
                 placeHolder = stringResource(id = R.string.course_outline),
-                focusRequester = blcFocusRequester
+                focusRequester = outlineFocusRequester
             )
 
             LargeButton(text = stringResource(id = R.string.save), onClick = saveSection)

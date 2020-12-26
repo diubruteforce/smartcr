@@ -177,13 +177,12 @@ class SectionEditViewModel @ViewModelInject constructor(
                     courseId = newSection.course.id
                 )
 
-                if (alreadyCreated) {
+                if (newSection.id.isEmpty() && alreadyCreated) {
                     setSideEffect {
                         TypedSideEffectState.Fail(
                             "Someone already created ${newSection.name} for ${newSection.course.courseTitle}"
                         )
                     }
-
                 } else {
                     classRepository.saveSection(newSection)
 
