@@ -75,7 +75,7 @@ class SectionEditViewModel @ViewModelInject constructor(
                     copy(
                         sectionName = sectionName.copy(value = sectionData.name),
                         instructorName = instructorName.copy(value = selectedInstructor.name),
-                        courseTitle = courseTitle.copy(value = selectedCourse.courseTitle),
+                        courseTitle = courseTitle.copy(value = selectedCourse.courseCode),
                         googleCode = googleCode.copy(value = sectionData.googleCode),
                         blcCode = blcCode.copy(value = sectionData.blcCode),
                         courseOutline = courseOutline.copy(value = sectionData.courseOutline),
@@ -114,7 +114,7 @@ class SectionEditViewModel @ViewModelInject constructor(
 
     fun changeCourse(course: Course) = withState {
         selectedCourse = course
-        val newCourseName = courseTitle.copy(value = course.courseTitle)
+        val newCourseName = courseTitle.copy(value = course.courseCode)
 
         setState { copy(courseTitle = newCourseName) }
     }

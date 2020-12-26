@@ -97,6 +97,7 @@ class ClassRepository @Inject constructor(
             .get()
             .await()
             .map { it.toObject<Section>().copy(id = it.id) }
+            .sortedBy { it.name }
     }
 
     suspend fun getSectionData(sectionId: String?): Section {

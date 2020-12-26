@@ -77,39 +77,41 @@ private fun SectionListScreenContent(
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.normal)
         ) {
-            item {
-                Column {
-                    Text(
-                        text = state.course.courseTitle,
-                        style = MaterialTheme.typography.h6,
-                        color = MaterialTheme.colors.primary
-                    )
-
-                    Text(text = "Credit Hour: ${state.course.credit}")
-                    Text(text = "Level: ${state.course.level}")
-                    Text(text = "Term: ${state.course.term}")
-                }
-            }
-
-            item {
-                Column {
-                    Spacer(modifier = Modifier.size(Margin.normal))
-
-                    OutlinedButton(
-                        modifier = Modifier.fillMaxWidth(),
-                        onClick = createNewSection
-                    ) {
-                        Text(text = stringResource(id = R.string.create_new_section))
-                    }
-
-                    Spacer(modifier = Modifier.size(Margin.big))
-
-                    if (state.sections.isNotEmpty()) {
+            if (state.course.id.isNotEmpty()) {
+                item {
+                    Column {
                         Text(
-                            text = stringResource(id = R.string.existing_sections),
+                            text = state.course.courseTitle,
                             style = MaterialTheme.typography.h6,
-                            color = MaterialTheme.colors.grayText
+                            color = MaterialTheme.colors.primary
                         )
+
+                        Text(text = "Credit Hour: ${state.course.credit}")
+                        Text(text = "Level: ${state.course.level}")
+                        Text(text = "Term: ${state.course.term}")
+                    }
+                }
+
+                item {
+                    Column {
+                        Spacer(modifier = Modifier.size(Margin.normal))
+
+                        OutlinedButton(
+                            modifier = Modifier.fillMaxWidth(),
+                            onClick = createNewSection
+                        ) {
+                            Text(text = stringResource(id = R.string.create_new_section))
+                        }
+
+                        Spacer(modifier = Modifier.size(Margin.big))
+
+                        if (state.sections.isNotEmpty()) {
+                            Text(
+                                text = stringResource(id = R.string.existing_sections),
+                                style = MaterialTheme.typography.h6,
+                                color = MaterialTheme.colors.grayText
+                            )
+                        }
                     }
                 }
             }
