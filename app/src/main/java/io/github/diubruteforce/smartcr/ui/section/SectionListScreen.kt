@@ -86,6 +86,7 @@ private fun SectionListScreenContent(
                             color = MaterialTheme.colors.primary
                         )
 
+                        Text(text = "Course Code: ${state.course.courseCode}")
                         Text(text = "Credit Hour: ${state.course.credit}")
                         Text(text = "Level: ${state.course.level}")
                         Text(text = "Term: ${state.course.term}")
