@@ -1,10 +1,7 @@
 package io.github.diubruteforce.smartcr.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigate
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
 import io.github.diubruteforce.smartcr.ui.section.SectionDetailScreen
@@ -123,7 +120,11 @@ fun SmartCRApp() {
             StudentDetailScreen(
                 viewModel = hiltViewModel(),
                 navigateToOnBoarding = {
-                    navController.navigate(MainRoute.Auth.route)
+                    navController.navigate(MainRoute.Auth.route) {
+                        popUpTo(MainRoute.Auth.route) {
+                            inclusive = true
+                        }
+                    }
                 },
                 navigateToProfileEdit = {
                     navController.navigate(MainRoute.StudentProfileEdit.uri("backPress"))
