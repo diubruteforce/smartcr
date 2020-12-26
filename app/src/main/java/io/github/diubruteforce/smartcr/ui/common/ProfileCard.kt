@@ -165,19 +165,7 @@ fun StudentProfileCard(
                 text = student.term
             )
         },
-        sideContent = {
-            OutlinedButton(
-                shape = RoundedCornerShape(
-                    topLeft = 16.dp,
-                    topRight = 0.dp,
-                    bottomRight = 0.dp,
-                    bottomLeft = 16.dp
-                ),
-                onClick = { }
-            ) {
-                Text(text = "BATCH ${student.batch}")
-            }
-        }
+        sideContent = { }
     )
 }
 
