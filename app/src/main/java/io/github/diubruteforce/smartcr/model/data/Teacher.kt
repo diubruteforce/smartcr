@@ -10,7 +10,7 @@ data class Teacher(
     override val updaterId: String = "admin",
     override val updaterEmail: String = "admin",
     val fullName: String = "",
-    val profileUrl: String = "https://firebasestorage.googleapis.com/v0/b/smartcr-aa8e8.appspot.com/o/profile%2Fc0055a46-df2f-4b6b-a46f-b8ac7865dd20?alt=media&token=5414dacc-2425-4c12-b66f-a2c867967263",
+    val profileUrl: String = "https://firebasestorage.googleapis.com/v0/b/smartcr-aa8e8.appspot.com/o/profile%2FMask%20Group%2017.jpg?alt=media&token=6a72169e-e238-41ad-bad7-c855f3e51027",
     val initial: String = "",
     val diuEmail: String = "",
     val gender: String = "",
