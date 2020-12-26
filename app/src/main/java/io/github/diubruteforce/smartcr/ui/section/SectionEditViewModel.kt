@@ -83,6 +83,7 @@ class SectionEditViewModel @ViewModelInject constructor(
                 }
             }
 
+            searchTeacher(_teacherState.value.query.value)
             setSideEffect { TypedSideEffectState.Success(SectionEditSuccess.Loaded) }
         }
     }

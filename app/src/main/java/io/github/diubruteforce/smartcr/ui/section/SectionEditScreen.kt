@@ -3,14 +3,13 @@ package io.github.diubruteforce.smartcr.ui.section
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.Scaffold
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
 import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.SettingsCell
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.AmbientFocusManager
@@ -23,6 +22,7 @@ import io.github.diubruteforce.smartcr.ui.bottomsheet.ListBottomSheet
 import io.github.diubruteforce.smartcr.ui.bottomsheet.SheetHeader
 import io.github.diubruteforce.smartcr.ui.common.*
 import io.github.diubruteforce.smartcr.ui.theme.Margin
+import io.github.diubruteforce.smartcr.ui.theme.grayText
 import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBottomSheetState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
@@ -39,12 +39,13 @@ fun SectionEditScreen(
     viewModel: SectionEditViewModel,
     sectionId: String?,
     courseId: String,
+    navigateToTeacherEdit: () -> Unit,
     onBackPress: () -> Unit
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
     val sheetState = rememberBackPressAwareBottomSheetState()
     val scope = rememberCoroutineScope()
-    var currentSheet by remember { mutableStateOf(SectionEditSheet.Course) }
+    var currentSheet by remember { mutableStateOf(SectionEditSheet.Instructor) }
 
     val focusManager = AmbientFocusManager.current
     val (courseFocusRequester, instructorFocusRequester) = FocusRequester.createRefs()
@@ -155,6 +156,33 @@ fun SectionEditScreen(
                                         }
                                     }
                                 )
+                            }
+
+                            if (teacherState.teacherList.isEmpty()) {
+                                item {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.Center,
+                                    ) {
+                                        Text(
+                                            text = stringResource(id = R.string.didnt_find_teacher),
+                                            color = MaterialTheme.colors.grayText
+                                        )
+
+                                        TextButton(
+                                            onClick = navigateToTeacherEdit,
+                                            colors = ButtonDefaults.textButtonColors(
+                                                contentColor = MaterialTheme.colors.error
+                                            )
+                                        ) {
+                                            Text(
+                                                text = stringResource(id = R.string.creat_one),
+                                                style = MaterialTheme.typography.body1
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
