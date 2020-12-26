@@ -1,5 +1,6 @@
 package io.github.diubruteforce.smartcr.utils.extension
 
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.OnBackPressedDispatcherOwner
 import androidx.activity.addCallback
 import androidx.compose.material.ExperimentalMaterialApi
@@ -27,4 +28,14 @@ fun rememberBackPressAwareBottomSheetState(): ModalBottomSheetState {
     onDispose { onBackPressedCallback.remove() }
 
     return sheetState
+}
+
+@Composable
+fun rememberOnBackPressCallback(onBackPress: () -> Unit): OnBackPressedCallback {
+    val mainActivity = AmbientContext.current as OnBackPressedDispatcherOwner
+    return remember {
+        mainActivity.onBackPressedDispatcher.addCallback {
+            onBackPress.invoke()
+        }
+    }
 }

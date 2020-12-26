@@ -20,16 +20,18 @@ data class Section(
 
 data class Instructor(
     val id: String = "",
-    val name: String = "",
+    val fullName: String = "",
     val designation: String = "",
     val department: String = "",
+    val departmentCode: String = "",
     val profileUrl: String = ""
 )
 
 fun Teacher.toInstructor() = Instructor(
     id = this.id,
-    name = this.fullName,
+    fullName = this.fullName,
     designation = this.designation,
     department = this.departmentName,
+    departmentCode = this.departmentCode,
     profileUrl = this.profileUrl
 )

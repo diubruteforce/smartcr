@@ -24,6 +24,7 @@ class ClassRepository @Inject constructor(
     private val sectionPath = "section"
     private val studentPath = "student"
     private val historyPath = "history"
+    private val routinePath = "routine"
 
     private var _semesterId: String? = null
     private var _userProfile: Student? = null
@@ -89,6 +90,13 @@ class ClassRepository @Inject constructor(
             .collection(semesterPath)
             .document(getSemesterId())
             .collection(sectionPath)
+
+    private suspend fun getRoutineCollectionPath() =
+        db.collection(departmentPath)
+            .document(getUserProfile().departmentId)
+            .collection(semesterPath)
+            .document(getSemesterId())
+            .collection(routinePath)
 
     suspend fun getSectionList(courseId: String): List<Section> {
         return getSectionCollectionPath()
@@ -181,5 +189,63 @@ class ClassRepository @Inject constructor(
         _userProfile = updatedProfile
 
         return updatedProfile
+    }
+
+    suspend fun getSectionRoutineList(sectionId: String): List<Routine> {
+        return getRoutineCollectionPath()
+            .whereActiveData()
+            .whereEqualTo("sectionId", sectionId)
+            .get()
+            .await()
+            .map { it.toObject<Routine>().copy(id = it.id) }
+            .sortedWith { left, right ->
+                val leftIndex = Week.values().indexOfFirst {
+                    left.day.equals(it.name, true)
+                }
+                val rightIndex = Week.values().indexOfFirst {
+                    right.day.equals(it.name, true)
+                }
+
+                when {
+                    leftIndex > rightIndex -> 1
+                    leftIndex < rightIndex -> -1
+                    else -> 0
+                }
+            }
+    }
+
+    suspend fun saveRoutine(routine: Routine) {
+        val newRoutine = routine.copy(
+            updaterId = getUserProfile().id,
+            updaterEmail = getUserProfile().diuEmail,
+            updatedOn = Timestamp.now()
+        )
+
+        val routineId = if (newRoutine.id.isEmpty()) {
+            getRoutineCollectionPath()
+                .add(newRoutine)
+                .await()
+                .id
+        } else {
+            getRoutineCollectionPath()
+                .document(newRoutine.id)
+                .set(newRoutine, SetOptions.merge())
+                .await()
+
+            newRoutine.id
+        }
+
+        // keeping history
+        getRoutineCollectionPath()
+            .document(routineId)
+            .collection(historyPath)
+            .add(newRoutine.copy(id = routineId))
+    }
+
+    suspend fun deleteRoutine(routineId: String) {
+        getRoutineCollectionPath()
+            .document(routineId)
+            .delete()
+            .await()
     }
 }

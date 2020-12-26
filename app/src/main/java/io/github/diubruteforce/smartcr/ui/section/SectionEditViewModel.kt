@@ -74,7 +74,7 @@ class SectionEditViewModel @ViewModelInject constructor(
                 setState {
                     copy(
                         sectionName = sectionName.copy(value = sectionData.name),
-                        instructorName = instructorName.copy(value = selectedInstructor.name),
+                        instructorName = instructorName.copy(value = selectedInstructor.fullName),
                         courseTitle = courseTitle.copy(value = selectedCourse.courseCode),
                         googleCode = googleCode.copy(value = sectionData.googleCode),
                         blcCode = blcCode.copy(value = sectionData.blcCode),

@@ -102,4 +102,12 @@
     <string name="section_list">Section List</string>
     <string name="create_new_section">Create New Section</string>
     <string name="existing_sections">Existing Sections</string>
+    <string name="section_detail">Section Detail</string>
+    <string name="edit_routine">Edit Routine</string>
+    <string name="google_classroom_code">Google Classroom Code</string>
+    <string name="copy">Copy</string>
+    <string name="blc_classroom_code">BLC Classroom code</string>
+    <string name="routine_delete">If you delete routine all the other student will not be able to view this routine any more.</string>
+    <string name="routine">Routine</string>
+    <string name="course_detail">Course Detail</string>
 </resources>

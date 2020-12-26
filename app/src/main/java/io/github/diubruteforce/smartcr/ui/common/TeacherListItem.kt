@@ -16,7 +16,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.accompanist.coil.CoilImage
-import io.github.diubruteforce.smartcr.model.data.Teacher
+import io.github.diubruteforce.smartcr.model.data.Instructor
 import io.github.diubruteforce.smartcr.ui.theme.CornerRadius
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
@@ -25,14 +25,14 @@ import io.github.diubruteforce.smartcr.ui.theme.grayBorder
 @Composable
 fun TeacherListItem(
     modifier: Modifier = Modifier,
-    teacher: Teacher,
-    itemClick: (Teacher) -> Unit
+    instructor: Instructor,
+    itemClick: (String) -> Unit
 ) {
     val interactionState = remember { InteractionState() }
 
     Card(
         modifier = modifier.clickable(
-            onClick = { itemClick.invoke(teacher) },
+            onClick = { itemClick.invoke(instructor.id) },
             interactionState = interactionState,
             indication = null
         ),
@@ -51,14 +51,14 @@ fun TeacherListItem(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = teacher.fullName,
+                    text = instructor.fullName,
                     style = MaterialTheme.typography.body1,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1
                 )
 
                 Text(
-                    text = "Department: ${teacher.departmentCode}",
+                    text = "Department: ${instructor.departmentCode}",
                     style = MaterialTheme.typography.body2
                 )
             }
@@ -74,7 +74,7 @@ fun TeacherListItem(
                 CoilImage(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
-                    data = teacher.profileUrl,
+                    data = instructor.profileUrl,
                     fadeIn = true
                 )
             }
@@ -92,7 +92,7 @@ private fun PreviewTeacherListItem() {
         ) {
             (1..10).forEach {
                 TeacherListItem(
-                    teacher = Teacher(
+                    instructor = Instructor(
                         fullName = "Abui mian kuddus boyati",
                         departmentCode = "CSE"
                     ),

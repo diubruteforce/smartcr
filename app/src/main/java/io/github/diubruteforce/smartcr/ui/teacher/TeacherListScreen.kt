@@ -22,6 +22,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
+import io.github.diubruteforce.smartcr.model.data.toInstructor
 import io.github.diubruteforce.smartcr.ui.common.FullName
 import io.github.diubruteforce.smartcr.ui.common.InsetAwareTopAppBar
 import io.github.diubruteforce.smartcr.ui.common.SideEffect
@@ -121,7 +122,7 @@ private fun TeacherListContent(
         ) {
             items(state.teacherList) { teacher ->
                 TeacherListItem(
-                    teacher = teacher,
+                    instructor = teacher.toInstructor(),
                     itemClick = { navigateToTeacherDetail(teacher.id) }
                 )
             }

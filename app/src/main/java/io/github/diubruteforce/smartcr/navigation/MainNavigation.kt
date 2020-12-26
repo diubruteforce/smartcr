@@ -7,6 +7,7 @@ import androidx.navigation.compose.navigate
 import androidx.navigation.compose.rememberNavController
 import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
+import io.github.diubruteforce.smartcr.ui.section.SectionDetailScreen
 import io.github.diubruteforce.smartcr.ui.section.SectionEditScreen
 import io.github.diubruteforce.smartcr.ui.section.SectionListScreen
 import io.github.diubruteforce.smartcr.ui.smartcr.SmartCRScreen
@@ -23,7 +24,7 @@ fun SmartCRApp() {
 
     NavHost(
         navController = navController,
-        startDestination = MainRoute.CourseList.route
+        startDestination = MainRoute.SectionDetail.route
     ) {
         authNavigation(
             navController = navController,
@@ -172,6 +173,24 @@ fun SmartCRApp() {
         }
         // endregion
 
+        // region: SectionDetail
+        composable(MainRoute.SectionDetail.route) {
+            val sectionId = "TS2CxBowARiLEsEPUYEP" //MainRoute.SectionDetail.getArgument(it)
+
+            SectionDetailScreen(
+                viewModel = hiltViewModel(),
+                sectionId = sectionId,
+                navigateToSectionEdit = { course, section ->
+                    navController.navigate(MainRoute.SectionEdit.uri(course, section))
+                },
+                navigateToTeacherDetail = {
+                    navController.navigate(MainRoute.TeacherDetail.uri(it))
+                },
+                onBackPress = navController::navigateUp
+            )
+        }
+        // endregion
+
     }
 }
 
@@ -194,4 +213,5 @@ object MainRoute {
         optionArgName = "sectionId"
     )
     val SectionList = SingleArgRoute("SectionList", "courseId")
+    val SectionDetail = SingleArgRoute("SectionDetail", "sectionId")
 }

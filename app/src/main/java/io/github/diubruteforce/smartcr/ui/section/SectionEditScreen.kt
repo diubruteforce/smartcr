@@ -18,6 +18,7 @@ import androidx.compose.ui.text.input.ImeAction
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 import io.github.diubruteforce.smartcr.R
+import io.github.diubruteforce.smartcr.model.data.toInstructor
 import io.github.diubruteforce.smartcr.ui.bottomsheet.ListBottomSheet
 import io.github.diubruteforce.smartcr.ui.bottomsheet.SheetHeader
 import io.github.diubruteforce.smartcr.ui.common.*
@@ -146,7 +147,7 @@ fun SectionEditScreen(
                         ) {
                             items(teacherState.teacherList) { teacher ->
                                 TeacherListItem(
-                                    teacher = teacher,
+                                    instructor = teacher.toInstructor(),
                                     itemClick = {
                                         viewModel.changeTeacher(teacher)
                                         scope.launch {
