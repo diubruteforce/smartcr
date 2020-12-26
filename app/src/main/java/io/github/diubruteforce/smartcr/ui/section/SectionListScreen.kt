@@ -47,7 +47,11 @@ fun SectionListScreen(
         navigateToSectionDetail = navigateToSectionDetail,
         joinSection = viewModel::joinSection,
         leaveSection = viewModel::leaveSection,
-        createNewSection = { createNewSection.invoke(courseId) },
+        createNewSection = {
+            if (viewModel.canCreateNewSection()) {
+                createNewSection.invoke(courseId)
+            }
+        },
         onBackPress = onBackPress
     )
 }

@@ -8,6 +8,7 @@ import io.github.diubruteforce.smartcr.model.data.Week
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
 import io.github.diubruteforce.smartcr.model.ui.EmptySuccessState
 import io.github.diubruteforce.smartcr.model.ui.InputState
+import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.StringFailSideEffectViewModel
 
 data class SectionDetailState(
@@ -41,14 +42,18 @@ class SectionDetailViewModel @ViewModelInject constructor(
     }
 
     fun startEditingRoutine(routine: Routine) = withState {
-        setState {
-            copy(
-                editingRoutine = routine,
-                room = room.copy(value = routine.room),
-                day = day.copy(value = routine.day),
-                startTime = startTime.copy(value = routine.startTime),
-                endTime = endTime.copy(value = routine.endTime)
-            )
+        launchInViewModelScope {
+            if (canEditSection()) {
+                setState {
+                    copy(
+                        editingRoutine = routine,
+                        room = room.copy(value = routine.room),
+                        day = day.copy(value = routine.day),
+                        startTime = startTime.copy(value = routine.startTime),
+                        endTime = endTime.copy(value = routine.endTime)
+                    )
+                }
+            }
         }
     }
 
@@ -125,5 +130,18 @@ class SectionDetailViewModel @ViewModelInject constructor(
             setState { copy(routines = routineList, editingRoutine = null) }
             setSideEffect { EmptySuccessState }
         }
+    }
+
+    suspend fun canEditSection(): Boolean {
+        val isMember =
+            classRepository.getUserProfile().joinedSection.contains(state.value.section.id)
+
+        if (isMember.not()) setSideEffect {
+            TypedSideEffectState.Fail(
+                "You have not joined this section. To edit you must have to join this section"
+            )
+        }
+
+        return isMember
     }
 }

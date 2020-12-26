@@ -38,6 +38,7 @@ import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBot
 import io.github.diubruteforce.smartcr.utils.extension.rememberOnBackPressCallback
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
@@ -52,6 +53,8 @@ fun SectionDetailScreen(
     val sideEffect = viewModel.sideEffect.collectAsState().value
     val mainActivity = getMainActivity()
     var deleteRoutineState by remember { mutableStateOf<Routine?>(null) }
+
+    val scope = rememberCoroutineScope()
 
     onActive {
         viewModel.loadData(sectionId)
@@ -115,7 +118,12 @@ fun SectionDetailScreen(
             },
             saveRoutine = viewModel::saveRoutine,
             cancelEditing = viewModel::cancelEditing,
-            navigateToSectionEdit = navigateToSectionEdit,
+            navigateToSectionEdit = { courseId, sectionId ->
+                scope.launch {
+                    if (viewModel.canEditSection())
+                        navigateToSectionEdit.invoke(courseId, sectionId)
+                }
+            },
             navigateToTeacherDetail = navigateToTeacherDetail,
             onBackPress = onBackPress
         )

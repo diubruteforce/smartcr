@@ -93,4 +93,12 @@ class SectionListViewModel @ViewModelInject constructor(
     override fun onCoroutineException(exception: Throwable) {
         setSideEffect { TypedSideEffectState.Fail(exception.message ?: String.Error) }
     }
+
+    fun canCreateNewSection(): Boolean {
+        if (joinedInAnotherSection) {
+            setSideEffect { TypedSideEffectState.Fail("You are already a member of a section. To create new section you must have to leave from that section.") }
+        }
+
+        return joinedInAnotherSection.not()
+    }
 }

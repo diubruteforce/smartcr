@@ -24,11 +24,11 @@ fun SmartCRApp() {
 
     NavHost(
         navController = navController,
-        startDestination = MainRoute.SectionDetail.route
+        startDestination = MainRoute.Auth.route
     ) {
         authNavigation(
             navController = navController,
-            route = MainRoute.CourseList.route
+            route = MainRoute.Auth.route
         )
 
         // region: SmartCR
@@ -160,13 +160,15 @@ fun SmartCRApp() {
         // endregion
 
         // region: SectionList
-        composable(MainRoute.SectionList.route) {
-            val courseId = MainRoute.SectionList.getArgument(it)
+        composable(MainRoute.SectionList.route) { backStack ->
+            val courseId = MainRoute.SectionList.getArgument(backStack)
 
             SectionListScreen(
                 viewModel = hiltViewModel(),
                 courseId = courseId,
-                navigateToSectionDetail = { /*TODO*/ },
+                navigateToSectionDetail = {
+                    navController.navigate(MainRoute.SectionDetail.uri(it))
+                },
                 createNewSection = { navController.navigate(MainRoute.SectionEdit.uri(it)) },
                 onBackPress = navController::navigateUp
             )
@@ -174,8 +176,8 @@ fun SmartCRApp() {
         // endregion
 
         // region: SectionDetail
-        composable(MainRoute.SectionDetail.route) {
-            val sectionId = "TS2CxBowARiLEsEPUYEP" //MainRoute.SectionDetail.getArgument(it)
+        composable(MainRoute.SectionDetail.route) { backStack ->
+            val sectionId = MainRoute.SectionDetail.getArgument(backStack)
 
             SectionDetailScreen(
                 viewModel = hiltViewModel(),
