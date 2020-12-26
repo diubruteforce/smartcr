@@ -97,4 +97,9 @@
     <string name="select_course">Select Course</string>
     <string name="search_course">Search Course</string>
     <string name="select_section_name">Select Section Name</string>
+    <string name="didnt_find_teacher">Didn\'t find teacher?</string>
+    <string name="creat_one">Create one</string>
+    <string name="section_list">Section List</string>
+    <string name="create_new_section">Create New Section</string>
+    <string name="existing_sections">Existing Sections</string>
 </resources>

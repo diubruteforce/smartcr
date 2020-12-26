@@ -19,14 +19,19 @@ import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 import io.github.diubruteforce.smartcr.ui.theme.grayBorder
 
+data class SectionListItemState(
+    val courseId: String,
+    val name: String,
+    val isJoined: Boolean
+)
+
 @Composable
 fun SectionListItem(
     modifier: Modifier = Modifier,
-    text: String,
-    isJoined: Boolean,
+    state: SectionListItemState,
     itemClick: () -> Unit,
     onJoin: () -> Unit,
-    onQuit: () -> Unit
+    onLeave: () -> Unit
 
 ) {
     val interactionState = remember { InteractionState() }
@@ -49,16 +54,16 @@ fun SectionListItem(
         ) {
             Text(
                 modifier = Modifier.weight(2.5f),
-                text = text,
+                text = state.name,
                 maxLines = 1,
                 style = MaterialTheme.typography.h6,
                 fontWeight = FontWeight.W400
             )
 
-            if (isJoined) {
+            if (state.isJoined) {
                 Button(
                     modifier = Modifier.weight(1f).heightIn(min = 56.dp),
-                    onClick = onQuit,
+                    onClick = onLeave,
                     shape = RoundedCornerShape(CornerRadius.normal),
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error)
                 ) {
@@ -88,11 +93,10 @@ private fun PreviewSectionListItem() {
         ) {
             (0..5).forEach {
                 SectionListItem(
-                    text = "Section $it",
-                    isJoined = it % 2 == 1,
+                    state = SectionListItemState("", "Section $it", it % 2 == 1),
                     itemClick = { },
                     onJoin = { },
-                    onQuit = { }
+                    onLeave = { }
                 )
             }
         }

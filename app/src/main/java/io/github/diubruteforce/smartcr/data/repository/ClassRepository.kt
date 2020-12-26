@@ -6,10 +6,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
-import io.github.diubruteforce.smartcr.model.data.Course
-import io.github.diubruteforce.smartcr.model.data.Department
-import io.github.diubruteforce.smartcr.model.data.Section
-import io.github.diubruteforce.smartcr.model.data.Student
+import io.github.diubruteforce.smartcr.model.data.*
 import io.github.diubruteforce.smartcr.utils.extension.whereActiveData
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
@@ -25,6 +22,7 @@ class ClassRepository @Inject constructor(
     private val coursePath = "course"
     private val semesterPath = "semester"
     private val sectionPath = "section"
+    private val studentPath = "student"
     private val historyPath = "history"
 
     private var _semesterId: String? = null
@@ -40,8 +38,8 @@ class ClassRepository @Inject constructor(
             .sortedBy { it.name }
     }
 
-    private suspend fun getUserProfile(): Student {
-        if (_userProfile != null) return _userProfile!!
+    suspend fun getUserProfile(force: Boolean = false): Student {
+        if (force.not() && _userProfile != null) return _userProfile!!
 
         _userProfile = profileRepository.getUserProfile()
 
@@ -74,6 +72,17 @@ class ClassRepository @Inject constructor(
             .sortedBy { it.courseTitle }
     }
 
+    suspend fun getCourse(courseId: String): Course {
+        val response = db.collection(departmentPath)
+            .document(getUserProfile().departmentId)
+            .collection(coursePath)
+            .document(courseId)
+            .get()
+            .await()
+
+        return response.toObject<Course>()?.copy(id = response.id)!!
+    }
+
     private suspend fun getSectionCollectionPath() =
         db.collection(departmentPath)
             .document(getUserProfile().departmentId)
@@ -84,7 +93,7 @@ class ClassRepository @Inject constructor(
     suspend fun getSectionList(courseId: String): List<Section> {
         return getSectionCollectionPath()
             .whereActiveData()
-            .whereEqualTo("courseId", courseId)
+            .whereEqualTo("course.id", courseId)
             .get()
             .await()
             .map { it.toObject<Section>().copy(id = it.id) }
@@ -137,5 +146,39 @@ class ClassRepository @Inject constructor(
             .collection(historyPath)
             .add(newSection)
             .await()
+    }
+
+    suspend fun joinSection(sectionId: String): Student {
+        getSectionCollectionPath()
+            .document(sectionId)
+            .collection(studentPath)
+            .document(getUserProfile().id)
+            .set(getUserProfile().toMemberStudent())
+            .await()
+
+        val updatedJoinedSection = getUserProfile().joinedSection + sectionId
+        val updatedProfile = getUserProfile().copy(joinedSection = updatedJoinedSection)
+
+        profileRepository.saveUserProfile(updatedProfile)
+        _userProfile = updatedProfile
+
+        return updatedProfile
+    }
+
+    suspend fun leaveSection(sectionId: String): Student {
+        getSectionCollectionPath()
+            .document(sectionId)
+            .collection(studentPath)
+            .document(getUserProfile().id)
+            .delete()
+            .await()
+
+        val updatedJoinedSection = getUserProfile().joinedSection.filter { it != sectionId }
+        val updatedProfile = getUserProfile().copy(joinedSection = updatedJoinedSection)
+
+        profileRepository.saveUserProfile(updatedProfile)
+        _userProfile = updatedProfile
+
+        return updatedProfile
     }
 }
