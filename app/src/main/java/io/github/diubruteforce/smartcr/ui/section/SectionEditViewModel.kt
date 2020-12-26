@@ -3,8 +3,7 @@ package io.github.diubruteforce.smartcr.ui.section
 import androidx.hilt.lifecycle.ViewModelInject
 import io.github.diubruteforce.smartcr.data.repository.ClassRepository
 import io.github.diubruteforce.smartcr.data.repository.TeacherRepository
-import io.github.diubruteforce.smartcr.model.data.Course
-import io.github.diubruteforce.smartcr.model.data.Teacher
+import io.github.diubruteforce.smartcr.model.data.*
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
 import io.github.diubruteforce.smartcr.model.ui.Error
 import io.github.diubruteforce.smartcr.model.ui.InputState
@@ -13,11 +12,11 @@ import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
 
 data class SectionEditState(
     val sectionName: InputState = InputState.NotEmptyState,
-    val facultyName: InputState = InputState.NotEmptyState,
-    val courseName: InputState = InputState.NotEmptyState,
-    val googleCode: InputState = InputState.NotEmptyState,
-    val blcCode: InputState = InputState.NotEmptyState,
-    val courseOutline: InputState = InputState.NotEmptyState,
+    val instructorName: InputState = InputState.NotEmptyState,
+    val courseTitle: InputState = InputState.NotEmptyState,
+    val googleCode: InputState = InputState.EmptyState,
+    val blcCode: InputState = InputState.EmptyState,
+    val courseOutline: InputState = InputState.EmptyState,
     val teacherList: List<Teacher> = emptyList(),
     val courseList: List<Course> = emptyList()
 )
@@ -32,18 +31,33 @@ class SectionEditViewModel @ViewModelInject constructor(
 ) : BaseViewModel<SectionEditState, Any, SectionEditSuccess, String>(
     initialState = SectionEditState(),
 ) {
-    private var selectedCourse: Course? = null
-    private var selectedTeacher: Teacher? = null
+    private lateinit var sectionData: Section
+    private lateinit var selectedCourse: Course
+    private lateinit var selectedInstructor: Instructor
 
-    fun loadDate() {
+    fun loadDate(sectionId: String?) {
         launchInViewModelScope {
             setSideEffect { EmptyLoadingState }
+
+            sectionData = classRepository.getSectionData(sectionId)
+            selectedCourse = sectionData.course
+            selectedInstructor = sectionData.instructor
+
             val courseList = classRepository.getCourseList()
             val teacherList = teacherRepository.getAllTeacher()
 
             withState {
                 setState {
-                    copy(teacherList = teacherList, courseList = courseList)
+                    copy(
+                        sectionName = sectionName.copy(value = sectionData.name),
+                        instructorName = instructorName.copy(value = sectionData.instructor.name),
+                        courseTitle = courseTitle.copy(value = sectionData.course.courseTitle),
+                        googleCode = googleCode.copy(value = sectionData.googleCode),
+                        blcCode = blcCode.copy(value = sectionData.blcCode),
+                        courseOutline = courseOutline.copy(value = sectionData.courseOutline),
+                        teacherList = teacherList,
+                        courseList = courseList
+                    )
                 }
             }
 
@@ -52,17 +66,19 @@ class SectionEditViewModel @ViewModelInject constructor(
     }
 
     fun changeTeacher(teacher: Teacher) = withState {
-        selectedTeacher = teacher
-        val newFacultyName = facultyName.copy(value = teacher.fullName)
+        selectedInstructor = teacher.toInstructor()
+        val newFacultyName = instructorName.copy(value = teacher.fullName)
 
-        setState { copy(facultyName = newFacultyName) }
+        setState { copy(instructorName = newFacultyName) }
     }
+
+    fun canChangeCourseOrName(): Boolean = sectionData.id.isEmpty()
 
     fun changeCourse(course: Course) = withState {
         selectedCourse = course
-        val newCourseName = courseName.copy(value = course.courseTitle)
+        val newCourseName = courseTitle.copy(value = course.courseTitle)
 
-        setState { copy(courseName = newCourseName) }
+        setState { copy(courseTitle = newCourseName) }
     }
 
     fun changeSectionName(name: String) = withState {
@@ -86,7 +102,44 @@ class SectionEditViewModel @ViewModelInject constructor(
     fun changeCourseOutline(outline: String) = withState {
         val newOutline = courseOutline.copy(value = outline)
 
-        setState { copy(courseName = newOutline) }
+        setState { copy(courseTitle = newOutline) }
+    }
+
+    fun saveSection() = withState {
+        val newSectionName = sectionName.validate()
+        val newCourseTitle = courseTitle.validate()
+        val newInstructorName = instructorName.validate()
+
+        val isError = newSectionName.isError ||
+                newCourseTitle.isError ||
+                newInstructorName.isError
+
+        setState {
+            copy(
+                sectionName = newSectionName,
+                courseTitle = newCourseTitle,
+                instructorName = newInstructorName
+            )
+        }
+
+        if (isError.not()) {
+            launchInViewModelScope {
+                setSideEffect { EmptyLoadingState }
+
+                val newSection = sectionData.copy(
+                    name = newSectionName.value,
+                    course = selectedCourse,
+                    instructor = selectedInstructor,
+                    googleCode = googleCode.value,
+                    blcCode = blcCode.value,
+                    courseOutline = courseOutline.value
+                )
+
+                classRepository.saveSection(newSection)
+
+                setSideEffect { TypedSideEffectState.Success(SectionEditSuccess.Saved) }
+            }
+        }
     }
 
 

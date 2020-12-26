@@ -25,3 +25,11 @@ data class Instructor(
     val department: String = "",
     val profileUrl: String = ""
 )
+
+fun Teacher.toInstructor() = Instructor(
+    id = this.id,
+    name = this.fullName,
+    designation = this.designation,
+    department = this.departmentName,
+    profileUrl = this.profileUrl
+)

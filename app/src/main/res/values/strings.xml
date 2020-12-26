@@ -84,6 +84,6 @@
     <string name="sign_out">Sign Out</string>
     <string name="profile_delete">If you delete your profile then you can\'t use this app anymore. And you will lose all of your dataIm</string>
     <string name="courses">Courses</string>
-    <string name="quit">Quit</string>
+    <string name="leave">Leave</string>
     <string name="join">Join</string>
 </resources>

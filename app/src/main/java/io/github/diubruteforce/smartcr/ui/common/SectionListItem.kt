@@ -62,7 +62,7 @@ fun SectionListItem(
                     shape = RoundedCornerShape(CornerRadius.normal),
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error)
                 ) {
-                    Text(text = stringResource(id = R.string.quit))
+                    Text(text = stringResource(id = R.string.leave))
                 }
             } else {
                 OutlinedButton(

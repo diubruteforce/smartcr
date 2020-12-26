@@ -2,6 +2,7 @@ package io.github.diubruteforce.smartcr.ui.teacher
 
 import android.net.Uri
 import androidx.hilt.lifecycle.ViewModelInject
+import io.github.diubruteforce.smartcr.data.repository.ClassRepository
 import io.github.diubruteforce.smartcr.data.repository.TeacherRepository
 import io.github.diubruteforce.smartcr.model.data.Department
 import io.github.diubruteforce.smartcr.model.data.Designation
@@ -30,7 +31,8 @@ data class TeacherEditState(
 enum class TeacherEditSuccess { Loaded, ProfileSaved, ImageSaved }
 
 class TeacherEditViewModel @ViewModelInject constructor(
-    private val teacherRepository: TeacherRepository
+    private val teacherRepository: TeacherRepository,
+    private val classRepository: ClassRepository
 ) : BaseViewModel<TeacherEditState, Any, TeacherEditSuccess, String>(
     initialState = TeacherEditState()
 ) {
@@ -40,7 +42,7 @@ class TeacherEditViewModel @ViewModelInject constructor(
         setSideEffect { EmptyLoadingState }
 
         launchInViewModelScope {
-            val departmentList = teacherRepository.getAllDepartment()
+            val departmentList = classRepository.getAllDepartment()
             val profile = teacherRepository.getTeacherProfile(teacherId)
 
             storedDepartment = departmentList.find { it.codeName == profile.departmentCode }

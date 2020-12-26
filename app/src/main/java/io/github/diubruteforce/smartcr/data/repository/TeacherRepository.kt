@@ -14,8 +14,7 @@ import javax.inject.Inject
 
 class TeacherRepository @Inject constructor(
     private val storageRepository: StorageRepository,
-    private val profileRepository: ProfileRepository,
-    private val classRepository: ClassRepository
+    private val profileRepository: ProfileRepository
 ) {
     private val db = Firebase.firestore
     private val teacherProfilePath = "teachers"
@@ -23,8 +22,6 @@ class TeacherRepository @Inject constructor(
     private val counselingPath = "counseling"
 
     private var teacherId: String? = null
-
-    suspend fun getAllDepartment() = classRepository.getAllDepartment()
 
     /*
     * TODO: If a user just add an image but don't add
