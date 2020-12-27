@@ -34,7 +34,7 @@ class HomeViewModel @ViewModelInject constructor(
         val currentDate = currentDateTime.toDateString()
 
         val routineList = classRepository.getStudentRoutineList()
-        val postList = classRepository.getTodayPostList(currentDay)
+        val postList = classRepository.getTodayPostList(currentDate)
 
 
         val postStateList = routineList
@@ -55,7 +55,7 @@ class HomeViewModel @ViewModelInject constructor(
         postList.mapTo(postStateList) {
             PostCardState(
                 type = PostType.valueOf(it.postType),
-                title = "${it.courseCode} (${it.postType} - ${it.number})",
+                title = "${it.courseCode} (${it.number})",
                 firstRow = "Time: ${it.time}",
                 dateTimeMillis = it.dateTimeMillis,
                 secondRow = "Place: ${it.place}",

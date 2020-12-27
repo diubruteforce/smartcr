@@ -24,7 +24,7 @@ data class SectionDetailState(
 class SectionDetailViewModel @ViewModelInject constructor(
     private val classRepository: ClassRepository
 ) : StringFailSideEffectViewModel<SectionDetailState>(
-    initialState = SectionDetailState(),
+    initialState = SectionDetailState()
 ) {
     fun loadData(sectionId: String) = launchInViewModelScope {
         setSideEffect { EmptyLoadingState }

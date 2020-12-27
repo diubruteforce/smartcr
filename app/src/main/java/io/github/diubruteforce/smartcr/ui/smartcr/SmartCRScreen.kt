@@ -29,6 +29,7 @@ fun SmartCRScreen(
     navigateToSectionDetail: (String) -> Unit,
     navigateToPostDetail: (PostType, String) -> Unit,
     navigateToCourseList: () -> Unit,
+    navigateToPostEdit: (PostType, String?) -> Unit,
     onMenuClick: (Menu) -> Unit
 ) {
     var currentScreen by savedInstanceState { HomeRoute.HOME }
@@ -69,7 +70,8 @@ fun SmartCRScreen(
                     viewModel = hiltViewModel(),
                     navigateToSectionDetail = navigateToSectionDetail,
                     navigateToPostDetail = navigateToPostDetail,
-                    navigateToCourseList = navigateToCourseList
+                    navigateToCourseList = navigateToCourseList,
+                    navigateToPostEdit = { navigateToPostEdit.invoke(it, null) }
                 )
             }
             HomeRoute.EVENT -> {

@@ -7,9 +7,11 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import io.github.diubruteforce.smartcr.model.data.*
+import io.github.diubruteforce.smartcr.utils.extension.toDateString
 import io.github.diubruteforce.smartcr.utils.extension.whereActiveData
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
+import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -313,5 +315,77 @@ class ClassRepository @Inject constructor(
                     PostType.Project -> it.toObject<Project>().copy(id = it.id)
                 }
             }
+    }
+
+    suspend fun getPost(postType: PostType, postId: String?): Post {
+        if (postId == null) {
+            val currentDate = Calendar.getInstance(Locale.getDefault()).toDateString()
+            return when (postType) {
+                PostType.Quiz -> Quiz().copy(date = currentDate)
+                PostType.Assignment -> Assignment().copy(date = currentDate)
+                PostType.Presentation -> Presentation().copy(date = currentDate)
+                PostType.Project -> Project().copy(date = currentDate)
+                PostType.Routine -> Quiz().copy(date = currentDate)
+            }
+        }
+
+        val response = getPostCollectionPath()
+            .document(postId)
+            .get()
+            .await()
+
+        return when (postType) {
+            PostType.Quiz -> response.toObject<Quiz>()!!.copy(id = response.id)
+            PostType.Assignment -> response.toObject<Assignment>()!!.copy(id = response.id)
+            PostType.Presentation -> response.toObject<Presentation>()!!.copy(id = response.id)
+            PostType.Project -> response.toObject<Project>()!!.copy(id = response.id)
+            PostType.Routine -> Quiz() // this won't happen
+        }
+    }
+
+    suspend fun savePost(post: Post) {
+        val newPost = when (post) {
+            is Quiz -> post.copy(
+                updaterId = getUserProfile().id,
+                updaterEmail = getUserProfile().diuEmail,
+                updatedOn = Timestamp.now()
+            )
+            is Assignment -> post.copy(
+                updaterId = getUserProfile().id,
+                updaterEmail = getUserProfile().diuEmail,
+                updatedOn = Timestamp.now()
+            )
+            is Presentation -> post.copy(
+                updaterId = getUserProfile().id,
+                updaterEmail = getUserProfile().diuEmail,
+                updatedOn = Timestamp.now()
+            )
+            is Project -> post.copy(
+                updaterId = getUserProfile().id,
+                updaterEmail = getUserProfile().diuEmail,
+                updatedOn = Timestamp.now()
+            )
+        }
+
+        val postId = if (newPost.id.isEmpty()) {
+            val id = getPostCollectionPath().add(newPost).await().id
+            val idData = mapOf("id" to id)
+            getPostCollectionPath().document(id).set(idData, SetOptions.merge()).await()
+
+            id
+        } else {
+            getPostCollectionPath()
+                .document(newPost.id)
+                .set(newPost, SetOptions.merge())
+                .await()
+
+            newPost.id
+        }
+
+        // Keeping history
+        getPostCollectionPath()
+            .document(postId)
+            .collection(historyPath)
+            .add(newPost)
     }
 }

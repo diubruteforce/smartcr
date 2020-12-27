@@ -16,7 +16,11 @@ data class Section(
     val googleCode: String = "",
     val blcCode: String = "",
     val courseOutline: String = "",
-) : EditableModel()
+) : EditableModel() {
+    override fun toString(): String {
+        return "${course.courseCode} (${name})"
+    }
+}
 
 data class Instructor(
     val id: String = "",

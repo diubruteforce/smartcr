@@ -116,4 +116,15 @@
     <string name="new_semester_message">Join sections to get and provide all the class related information</string>
     <string name="no_class_today">No class today!</string>
     <string name="no_class_today_message">Yay! No class today. Chill and have fun</string>
+    <string name="section">Section</string>
+    <string name="submission_date">Submission date</string>
+    <string name="submission_time">Submission time</string>
+    <string name="type">Type</string>
+    <string name="max_member">Max member</string>
+    <string name="place">Place e.g. BLC, Offline, Meet etc</string>
+    <string name="detail">Details</string>
+    <string name="syllabus">Syllabus</string>
+    <string name="select_post_type">Select post type</string>
+    <string name="select_max_member">Select maximum member count</string>
+    <string name="what_to_create">Select post type</string>
 </resources>

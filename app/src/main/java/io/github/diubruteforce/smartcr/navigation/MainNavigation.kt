@@ -3,7 +3,9 @@ package io.github.diubruteforce.smartcr.navigation
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.*
 import io.github.diubruteforce.smartcr.di.hiltViewModel
+import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
+import io.github.diubruteforce.smartcr.ui.post.PostEditScreen
 import io.github.diubruteforce.smartcr.ui.section.SectionDetailScreen
 import io.github.diubruteforce.smartcr.ui.section.SectionEditScreen
 import io.github.diubruteforce.smartcr.ui.section.SectionListScreen
@@ -39,6 +41,9 @@ fun SmartCRApp() {
                 },
                 navigateToCourseList = {
                     navController.navigate(MainRoute.CourseList.uri())
+                },
+                navigateToPostEdit = { postType, postId ->
+                    navController.navigate(MainRoute.PostEdit.uri(postType.name, postId))
                 },
                 onMenuClick = { menu ->
                     when (menu) {
@@ -206,6 +211,21 @@ fun SmartCRApp() {
         }
         // endregion
 
+        // region: PostEdit
+        composable(MainRoute.PostEdit.route) { backStack ->
+            val arg = MainRoute.PostEdit.getArgument(backStack)
+            val postType = PostType.valueOf(arg.first)
+            val postId = arg.second
+
+            PostEditScreen(
+                viewModel = hiltViewModel(),
+                postType = postType,
+                postId = postId,
+                onBackPress = navController::navigateUp
+            )
+        }
+        // endregion
+
     }
 }
 
@@ -229,4 +249,10 @@ object MainRoute {
     )
     val SectionList = SingleArgRoute("SectionList", "courseId")
     val SectionDetail = SingleArgRoute("SectionDetail", "sectionId")
+
+    val PostEdit = RequiredAndOptionalArgRoute(
+        path = "PostEdit",
+        requiredArgName = "postType",
+        optionArgName = "courseId"
+    )
 }

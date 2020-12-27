@@ -5,7 +5,7 @@ import com.google.firebase.firestore.ServerTimestamp
 
 sealed class Post : EditableModel() {
     abstract val postType: String
-    abstract val number: Int
+    abstract val number: String
     abstract val date: String
     abstract val dateTimeMillis: Long
     abstract val time: String
@@ -21,7 +21,7 @@ enum class PostType {
     Quiz, Assignment, Presentation, Project, Routine
 }
 
-enum class TaskType {
+enum class GroupType {
     Group, Single
 }
 
@@ -29,7 +29,7 @@ data class Quiz(
     val syllabus: String = "",
 
     override val postType: String = PostType.Quiz.name,
-    override val number: Int = -1,
+    override val number: String = "Quiz 1",
     override val date: String = "January 25, 2021",
     override val dateTimeMillis: Long = -1,
     override val time: String = "08:00 AM",
@@ -48,11 +48,11 @@ data class Quiz(
 ) : Post()
 
 data class Assignment(
-    val type: String = TaskType.Single.name,
+    val groupType: String = GroupType.Single.name,
     val maxMember: Int = 1,
 
     override val postType: String = PostType.Assignment.name,
-    override val number: Int = -1,
+    override val number: String = "Assignment 1",
     override val date: String = "January 25, 2021",
     override val dateTimeMillis: Long = -1,
     override val time: String = "08:00 AM",
@@ -71,11 +71,11 @@ data class Assignment(
 ) : Post()
 
 data class Presentation(
-    val type: String = TaskType.Single.name,
+    val groupType: String = GroupType.Single.name,
     val maxMember: Int = 1,
 
     override val postType: String = PostType.Presentation.name,
-    override val number: Int = -1,
+    override val number: String = "Presentation 1",
     override val date: String = "January 25, 2021",
     override val dateTimeMillis: Long = -1,
     override val time: String = "08:00 AM",
@@ -94,11 +94,11 @@ data class Presentation(
 ) : Post()
 
 data class Project(
-    val type: String = TaskType.Single.name,
+    val groupType: String = GroupType.Single.name,
     val maxMember: Int = 1,
 
     override val postType: String = PostType.Project.name,
-    override val number: Int = -1,
+    override val number: String = "Project 1",
     override val date: String = "January 25, 2021",
     override val dateTimeMillis: Long = -1,
     override val time: String = "08:00 AM",
