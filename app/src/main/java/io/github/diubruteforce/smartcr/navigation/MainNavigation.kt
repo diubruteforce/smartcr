@@ -80,8 +80,8 @@ fun SmartCRApp() {
         // endregion
 
         // region: TeacherDetail
-        composable(MainRoute.TeacherDetail.route) {
-            val teacherId = MainRoute.TeacherDetail.getArgument(it)
+        composable(MainRoute.TeacherDetail.route) { backStack ->
+            val teacherId = MainRoute.TeacherDetail.getArgument(backStack)
 
             TeacherDetailScreen(
                 viewModel = hiltViewModel(),
