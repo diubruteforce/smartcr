@@ -25,6 +25,7 @@ class ClassRepository @Inject constructor(
     private val studentPath = "student"
     private val historyPath = "history"
     private val routinePath = "routine"
+    private val postPath = "post"
 
     private var _semesterId: String? = null
     private var _userProfile: Student? = null
@@ -97,6 +98,13 @@ class ClassRepository @Inject constructor(
             .collection(semesterPath)
             .document(getSemesterId())
             .collection(routinePath)
+
+    private suspend fun getPostCollectionPath() =
+        db.collection(departmentPath)
+            .document(getUserProfile().departmentId)
+            .collection(semesterPath)
+            .document(getSemesterId())
+            .collection(postPath)
 
     suspend fun getSectionList(courseId: String): List<Section> {
         return getSectionCollectionPath()
@@ -258,11 +266,52 @@ class ClassRepository @Inject constructor(
     }
 
     suspend fun getJoinedSectionList(): List<Section> {
+        val joinedSections = getUserProfile().joinedSection
+
+        if (joinedSections.isEmpty()) return emptyList()
+
         return getSectionCollectionPath()
             .whereActiveData()
-            .whereIn("id", getUserProfile().joinedSection)
+            .whereIn("id", joinedSections)
             .get()
             .await()
             .map { it.toObject<Section>().copy(id = it.id) }
+    }
+
+    suspend fun getStudentRoutineList(): List<Routine> {
+        val joinedSections = getUserProfile().joinedSection
+
+        if (joinedSections.isEmpty()) return emptyList()
+
+        return getRoutineCollectionPath()
+            .whereActiveData()
+            .whereIn("sectionId", joinedSections)
+            .get()
+            .await()
+            .map { it.toObject<Routine>().copy(id = it.id) }
+    }
+
+    suspend fun getTodayPostList(date: String): List<Post> {
+        val joinedSections = getUserProfile().joinedSection
+
+        if (joinedSections.isEmpty()) return emptyList()
+
+        return getPostCollectionPath()
+            .whereActiveData()
+            .whereIn("sectionId", joinedSections)
+            .whereEqualTo("date", date)
+            .get()
+            .await()
+            .map {
+                val postTypeStr = it.getString("postType")!!
+
+                when (PostType.valueOf(postTypeStr)) {
+                    PostType.Routine -> Quiz() // this won't happen.
+                    PostType.Quiz -> it.toObject<Quiz>().copy(id = it.id)
+                    PostType.Assignment -> it.toObject<Assignment>().copy(id = it.id)
+                    PostType.Presentation -> it.toObject<Presentation>().copy(id = it.id)
+                    PostType.Project -> it.toObject<Project>().copy(id = it.id)
+                }
+            }
     }
 }

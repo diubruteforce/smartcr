@@ -1,9 +1,9 @@
 package io.github.diubruteforce.smartcr.ui.smartcr.menu
 
 import androidx.annotation.DrawableRes
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.vectorResource
@@ -17,13 +17,12 @@ import io.github.diubruteforce.smartcr.utils.extension.toPairList
 fun MenuScreen(
     onMenuClick: (Menu) -> Unit
 ) {
-    ScrollableColumn(
+    LazyColumn(
         modifier = Modifier.navigationBarsPadding(),
         verticalArrangement = Arrangement.spacedBy(Margin.normal),
         contentPadding = PaddingValues(top = Margin.normal, bottom = Margin.large)
     ) {
-
-        Menu.values().toPairList().forEach {
+        items(Menu.values().toPairList()) {
             MenuRow(
                 leftIcon = vectorResource(id = it.first.iconRes),
                 leftTitle = it.first.title,
@@ -37,7 +36,7 @@ fun MenuScreen(
 }
 
 enum class Menu(val title: String, @DrawableRes val iconRes: Int) {
-    FIND_FACULTY("Find Faculty", R.drawable.find_faculty),
+    FIND_FACULTY("Find Teacher", R.drawable.find_faculty),
     FIND_COURSE("Find Courses", R.drawable.find_course),
     GET_RESOURCE("Get Resource", R.drawable.find_resource),
     EXTRA_CLASS("Extra Class", R.drawable.extra_class),

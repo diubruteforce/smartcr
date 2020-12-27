@@ -47,7 +47,7 @@
     <string name="department">Department</string>
     <string name="level">Level</string>
     <string name="term">Term</string>
-    <string name="find_faculty">Find Faculty</string>
+    <string name="find_faculty">Find Teacher</string>
     <string name="find_course">Find Course</string>
     <string name="get_resource">Get Resource</string>
     <string name="extra_class">Extra Class</string>
@@ -111,4 +111,8 @@
     <string name="routine">Routine</string>
     <string name="course_detail">Course Detail</string>
     <string name="joined_sections">Joined Sections</string>
+    <string name="new_semester">New Semester!</string>
+    <string name="join_section">Join sections to get and provide all the class related information</string>
+    <string name="no_class_today">No class today!</string>
+    <string name="no_class_today_message">Yay! No class today. Chill and have fun</string>
 </resources>

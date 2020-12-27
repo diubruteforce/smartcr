@@ -5,12 +5,14 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreHoriz
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import io.github.diubruteforce.smartcr.R
 
 @Composable
 fun UpdateDeleteMenu(
     modifier: Modifier = Modifier,
+    iconColor: Color = AmbientContentColor.current.copy(alpha = AmbientContentAlpha.current),
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
@@ -18,7 +20,10 @@ fun UpdateDeleteMenu(
     DropdownMenu(
         toggle = {
             IconButton(onClick = { isExpanded = true }) {
-                Icon(imageVector = Icons.Outlined.MoreHoriz)
+                Icon(
+                    imageVector = Icons.Outlined.MoreHoriz,
+                    tint = iconColor
+                )
             }
         },
         toggleModifier = modifier,

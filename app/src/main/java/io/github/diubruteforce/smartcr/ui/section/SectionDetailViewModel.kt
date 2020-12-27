@@ -109,7 +109,10 @@ class SectionDetailViewModel @ViewModelInject constructor(
                 day = newDay.value,
                 startTime = newStartTime.value,
                 endTime = newEndTime.value,
-                sectionId = section.id
+                sectionId = section.id,
+                sectionName = section.name,
+                courseCode = section.course.courseCode,
+                courseName = section.course.courseTitle
             )
 
             classRepository.saveRoutine(newRoutine)

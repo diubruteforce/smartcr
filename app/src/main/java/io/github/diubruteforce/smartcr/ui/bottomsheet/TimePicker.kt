@@ -1,5 +1,6 @@
 package io.github.diubruteforce.smartcr.ui.bottomsheet
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,7 +11,6 @@ import android.widget.TextView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.button.MaterialButton
 import io.github.diubruteforce.smartcr.R
-import io.github.diubruteforce.smartcr.model.data.CounselingHourState
 import io.github.diubruteforce.smartcr.model.data.Meridiem
 
 class TimePicker(
@@ -28,6 +28,22 @@ class TimePicker(
 
     private val meridiemArray = Meridiem.values().map { it.name }.toTypedArray()
 
+    companion object {
+        fun timeToString(hour: Int, minute: Int, meridiem: String) =
+            "%02d:%02d %s".format(hour, minute, meridiem)
+
+        fun separateTime(time: String): Triple<Int, Int, String> {
+            val array = time.split(":")
+            val hour = array[0].toInt()
+
+            val array2 = array[1].split(" ")
+            val minute = array2[0].toInt()
+            val meridiem = array2[1]
+
+            return Triple(hour, minute, meridiem)
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,7 +57,7 @@ class TimePicker(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val timeTriple = CounselingHourState.separateTime(time)
+        val timeTriple = separateTime(time)
 
         hourPicker.minValue = 1
         hourPicker.maxValue = 12
@@ -66,7 +82,7 @@ class TimePicker(
             val minute = minutePicker.value
             val meridiem = Meridiem.values()[meridiemPicker.value]
 
-            val newTime = CounselingHourState.timeToString(
+            val newTime = timeToString(
                 hour = hour,
                 minute = minute,
                 meridiem = meridiem.name
@@ -81,6 +97,7 @@ class TimePicker(
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun updateText() {
         val hour = hourPicker.value
         val minute = minutePicker.value

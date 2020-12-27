@@ -14,5 +14,9 @@ data class Routine(
     val room: String = "",
     val startTime: String = "8:00 AM",
     val endTime: String = "11:00 AM",
-    val sectionId: String = ""
+
+    val sectionId: String = "",
+    val sectionName: String = "",
+    val courseCode: String = "",
+    val courseName: String = ""
 ) : EditableModel()
