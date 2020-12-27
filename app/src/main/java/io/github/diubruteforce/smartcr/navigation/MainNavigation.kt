@@ -31,6 +31,15 @@ fun SmartCRApp() {
         // region: SmartCR
         composable(MainRoute.SmartCR.route) {
             SmartCRScreen(
+                navigateToSectionDetail = {
+                    navController.navigate(MainRoute.SectionDetail.uri(it))
+                },
+                navigateToPostDetail = { postType, postId ->
+
+                },
+                navigateToCourseList = {
+                    navController.navigate(MainRoute.CourseList.uri())
+                },
                 onMenuClick = { menu ->
                     when (menu) {
                         Menu.FIND_FACULTY -> {

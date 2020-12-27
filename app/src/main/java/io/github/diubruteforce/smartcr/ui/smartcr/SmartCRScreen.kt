@@ -20,6 +20,7 @@ import androidx.compose.ui.res.vectorResource
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.di.hiltViewModel
+import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.common.Empty
 import io.github.diubruteforce.smartcr.ui.common.InsetAwareTopAppBar
 import io.github.diubruteforce.smartcr.ui.smartcr.home.HomeScreen
@@ -28,6 +29,9 @@ import io.github.diubruteforce.smartcr.ui.smartcr.menu.MenuScreen
 
 @Composable
 fun SmartCRScreen(
+    navigateToSectionDetail: (String) -> Unit,
+    navigateToPostDetail: (PostType, String) -> Unit,
+    navigateToCourseList: () -> Unit,
     onMenuClick: (Menu) -> Unit
 ) {
     var currentScreen by savedInstanceState { HomeRoute.HOME }
@@ -55,7 +59,7 @@ fun SmartCRScreen(
                         selected = currentScreen == screen,
                         selectedContentColor = MaterialTheme.colors.primary,
                         unselectedContentColor = Color.Gray,
-                        alwaysShowLabels = false,
+                        alwaysShowLabels = true,
                         onClick = { currentScreen = screen }
                     )
                 }
@@ -66,8 +70,9 @@ fun SmartCRScreen(
             HomeRoute.HOME -> {
                 HomeScreen(
                     viewModel = hiltViewModel(),
-                    navigateToSectionDetail = { /*TODO*/ },
-                    navigateToPostDetail = { type, postId -> /*TODO*/ }
+                    navigateToSectionDetail = navigateToSectionDetail,
+                    navigateToPostDetail = navigateToPostDetail,
+                    navigateToCourseList = navigateToCourseList
                 )
             }
             HomeRoute.EVENT -> {

@@ -33,7 +33,8 @@ import kotlinx.coroutines.flow.StateFlow
 fun HomeScreen(
     viewModel: HomeViewModel,
     navigateToSectionDetail: (String) -> Unit,
-    navigateToPostDetail: (PostType, String) -> Unit
+    navigateToPostDetail: (PostType, String) -> Unit,
+    navigateToCourseList: () -> Unit
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
 
@@ -51,6 +52,7 @@ fun HomeScreen(
         stateFlow = viewModel.state,
         navigateToSectionDetail = navigateToSectionDetail,
         navigateToPostDetail = navigateToPostDetail,
+        navigateToCourseList = navigateToCourseList,
         onNextDay = viewModel::nextDay,
         onPreviousDay = viewModel::previousDay
     )
@@ -73,6 +75,7 @@ private fun HomeScreenContent(
     stateFlow: StateFlow<HomeState>,
     navigateToSectionDetail: (String) -> Unit,
     navigateToPostDetail: (PostType, String) -> Unit,
+    navigateToCourseList: () -> Unit,
     onNextDay: () -> Unit,
     onPreviousDay: () -> Unit
 ) {
@@ -142,8 +145,10 @@ private fun HomeScreenContent(
         } else {
             Empty(
                 title = stringResource(id = R.string.new_semester),
-                message = stringResource(id = R.string.join_section),
-                image = vectorResource(id = R.drawable.new_semseter)
+                message = stringResource(id = R.string.new_semester_message),
+                image = vectorResource(id = R.drawable.new_semseter),
+                actionTitle = stringResource(id = R.string.join_section),
+                onAction = navigateToCourseList
             )
         }
     }
