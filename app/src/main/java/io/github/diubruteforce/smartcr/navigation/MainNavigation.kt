@@ -116,7 +116,7 @@ fun SmartCRApp() {
         // endregion
 
         // region: StudentProfileDetail
-        composable(MainRoute.StudentProfileDetail.route) {
+        composable(MainRoute.StudentProfileDetail.route) { _ ->
             StudentDetailScreen(
                 viewModel = hiltViewModel(),
                 navigateToOnBoarding = {
@@ -128,6 +128,9 @@ fun SmartCRApp() {
                 },
                 navigateToProfileEdit = {
                     navController.navigate(MainRoute.StudentProfileEdit.uri("backPress"))
+                },
+                navigateToSectionDetail = {
+                    navController.navigate(MainRoute.SectionDetail.uri(it))
                 },
                 onBackPress = navController::navigateUp
             )

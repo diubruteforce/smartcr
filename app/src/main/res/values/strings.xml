@@ -110,4 +110,5 @@
     <string name="routine_delete">If you delete routine all the other student will not be able to view this routine any more.</string>
     <string name="routine">Routine</string>
     <string name="course_detail">Course Detail</string>
+    <string name="joined_sections">Joined Sections</string>
 </resources>

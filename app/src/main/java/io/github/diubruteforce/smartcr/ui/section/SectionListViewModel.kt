@@ -54,7 +54,7 @@ class SectionListViewModel @ViewModelInject constructor(
 
         if (isJoined) joinedInAnotherSection = true
 
-        SectionListItemState(name = it.name, isJoined = isJoined, courseId = it.id)
+        SectionListItemState(name = it.name, isJoined = isJoined, sectionId = it.id)
     }
 
     fun joinSection(sectionId: String) {

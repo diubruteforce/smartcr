@@ -1,35 +1,75 @@
 package io.github.diubruteforce.smartcr.ui.student
 
 import androidx.hilt.lifecycle.ViewModelInject
+import io.github.diubruteforce.smartcr.data.repository.ClassRepository
 import io.github.diubruteforce.smartcr.data.repository.ProfileRepository
+import io.github.diubruteforce.smartcr.model.data.Section
 import io.github.diubruteforce.smartcr.model.data.Student
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
 import io.github.diubruteforce.smartcr.model.ui.Error
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
+import io.github.diubruteforce.smartcr.ui.common.SectionListItemState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
 
 data class StudentDetailState(
-    val student: Student = Student()
+    val student: Student = Student(),
+    val joinedSections: List<SectionListItemState> = emptyList()
 )
 
 enum class StudentDetailSuccess {
-    Loaded, SignOut, Deleted
+    Loaded, SignOut, Deleted, SectionJoined, SectionLeft
 }
 
 class StudentDetailViewModel @ViewModelInject constructor(
-    private val profileRepository: ProfileRepository
+    private val profileRepository: ProfileRepository,
+    private val classRepository: ClassRepository,
 ) : BaseViewModel<StudentDetailState, Any, StudentDetailSuccess, String>(
     initialState = StudentDetailState()
 ) {
+    private lateinit var sectionList: List<Section>
+
     fun loadData() {
         launchInViewModelScope {
             setSideEffect { EmptyLoadingState }
 
             val newStudent = profileRepository.getUserProfile()
+            sectionList = classRepository.getJoinedSectionList()
 
-            withState { setState { copy(student = newStudent) } }
+            populateSuccessState(newStudent)
             setSideEffect { TypedSideEffectState.Success(StudentDetailSuccess.Loaded) }
         }
+    }
+
+    private fun populateSuccessState(newStudent: Student) = withState {
+        val joinedSectionList = sectionList.map {
+            SectionListItemState(
+                sectionId = it.id,
+                name = "${it.course.courseCode} (${it.name})",
+                isJoined = newStudent.joinedSection.contains(it.id)
+            )
+        }
+
+        setState { copy(student = newStudent, joinedSections = joinedSectionList) }
+    }
+
+    fun joinSection(sectionId: String) {
+        launchInViewModelScope {
+            setSideEffect { EmptyLoadingState }
+
+            val profileData = classRepository.joinSection(sectionId)
+            populateSuccessState(profileData)
+
+            setSideEffect { TypedSideEffectState.Success(StudentDetailSuccess.SectionJoined) }
+        }
+    }
+
+    fun leaveSection(sectionId: String) = launchInViewModelScope {
+        setSideEffect { EmptyLoadingState }
+
+        val profileData = classRepository.leaveSection(sectionId)
+        populateSuccessState(profileData)
+
+        setSideEffect { TypedSideEffectState.Success(StudentDetailSuccess.SectionLeft) }
     }
 
     fun signOut() {

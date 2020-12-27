@@ -124,9 +124,9 @@ private fun SectionListScreenContent(
             items(state.sections) { item ->
                 SectionListItem(
                     state = item,
-                    itemClick = { navigateToSectionDetail.invoke(item.courseId) },
-                    onJoin = { joinSection.invoke(item.courseId) },
-                    onLeave = { leaveSection.invoke(item.courseId) }
+                    itemClick = { navigateToSectionDetail.invoke(item.sectionId) },
+                    onJoin = { joinSection.invoke(item.sectionId) },
+                    onLeave = { leaveSection.invoke(item.sectionId) }
                 )
             }
         }

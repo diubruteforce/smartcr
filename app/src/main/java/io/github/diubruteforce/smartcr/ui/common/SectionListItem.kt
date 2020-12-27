@@ -20,7 +20,7 @@ import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 import io.github.diubruteforce.smartcr.ui.theme.grayBorder
 
 data class SectionListItemState(
-    val courseId: String,
+    val sectionId: String,
     val name: String,
     val isJoined: Boolean
 )

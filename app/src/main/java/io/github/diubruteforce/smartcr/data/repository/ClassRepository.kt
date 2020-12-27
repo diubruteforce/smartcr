@@ -139,7 +139,15 @@ class ClassRepository @Inject constructor(
         )
 
         val sectionId = if (newSection.id.isEmpty()) {
-            getSectionCollectionPath().add(newSection).await().id
+            val id = getSectionCollectionPath().add(newSection).await().id
+
+            val idData = mapOf(
+                "id" to id
+            )
+
+            getSectionCollectionPath().document(id).set(idData, SetOptions.merge()).await()
+
+            id
         } else {
             getSectionCollectionPath()
                 .document(newSection.id)
@@ -247,5 +255,14 @@ class ClassRepository @Inject constructor(
             .document(routineId)
             .delete()
             .await()
+    }
+
+    suspend fun getJoinedSectionList(): List<Section> {
+        return getSectionCollectionPath()
+            .whereActiveData()
+            .whereIn("id", getUserProfile().joinedSection)
+            .get()
+            .await()
+            .map { it.toObject<Section>().copy(id = it.id) }
     }
 }

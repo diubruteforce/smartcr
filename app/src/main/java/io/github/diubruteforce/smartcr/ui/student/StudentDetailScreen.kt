@@ -1,13 +1,11 @@
 package io.github.diubruteforce.smartcr.ui.student
 
+import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.*
@@ -17,6 +15,7 @@ import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.ui.common.*
 import io.github.diubruteforce.smartcr.ui.theme.Margin
+import io.github.diubruteforce.smartcr.ui.theme.grayText
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 
@@ -26,6 +25,7 @@ fun StudentDetailScreen(
     viewModel: StudentDetailViewModel,
     navigateToOnBoarding: () -> Unit,
     navigateToProfileEdit: () -> Unit,
+    navigateToSectionDetail: (String) -> Unit,
     onBackPress: () -> Unit,
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
@@ -61,6 +61,9 @@ fun StudentDetailScreen(
 
     StudentDetailScreenContent(
         stateFlow = viewModel.state,
+        navigateToSectionDetail = navigateToSectionDetail,
+        joinSection = viewModel::joinSection,
+        leaveSection = viewModel::leaveSection,
         onProfileEdit = { navigateToProfileEdit.invoke() },
         onProfileDelete = { deleteProfile = true },
         signOut = viewModel::signOut,
@@ -73,6 +76,9 @@ fun StudentDetailScreen(
 @Composable
 private fun StudentDetailScreenContent(
     stateFlow: StateFlow<StudentDetailState>,
+    navigateToSectionDetail: (String) -> Unit,
+    joinSection: (String) -> Unit,
+    leaveSection: (String) -> Unit,
     onProfileEdit: (String) -> Unit,
     onProfileDelete: (String) -> Unit,
     signOut: () -> Unit,
@@ -97,8 +103,9 @@ private fun StudentDetailScreenContent(
             )
         }
     ) {
-        Column(
-            modifier = Modifier.navigationBarsWithImePadding().padding(Margin.normal),
+        ScrollableColumn(
+            modifier = Modifier.navigationBarsWithImePadding(),
+            contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.normal),
         ) {
 
@@ -108,12 +115,28 @@ private fun StudentDetailScreenContent(
                 onDelete = onProfileDelete
             )
 
+            Spacer(modifier = Modifier.size(Margin.medium))
 
-            Spacer(modifier = Modifier.weight(1f))
+            Text(
+                text = stringResource(id = R.string.joined_sections),
+                style = MaterialTheme.typography.h6,
+                color = MaterialTheme.colors.grayText
+            )
+
+            state.joinedSections.forEach {
+                SectionListItem(
+                    state = it,
+                    itemClick = { navigateToSectionDetail.invoke(it.sectionId) },
+                    onJoin = { joinSection.invoke(it.sectionId) },
+                    onLeave = { leaveSection.invoke(it.sectionId) }
+                )
+            }
+
+            Spacer(modifier = Modifier.size(Margin.medium))
 
             LargeButton(text = stringResource(id = R.string.sign_out), onClick = signOut)
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(modifier = Modifier.size(Margin.medium))
         }
     }
 }
