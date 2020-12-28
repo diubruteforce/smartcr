@@ -39,9 +39,7 @@ enum class Menu(val title: String, @DrawableRes val iconRes: Int) {
     FIND_FACULTY("Find Teacher", R.drawable.find_faculty),
     FIND_COURSE("Find Courses", R.drawable.find_course),
     GET_RESOURCE("Get Resource", R.drawable.find_resource),
-    EXTRA_CLASS("Extra Class", R.drawable.extra_class),
     EXAM_ROUTINE("Exam Routine", R.drawable.exam_routine),
     FEES_SCHEDULE("Fees Schedule", R.drawable.fees_schedule),
-    YOUR_PROFILE("Your Profile", R.drawable.student_profile),
     APP_SETTING("App Setting", R.drawable.app_setting),
 }

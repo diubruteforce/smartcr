@@ -45,6 +45,9 @@ fun SmartCRApp() {
                 navigateToPostEdit = { postType, postId ->
                     navController.navigate(MainRoute.PostEdit.uri(postType.name, postId))
                 },
+                navigateToProfileDetail = {
+                    navController.navigate(MainRoute.StudentProfileDetail.uri())
+                },
                 onMenuClick = { menu ->
                     when (menu) {
                         Menu.FIND_FACULTY -> {
@@ -55,14 +58,9 @@ fun SmartCRApp() {
                         }
                         Menu.GET_RESOURCE -> {
                         }
-                        Menu.EXTRA_CLASS -> {
-                        }
                         Menu.EXAM_ROUTINE -> {
                         }
                         Menu.FEES_SCHEDULE -> {
-                        }
-                        Menu.YOUR_PROFILE -> {
-                            navController.navigate(MainRoute.StudentProfileDetail.uri())
                         }
                         Menu.APP_SETTING -> {
                         }

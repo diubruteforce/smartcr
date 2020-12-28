@@ -1,13 +1,9 @@
 package io.github.diubruteforce.smartcr.ui.smartcr
 
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.Event
-import androidx.compose.material.icons.outlined.Grading
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
@@ -16,13 +12,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
+import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.common.InsetAwareTopAppBar
 import io.github.diubruteforce.smartcr.ui.smartcr.home.HomeScreen
 import io.github.diubruteforce.smartcr.ui.smartcr.menu.Menu
 import io.github.diubruteforce.smartcr.ui.smartcr.menu.MenuScreen
+import io.github.diubruteforce.smartcr.ui.theme.grayText
 
 @Composable
 fun SmartCRScreen(
@@ -30,6 +30,7 @@ fun SmartCRScreen(
     navigateToPostDetail: (PostType, String) -> Unit,
     navigateToCourseList: () -> Unit,
     navigateToPostEdit: (PostType, String?) -> Unit,
+    navigateToProfileDetail: () -> Unit,
     onMenuClick: (Menu) -> Unit
 ) {
     var currentScreen by savedInstanceState { HomeRoute.HOME }
@@ -38,12 +39,26 @@ fun SmartCRScreen(
         modifier = Modifier.fillMaxSize().navigationBarsWithImePadding(),
         topBar = {
             InsetAwareTopAppBar {
-                Spacer(modifier = Modifier.weight(1f))
+                IconButton(onClick = {}) {
+
+                }
                 Text(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = HomeRoute.HOME.route
+                    modifier = Modifier.align(Alignment.CenterVertically).weight(1f),
+                    text = stringResource(id = R.string.app_name),
+                    style = MaterialTheme.typography.h6,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colors.primary
                 )
-                Spacer(modifier = Modifier.weight(1f))
+
+                IconButton(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    onClick = navigateToProfileDetail
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.AccountCircle,
+                        tint = MaterialTheme.colors.grayText
+                    )
+                }
             }
         },
         bottomBar = {
@@ -74,7 +89,7 @@ fun SmartCRScreen(
                     navigateToPostEdit = { navigateToPostEdit.invoke(it, null) }
                 )
             }
-            HomeRoute.EVENT -> {
+            HomeRoute.Resource -> {
 
             }
             HomeRoute.TODO -> {
@@ -87,9 +102,9 @@ fun SmartCRScreen(
     }
 }
 
-enum class HomeRoute(val route: String, val imageVector: ImageVector) {
+private enum class HomeRoute(val route: String, val imageVector: ImageVector) {
     HOME("Home", Icons.Outlined.Home),
-    EVENT("Event", Icons.Outlined.Event),
+    Resource("Resource", Icons.Outlined.Book),
     TODO("To Do", Icons.Outlined.Grading),
     MENU("Menu", Icons.Outlined.Menu)
 }
