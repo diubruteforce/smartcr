@@ -56,7 +56,7 @@ fun SmartCRApp() {
                         Menu.FIND_COURSE -> {
                             navController.navigate(MainRoute.CourseList.uri())
                         }
-                        Menu.GET_RESOURCE -> {
+                        Menu.Event -> {
                         }
                         Menu.EXAM_ROUTINE -> {
                         }
