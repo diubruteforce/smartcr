@@ -11,12 +11,10 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CalendarToday
-import androidx.compose.material.icons.outlined.Edit
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.AmbientFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -32,7 +30,6 @@ import io.github.diubruteforce.smartcr.ui.common.*
 import io.github.diubruteforce.smartcr.ui.theme.CornerRadius
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.grayBorder
-import io.github.diubruteforce.smartcr.ui.theme.grayText
 import io.github.diubruteforce.smartcr.utils.extension.getMainActivity
 import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBottomSheetState
 import io.github.diubruteforce.smartcr.utils.extension.rememberOnBackPressCallback
@@ -354,30 +351,6 @@ private fun ColumnScope.SectionDetail(
         )
 
         Spacer(modifier = Modifier.size(Margin.normal))
-    }
-}
-
-@Composable
-private fun TitleRow(
-    title: String,
-    icon: ImageVector = Icons.Outlined.Edit,
-    onEdit: () -> Unit
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            modifier = Modifier.weight(1f),
-            text = title,
-            style = MaterialTheme.typography.body1,
-            fontWeight = FontWeight.W500,
-            color = MaterialTheme.colors.grayText
-        )
-
-        IconButton(onClick = onEdit) {
-            Icon(
-                imageVector = icon,
-                tint = MaterialTheme.colors.grayText
-            )
-        }
     }
 }
 

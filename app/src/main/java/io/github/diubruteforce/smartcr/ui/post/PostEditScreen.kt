@@ -255,7 +255,7 @@ private fun PostEditScreenContent(
             FullName(
                 state = state.place,
                 onValueChange = onPlaceChange,
-                placeHolder = stringResource(id = R.string.place),
+                placeHolder = stringResource(id = R.string.place_with_example),
                 focusRequester = placeFocusRequester,
                 onImeActionPerformed = {
                     if (postType == PostType.Quiz) syllabusFocusRequester.requestFocus()

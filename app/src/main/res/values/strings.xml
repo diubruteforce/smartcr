@@ -121,10 +121,16 @@
     <string name="submission_time">Submission time</string>
     <string name="type">Type</string>
     <string name="max_member">Max member</string>
-    <string name="place">Place e.g. BLC, Offline, Meet etc</string>
+    <string name="place_with_example">Place e.g. BLC, Offline, Meet etc</string>
     <string name="detail">Details</string>
     <string name="syllabus">Syllabus</string>
     <string name="select_post_type">Select post type</string>
     <string name="select_max_member">Select maximum member count</string>
     <string name="what_to_create">Select post type</string>
+    <string name="group">Group Information</string>
+    <string name="your_group">Your group</string>
+    <string name="you_have_not">You have not joined any group yet</string>
+    <string name="join_or_creat_section">Join/Create Section</string>
+    <string name="place">Place</string>
+    <string name="post_delete">If you delete this post nobody would be able to view this anymore.</string>
 </resources>

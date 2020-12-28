@@ -28,6 +28,7 @@ class ClassRepository @Inject constructor(
     private val historyPath = "history"
     private val routinePath = "routine"
     private val postPath = "post"
+    private val groupPath = "group"
 
     private var _semesterId: String? = null
     private var _userProfile: Student? = null
@@ -385,6 +386,58 @@ class ClassRepository @Inject constructor(
         // Keeping history
         getPostCollectionPath()
             .document(postId)
+            .collection(historyPath)
+            .add(newPost)
+    }
+
+    suspend fun getJoinedGroup(postId: String): Group? {
+        return getPostCollectionPath()
+            .document(postId)
+            .collection(groupPath)
+            .whereActiveData()
+            .whereArrayContains("members", getUserProfile().id)
+            .get()
+            .await()
+            .map { it.toObject<Group>().copy(id = it.id) }
+            .firstOrNull()
+    }
+
+    suspend fun deletePost(post: Post) {
+        val newPost = when (post) {
+            is Quiz -> post.copy(
+                isActive = false,
+                updaterId = getUserProfile().id,
+                updaterEmail = getUserProfile().diuEmail,
+                updatedOn = Timestamp.now()
+            )
+            is Assignment -> post.copy(
+                isActive = false,
+                updaterId = getUserProfile().id,
+                updaterEmail = getUserProfile().diuEmail,
+                updatedOn = Timestamp.now()
+            )
+            is Presentation -> post.copy(
+                isActive = false,
+                updaterId = getUserProfile().id,
+                updaterEmail = getUserProfile().diuEmail,
+                updatedOn = Timestamp.now()
+            )
+            is Project -> post.copy(
+                isActive = false,
+                updaterId = getUserProfile().id,
+                updaterEmail = getUserProfile().diuEmail,
+                updatedOn = Timestamp.now()
+            )
+        }
+
+        getPostCollectionPath()
+            .document(newPost.id)
+            .set(newPost, SetOptions.merge())
+            .await()
+
+        // Keeping history
+        getPostCollectionPath()
+            .document(newPost.id)
             .collection(historyPath)
             .add(newPost)
     }

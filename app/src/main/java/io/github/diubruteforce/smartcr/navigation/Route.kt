@@ -30,6 +30,23 @@ class SingleArgRoute(private val path: String, private val argName: String) {
         backStackEntry.arguments?.getString(argName)!!
 }
 
+class DoubleArgRoute(
+    private val path: String,
+    private val firstArgName: String,
+    private val secondArgName: String
+) {
+    val route = "$path/{$firstArgName}/{$secondArgName}"
+
+    fun uri(firstArg: String, secondArg: String) = "$path/$firstArg/$secondArg"
+
+    fun getArgument(backStackEntry: NavBackStackEntry): Pair<String, String> {
+        val firstArg = backStackEntry.arguments?.getString(firstArgName)!!
+        val secondArg = backStackEntry.arguments?.getString(secondArgName)!!
+
+        return Pair(firstArg, secondArg)
+    }
+}
+
 class SingleOptionalArgRoute(private val path: String, private val argName: String) {
     val route = "$path?$argName={$argName}"
     fun uri(arg: String? = null) = if (arg != null) "$path?$argName=$arg" else path

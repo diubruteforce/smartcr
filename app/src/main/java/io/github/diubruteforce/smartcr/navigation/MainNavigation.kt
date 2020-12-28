@@ -5,6 +5,7 @@ import androidx.navigation.compose.*
 import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
+import io.github.diubruteforce.smartcr.ui.post.PostDetailScreen
 import io.github.diubruteforce.smartcr.ui.post.PostEditScreen
 import io.github.diubruteforce.smartcr.ui.section.SectionDetailScreen
 import io.github.diubruteforce.smartcr.ui.section.SectionEditScreen
@@ -37,7 +38,7 @@ fun SmartCRApp() {
                     navController.navigate(MainRoute.SectionDetail.uri(it))
                 },
                 navigateToPostDetail = { postType, postId ->
-
+                    navController.navigate(MainRoute.PostDetail.uri(postType.name, postId))
                 },
                 navigateToCourseList = {
                     navController.navigate(MainRoute.CourseList.uri())
@@ -224,6 +225,25 @@ fun SmartCRApp() {
         }
         // endregion
 
+        // region: PostDetail
+        composable(MainRoute.PostDetail.route) { backStack ->
+            val arg = MainRoute.PostDetail.getArgument(backStack)
+            val argPostType = PostType.valueOf(arg.first)
+            val argPostId = arg.second
+
+            PostDetailScreen(
+                viewModel = hiltViewModel(),
+                postType = argPostType,
+                postId = argPostId,
+                navigateToGroupList = { postType, postId -> },
+                navigateToPostEdit = { postType, postId ->
+                    navController.navigate(MainRoute.PostEdit.uri(postType.name, postId))
+                },
+                onBackPress = navController::navigateUp
+            )
+        }
+        // endregion
+
     }
 }
 
@@ -252,5 +272,11 @@ object MainRoute {
         path = "PostEdit",
         requiredArgName = "postType",
         optionArgName = "courseId"
+    )
+
+    val PostDetail = DoubleArgRoute(
+        path = "PostDetail",
+        firstArgName = "postType",
+        secondArgName = "postId"
     )
 }
