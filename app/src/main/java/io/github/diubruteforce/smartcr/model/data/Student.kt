@@ -23,7 +23,8 @@ data class MemberStudent(
     val fcmId: String = "",
     val diuId: String = "",
     val fullName: String = "",
-    val profileUrl: String = ""
+    val profileUrl: String = "",
+    val joinedGroups: List<String> = emptyList()
 )
 
 fun Student.toMemberStudent() = MemberStudent(

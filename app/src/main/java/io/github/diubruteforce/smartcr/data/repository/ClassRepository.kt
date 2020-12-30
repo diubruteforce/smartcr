@@ -441,4 +441,50 @@ class ClassRepository @Inject constructor(
             .collection(historyPath)
             .add(newPost)
     }
+
+    suspend fun getMemberStudentList(sectionId: String): List<MemberStudent> {
+        return getSectionCollectionPath()
+            .document(sectionId)
+            .collection(studentPath)
+            .get()
+            .await()
+            .map { it.toObject<MemberStudent>() }
+    }
+
+    suspend fun getGroupList(postId: String): List<Group> {
+        return getPostCollectionPath()
+            .document(postId)
+            .collection(groupPath)
+            .whereActiveData()
+            .get()
+            .await()
+            .map { it.toObject<Group>().copy(id = it.id) }
+    }
+
+    suspend fun editGroup(postId: String, group: Group) {
+        val newGroup = group.copy(
+            updatedOn = Timestamp.now(),
+            updaterEmail = getUserProfile().diuEmail,
+            updaterId = getUserProfile().id
+        )
+
+        val groupPath = getPostCollectionPath()
+            .document(postId)
+            .collection(groupPath)
+
+        val groupId = if (newGroup.id.isEmpty()) {
+            groupPath.add(newGroup).await().id
+        } else {
+            groupPath.document(newGroup.id)
+                .set(newGroup, SetOptions.merge())
+                .await()
+
+            newGroup.id
+        }
+
+        // Keeping history
+        groupPath.document(groupId)
+            .collection(historyPath)
+            .add(newGroup.copy(id = groupId))
+    }
 }

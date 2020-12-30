@@ -301,9 +301,11 @@ private fun ColumnScope.SectionDetail(
         onEdit = { navigateToSectionEdit.invoke(section.course.courseCode, section.id) }
     )
 
-    TeacherListItem(
-        instructor = section.instructor,
-        itemClick = navigateToTeacherDetail
+    ProfileListItem(
+        title = section.instructor.fullName,
+        subTitle = "Department: ${section.instructor.departmentCode}",
+        profileUrl = section.instructor.profileUrl,
+        itemClick = { navigateToTeacherDetail.invoke(section.instructor.id) }
     )
 
     Spacer(modifier = Modifier.size(Margin.big))

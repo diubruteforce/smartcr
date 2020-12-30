@@ -24,11 +24,10 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
-import io.github.diubruteforce.smartcr.model.data.toInstructor
 import io.github.diubruteforce.smartcr.ui.common.FullName
 import io.github.diubruteforce.smartcr.ui.common.InsetAwareTopAppBar
+import io.github.diubruteforce.smartcr.ui.common.ProfileListItem
 import io.github.diubruteforce.smartcr.ui.common.SideEffect
-import io.github.diubruteforce.smartcr.ui.common.TeacherListItem
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -124,9 +123,11 @@ private fun TeacherListContent(
             contentPadding = PaddingValues(Margin.normal)
         ) {
             items(state.teacherList) { teacher ->
-                TeacherListItem(
-                    instructor = teacher.toInstructor(),
-                    itemClick = { navigateToTeacherDetail(teacher.id) }
+                ProfileListItem(
+                    title = teacher.fullName,
+                    subTitle = "Department: ${teacher.departmentCode}",
+                    profileUrl = teacher.profileUrl,
+                    itemClick = { navigateToTeacherDetail.invoke(teacher.id) }
                 )
             }
         }

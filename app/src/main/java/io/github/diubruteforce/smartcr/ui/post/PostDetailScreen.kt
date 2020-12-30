@@ -78,6 +78,8 @@ private fun PostDetailScreenContent(
     onBackPress: () -> Unit
 ) {
     val state = stateFlow.collectAsState().value
+    val title = if (state.post == null) "${postType.name} Details"
+    else "${state.post.number} : ${state.post.courseCode}"
 
     Scaffold(
         topBar = {
@@ -93,7 +95,9 @@ private fun PostDetailScreenContent(
 
                 Text(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = "${postType.name} Details"
+                    text = title,
+                    style = MaterialTheme.typography.h6,
+                    color = MaterialTheme.colors.primary
                 )
 
                 Spacer(modifier = Modifier.weight(1f))
@@ -113,13 +117,6 @@ private fun PostDetailScreenContent(
             verticalArrangement = Arrangement.spacedBy(Margin.tiny)
         ) {
             state.post?.let { post ->
-                Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    text = "${post.number} : ${post.courseCode}",
-                    style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.primary
-                )
-
                 Spacer(modifier = Modifier.size(Margin.normal))
 
                 LabelText(label = stringResource(id = R.string.course), text = post.courseName)

@@ -16,23 +16,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.accompanist.coil.CoilImage
-import io.github.diubruteforce.smartcr.model.data.Instructor
 import io.github.diubruteforce.smartcr.ui.theme.CornerRadius
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.ui.theme.SmartCRTheme
 import io.github.diubruteforce.smartcr.ui.theme.grayBorder
 
 @Composable
-fun TeacherListItem(
+fun ProfileListItem(
     modifier: Modifier = Modifier,
-    instructor: Instructor,
-    itemClick: (String) -> Unit
+    title: String,
+    subTitle: String,
+    profileUrl: String,
+    isSelected: Boolean = false,
+    itemClick: () -> Unit
 ) {
     val interactionState = remember { InteractionState() }
 
     Card(
         modifier = modifier.clickable(
-            onClick = { itemClick.invoke(instructor.id) },
+            onClick = itemClick,
             interactionState = interactionState,
             indication = null
         ),
@@ -51,14 +53,14 @@ fun TeacherListItem(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = instructor.fullName,
+                    text = title,
                     style = MaterialTheme.typography.body1,
                     fontWeight = FontWeight.Medium,
                     maxLines = 1
                 )
 
                 Text(
-                    text = "Department: ${instructor.departmentCode}",
+                    text = subTitle,
                     style = MaterialTheme.typography.body2
                 )
             }
@@ -66,7 +68,7 @@ fun TeacherListItem(
             Spacer(modifier = Modifier.size(Margin.small))
 
             Card(
-                modifier = Modifier.size(100.dp),
+                modifier = Modifier.size(80.dp),
                 shape = RoundedCornerShape(CornerRadius.normal),
                 elevation = 0.dp,
                 backgroundColor = Color.Gray
@@ -74,7 +76,7 @@ fun TeacherListItem(
                 CoilImage(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
-                    data = instructor.profileUrl,
+                    data = profileUrl,
                     fadeIn = true
                 )
             }
@@ -84,18 +86,17 @@ fun TeacherListItem(
 
 @Preview(showBackground = true)
 @Composable
-private fun PreviewTeacherListItem() {
+private fun PreviewProfileListItem() {
     SmartCRTheme {
         ScrollableColumn(
             verticalArrangement = Arrangement.spacedBy(Margin.normal),
             contentPadding = PaddingValues(Margin.medium)
         ) {
             (1..10).forEach {
-                TeacherListItem(
-                    instructor = Instructor(
-                        fullName = "Abui mian kuddus boyati",
-                        departmentCode = "CSE"
-                    ),
+                ProfileListItem(
+                    title = "",
+                    subTitle = "",
+                    profileUrl = "",
                     itemClick = {}
                 )
             }
