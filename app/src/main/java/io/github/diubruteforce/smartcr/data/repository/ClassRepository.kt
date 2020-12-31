@@ -318,6 +318,30 @@ class ClassRepository @Inject constructor(
             }
     }
 
+    suspend fun getTodayTodoList(currentDateMillis: Long): List<Post> {
+        val joinedSections = getUserProfile().joinedSection
+
+        if (joinedSections.isEmpty()) return emptyList()
+
+        return getPostCollectionPath()
+            .whereActiveData()
+            .whereIn("sectionId", joinedSections)
+            .whereGreaterThanOrEqualTo("dateTimeMillis", currentDateMillis)
+            .get()
+            .await()
+            .map {
+                val postTypeStr = it.getString("postType")!!
+
+                when (PostType.valueOf(postTypeStr)) {
+                    PostType.Routine -> Quiz() // this won't happen.
+                    PostType.Quiz -> it.toObject<Quiz>().copy(id = it.id)
+                    PostType.Assignment -> it.toObject<Assignment>().copy(id = it.id)
+                    PostType.Presentation -> it.toObject<Presentation>().copy(id = it.id)
+                    PostType.Project -> it.toObject<Project>().copy(id = it.id)
+                }
+            }
+    }
+
     suspend fun getPost(postType: PostType, postId: String?): Post {
         if (postId == null) {
             val currentDate = Calendar.getInstance(Locale.getDefault()).toDateString()

@@ -95,7 +95,10 @@ fun SmartCRScreen(
                 ResourceScreen()
             }
             HomeRoute.TODO -> {
-                ToDoScreen()
+                ToDoScreen(
+                    viewModel = hiltViewModel(),
+                    navigateToPostDetail = navigateToPostDetail
+                )
             }
             HomeRoute.MENU -> {
                 MenuScreen(onMenuClick = onMenuClick)
