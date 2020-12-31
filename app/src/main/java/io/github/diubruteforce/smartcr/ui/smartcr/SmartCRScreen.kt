@@ -19,10 +19,12 @@ import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.common.InsetAwareTopAppBar
+import io.github.diubruteforce.smartcr.ui.resource.ResourceScreen
 import io.github.diubruteforce.smartcr.ui.smartcr.home.HomeScreen
 import io.github.diubruteforce.smartcr.ui.smartcr.menu.Menu
 import io.github.diubruteforce.smartcr.ui.smartcr.menu.MenuScreen
 import io.github.diubruteforce.smartcr.ui.theme.grayText
+import io.github.diubruteforce.smartcr.ui.todo.ToDoScreen
 
 @Composable
 fun SmartCRScreen(
@@ -90,10 +92,10 @@ fun SmartCRScreen(
                 )
             }
             HomeRoute.Resource -> {
-
+                ResourceScreen()
             }
             HomeRoute.TODO -> {
-
+                ToDoScreen()
             }
             HomeRoute.MENU -> {
                 MenuScreen(onMenuClick = onMenuClick)

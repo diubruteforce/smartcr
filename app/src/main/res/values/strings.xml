@@ -135,4 +135,8 @@
     <string name="post_delete">If you delete this post nobody would be able to view this anymore.</string>
     <string name="groups">Groups</string>
     <string name="group_name">Group Name</string>
+    <string name="no_resource">No resource found</string>
+    <string name="no_resource_message">There is no resource at this moment. Please check some times later.</string>
+    <string name="no_todo">Nothing to do</string>
+    <string name="no_todo_message">You have no job to do. Chill and have fun.</string>
 </resources>

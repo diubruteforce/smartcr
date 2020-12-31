@@ -5,6 +5,9 @@ import androidx.navigation.compose.*
 import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
+import io.github.diubruteforce.smartcr.ui.event.EventScreen
+import io.github.diubruteforce.smartcr.ui.examroutine.ExamRoutineScreen
+import io.github.diubruteforce.smartcr.ui.feesschedule.FeesScheduleScreen
 import io.github.diubruteforce.smartcr.ui.post.GroupScreen
 import io.github.diubruteforce.smartcr.ui.post.PostDetailScreen
 import io.github.diubruteforce.smartcr.ui.post.PostEditScreen
@@ -59,10 +62,14 @@ fun SmartCRApp() {
                             navController.navigate(MainRoute.CourseList.uri())
                         }
                         Menu.Event -> {
+                            navController.navigate(MainRoute.Event.uri())
                         }
                         Menu.EXAM_ROUTINE -> {
+                            navController.navigate(MainRoute.ExamRoutine.uri())
+
                         }
                         Menu.FEES_SCHEDULE -> {
+                            navController.navigate(MainRoute.FeesSchedule.uri())
                         }
                         Menu.APP_SETTING -> {
                         }
@@ -71,6 +78,18 @@ fun SmartCRApp() {
             )
         }
         // endregion
+
+        composable(MainRoute.Event.route) {
+            EventScreen(onBackPress = navController::navigateUp)
+        }
+
+        composable(MainRoute.ExamRoutine.route) {
+            ExamRoutineScreen(onBackPress = navController::navigateUp)
+        }
+
+        composable(MainRoute.FeesSchedule.route) {
+            FeesScheduleScreen(onBackPress = navController::navigateUp)
+        }
 
         // region: TeacherProfileEdit
         composable(MainRoute.TeacherProfileEdit.route) {
@@ -303,4 +322,9 @@ object MainRoute {
         firstArgName = "postId",
         secondArgName = "sectionId"
     )
+
+    val Event = NoArgRoute("Event")
+    val ExamRoutine = NoArgRoute("ExamRoutine")
+    val FeesSchedule = NoArgRoute("FeesSchedule")
+
 }
