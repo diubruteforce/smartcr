@@ -25,7 +25,7 @@ fun PostDetailScreen(
     viewModel: PostDetailViewModel,
     postType: PostType,
     postId: String,
-    navigateToGroupList: (PostType, String) -> Unit,
+    navigateToGroupList: (String, String) -> Unit,
     navigateToPostEdit: (PostType, String) -> Unit,
     onBackPress: () -> Unit
 ) {
@@ -60,7 +60,7 @@ fun PostDetailScreen(
     PostDetailScreenContent(
         stateFlow = viewModel.state,
         postType = postType,
-        navigateToGroupList = { navigateToGroupList.invoke(postType, postId) },
+        navigateToGroupList = { sectionId -> navigateToGroupList.invoke(postId, sectionId) },
         navigateToPostEdit = { navigateToPostEdit.invoke(postType, postId) },
         deletePost = { deletePost = true },
         onBackPress = onBackPress
@@ -72,7 +72,7 @@ fun PostDetailScreen(
 private fun PostDetailScreenContent(
     stateFlow: StateFlow<PostDetailState>,
     postType: PostType,
-    navigateToGroupList: () -> Unit,
+    navigateToGroupList: (String) -> Unit,
     navigateToPostEdit: () -> Unit,
     deletePost: () -> Unit,
     onBackPress: () -> Unit
@@ -136,21 +136,21 @@ private fun PostDetailScreenContent(
                     }
                     is Assignment -> if (post.groupType == GroupType.Group.name) {
                         GroupInformation(
-                            navigateToGroupList = navigateToGroupList,
+                            navigateToGroupList = { navigateToGroupList.invoke(post.sectionId) },
                             maxMember = post.maxMember,
                             joinedGroup = state.joinedGroup
                         )
                     }
                     is Presentation -> if (post.groupType == GroupType.Group.name) {
                         GroupInformation(
-                            navigateToGroupList = navigateToGroupList,
+                            navigateToGroupList = { navigateToGroupList.invoke(post.sectionId) },
                             maxMember = post.maxMember,
                             joinedGroup = state.joinedGroup
                         )
                     }
                     is Project -> if (post.groupType == GroupType.Group.name) {
                         GroupInformation(
-                            navigateToGroupList = navigateToGroupList,
+                            navigateToGroupList = { navigateToGroupList.invoke(post.sectionId) },
                             maxMember = post.maxMember,
                             joinedGroup = state.joinedGroup
                         )

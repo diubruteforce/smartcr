@@ -5,6 +5,7 @@ import androidx.navigation.compose.*
 import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
+import io.github.diubruteforce.smartcr.ui.post.GroupScreen
 import io.github.diubruteforce.smartcr.ui.post.PostDetailScreen
 import io.github.diubruteforce.smartcr.ui.post.PostEditScreen
 import io.github.diubruteforce.smartcr.ui.section.SectionDetailScreen
@@ -235,10 +236,27 @@ fun SmartCRApp() {
                 viewModel = hiltViewModel(),
                 postType = argPostType,
                 postId = argPostId,
-                navigateToGroupList = { postType, postId -> },
+                navigateToGroupList = { postId, sectionId ->
+                    navController.navigate(MainRoute.Group.uri(postId, sectionId))
+                },
                 navigateToPostEdit = { postType, postId ->
                     navController.navigate(MainRoute.PostEdit.uri(postType.name, postId))
                 },
+                onBackPress = navController::navigateUp
+            )
+        }
+        // endregion
+
+        // region: Group
+        composable(MainRoute.Group.route) { backStack ->
+            val arg = MainRoute.Group.getArgument(backStack)
+            val postId = arg.first
+            val sectionId = arg.second
+
+            GroupScreen(
+                viewModel = hiltViewModel(),
+                postId = postId,
+                sectionId = sectionId,
                 onBackPress = navController::navigateUp
             )
         }
@@ -278,5 +296,11 @@ object MainRoute {
         path = "PostDetail",
         firstArgName = "postType",
         secondArgName = "postId"
+    )
+
+    val Group = DoubleArgRoute(
+        path = "Group",
+        firstArgName = "postId",
+        secondArgName = "sectionId"
     )
 }

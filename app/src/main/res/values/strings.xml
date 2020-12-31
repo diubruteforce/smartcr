@@ -133,4 +133,6 @@
     <string name="join_or_creat_section">Join/Create Section</string>
     <string name="place">Place</string>
     <string name="post_delete">If you delete this post nobody would be able to view this anymore.</string>
+    <string name="groups">Groups</string>
+    <string name="group_name">Group Name</string>
 </resources>

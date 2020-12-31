@@ -390,16 +390,18 @@ class ClassRepository @Inject constructor(
             .add(newPost)
     }
 
-    suspend fun getJoinedGroup(postId: String): Group? {
-        return getPostCollectionPath()
-            .document(postId)
-            .collection(groupPath)
-            .whereActiveData()
-            .whereArrayContains("members", getUserProfile().id)
+    suspend fun getJoinedGroup(postId: String, sectionId: String): Group? {
+        val groups = getGroupList(postId)
+
+        val memberStudent: MemberStudent = getSectionCollectionPath()
+            .document(sectionId)
+            .collection(studentPath)
+            .document(getUserProfile().id)
             .get()
             .await()
-            .map { it.toObject<Group>().copy(id = it.id) }
-            .firstOrNull()
+            .toObject<MemberStudent>() ?: return null
+
+        return groups.find { memberStudent.joinedGroups.contains(it.id) }
     }
 
     suspend fun deletePost(post: Post) {
@@ -486,5 +488,14 @@ class ClassRepository @Inject constructor(
         groupPath.document(groupId)
             .collection(historyPath)
             .add(newGroup.copy(id = groupId))
+    }
+
+    suspend fun joinLeavePostGroup(profileMember: MemberStudent, sectionId: String) {
+        getSectionCollectionPath()
+            .document(sectionId)
+            .collection(studentPath)
+            .document(profileMember.studentId)
+            .set(profileMember, SetOptions.merge())
+            .await()
     }
 }

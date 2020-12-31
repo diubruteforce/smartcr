@@ -32,6 +32,7 @@ class GroupViewModel @ViewModelInject constructor(
 ) {
     private lateinit var savedPostId: String
     private lateinit var savedSectionId: String
+    private lateinit var profileMember: MemberStudent
 
     fun loadData(postId: String, sectionId: String) = launchInViewModelScope {
         setSideEffect { EmptyLoadingState }
@@ -51,9 +52,9 @@ class GroupViewModel @ViewModelInject constructor(
 
 
         val userProfile = classRepository.getUserProfile()
-        val userMember = members.find { it.studentId == userProfile.id }!!
+        profileMember = members.find { it.studentId == userProfile.id }!!
 
-        val joinedGroupId = groups.find { userMember.joinedGroups.contains(it.id) }?.id
+        val joinedGroupId = groups.find { profileMember.joinedGroups.contains(it.id) }?.id
 
         withState {
             setState {
@@ -87,7 +88,7 @@ class GroupViewModel @ViewModelInject constructor(
         setState { copy(groupDetails = groupDetails.copy(value = newDetails)) }
     }
 
-    fun editGroup() = withState {
+    fun saveGroup() = withState {
         val newGroupName = groupName.validate()
         val newGroupDetail = groupDetails.validate()
 
@@ -107,7 +108,49 @@ class GroupViewModel @ViewModelInject constructor(
 
             classRepository.editGroup(savedPostId, newGroup)
 
+            setState { copy(editingGroup = null) }
+
             setSideEffect { TypedSideEffectState.Success(GroupSuccess.GroupSaved) }
+        }
+    }
+
+    fun joinGroup(groupId: String) = withState {
+        if (joinedGroupId != null) setSideEffect {
+            TypedSideEffectState.Fail(
+                "You are a member of another group. Leave from that group before joining this group"
+            )
+        } else launchInViewModelScope {
+            setSideEffect { EmptyLoadingState }
+
+            profileMember = profileMember.copy(joinedGroups = profileMember.joinedGroups + groupId)
+
+            classRepository.joinLeavePostGroup(profileMember, savedSectionId)
+
+            val joinedGroupId = groups.find { profileMember.joinedGroups.contains(it.id) }?.id
+
+            setState { copy(joinedGroupId = joinedGroupId) }
+
+            //setSideEffect { TypedSideEffectState.Success(GroupSuccess.Joined) }
+
+            loadData(postId = savedPostId, sectionId = savedSectionId)
+        }
+    }
+
+    fun leaveGroup(groupId: String) = withState {
+        launchInViewModelScope {
+            setSideEffect { EmptyLoadingState }
+
+            profileMember = profileMember.copy(joinedGroups = profileMember.joinedGroups - groupId)
+
+            classRepository.joinLeavePostGroup(profileMember, savedSectionId)
+
+            val joinedGroupId = groups.find { profileMember.joinedGroups.contains(it.id) }?.id
+
+            setState { copy(joinedGroupId = joinedGroupId) }
+
+            //setSideEffect { TypedSideEffectState.Success(GroupSuccess.Left) }
+
+            loadData(postId = savedPostId, sectionId = savedSectionId)
         }
     }
 

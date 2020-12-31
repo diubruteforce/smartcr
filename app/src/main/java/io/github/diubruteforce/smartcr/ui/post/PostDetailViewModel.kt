@@ -28,7 +28,8 @@ class PostDetailViewModel @ViewModelInject constructor(
         setSideEffect { EmptyLoadingState }
 
         val post = classRepository.getPost(postType, postId)
-        val joinedGroup = classRepository.getJoinedGroup(postId = postId)
+        val joinedGroup =
+            classRepository.getJoinedGroup(postId = postId, sectionId = post.sectionId)
 
         withState {
             setState {
