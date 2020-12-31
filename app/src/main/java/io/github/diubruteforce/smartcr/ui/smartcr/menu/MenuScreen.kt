@@ -41,5 +41,5 @@ enum class Menu(val title: String, @DrawableRes val iconRes: Int) {
     Event("Event", R.drawable.event),
     EXAM_ROUTINE("Exam Routine", R.drawable.exam_routine),
     FEES_SCHEDULE("Fees Schedule", R.drawable.fees_schedule),
-    APP_SETTING("App Setting", R.drawable.app_setting),
+    ABOUT_APP("About App", R.drawable.app_setting),
 }

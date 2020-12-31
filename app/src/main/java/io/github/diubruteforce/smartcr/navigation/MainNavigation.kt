@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.*
 import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.model.data.PostType
+import io.github.diubruteforce.smartcr.ui.about.AboutScreen
 import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
 import io.github.diubruteforce.smartcr.ui.event.EventScreen
 import io.github.diubruteforce.smartcr.ui.examroutine.ExamRoutineScreen
@@ -71,7 +72,8 @@ fun SmartCRApp() {
                         Menu.FEES_SCHEDULE -> {
                             navController.navigate(MainRoute.FeesSchedule.uri())
                         }
-                        Menu.APP_SETTING -> {
+                        Menu.ABOUT_APP -> {
+                            navController.navigate(MainRoute.AboutApp.uri())
                         }
                     }
                 }
@@ -89,6 +91,10 @@ fun SmartCRApp() {
 
         composable(MainRoute.FeesSchedule.route) {
             FeesScheduleScreen(onBackPress = navController::navigateUp)
+        }
+
+        composable(MainRoute.AboutApp.route) {
+            AboutScreen(onBackPress = navController::navigateUp)
         }
 
         // region: TeacherProfileEdit
@@ -326,5 +332,5 @@ object MainRoute {
     val Event = NoArgRoute("Event")
     val ExamRoutine = NoArgRoute("ExamRoutine")
     val FeesSchedule = NoArgRoute("FeesSchedule")
-
+    val AboutApp = NoArgRoute("AboutApp")
 }

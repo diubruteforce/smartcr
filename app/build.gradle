@@ -26,11 +26,13 @@ android {
     buildTypes {
         debug {
             //applicationIdSuffix ".debug"
+            buildConfigField("String", "FOOD_VERSION", "\"${rootProject.APP_VERSION}\"")
         }
 
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField("String", "FOOD_VERSION", "\"${rootProject.APP_VERSION}\"")
         }
     }
 
