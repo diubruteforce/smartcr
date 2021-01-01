@@ -9,6 +9,7 @@ import io.github.diubruteforce.smartcr.model.ui.Error
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
+import io.github.diubruteforce.smartcr.utils.extension.toDateTimeMillis
 
 data class EventEditState(
     val title: InputState = InputState.NotEmptyState,
@@ -110,7 +111,8 @@ class EventEditViewModel @ViewModelInject constructor(
                 date = newDate.value,
                 time = newTime.value,
                 place = newPlace.value,
-                details = newDetails.value
+                details = newDetails.value,
+                dateTimeMillis = "${newDate.value} 11:59 PM".toDateTimeMillis()
             )
 
             extraFeatureRepository.saveEvent(newEvent)

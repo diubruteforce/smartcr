@@ -8,7 +8,7 @@ import io.github.diubruteforce.smartcr.ui.about.AboutScreen
 import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
 import io.github.diubruteforce.smartcr.ui.event.EventDetailScreen
 import io.github.diubruteforce.smartcr.ui.event.EventEditScreen
-import io.github.diubruteforce.smartcr.ui.event.EventScreen
+import io.github.diubruteforce.smartcr.ui.event.EventListScreen
 import io.github.diubruteforce.smartcr.ui.examroutine.ExamRoutineScreen
 import io.github.diubruteforce.smartcr.ui.feesschedule.FeesScheduleScreen
 import io.github.diubruteforce.smartcr.ui.post.GroupScreen
@@ -31,7 +31,7 @@ fun SmartCRApp() {
 
     NavHost(
         navController = navController,
-        startDestination = MainRoute.EventDetail.route
+        startDestination = MainRoute.Auth.route
     ) {
         authNavigation(
             navController = navController,
@@ -60,7 +60,7 @@ fun SmartCRApp() {
                     val uri = when (menu) {
                         Menu.FIND_FACULTY -> MainRoute.TeacherList.uri()
                         Menu.FIND_COURSE -> MainRoute.CourseList.uri()
-                        Menu.Event -> MainRoute.Event.uri()
+                        Menu.Event -> MainRoute.EventList.uri()
                         Menu.EXAM_ROUTINE -> MainRoute.ExamRoutine.uri()
                         Menu.FEES_SCHEDULE -> MainRoute.FeesSchedule.uri()
                         Menu.ABOUT_APP -> MainRoute.AboutApp.uri()
@@ -71,10 +71,6 @@ fun SmartCRApp() {
             )
         }
         // endregion
-
-        composable(MainRoute.Event.route) {
-            EventScreen(onBackPress = navController::navigateUp)
-        }
 
         composable(MainRoute.ExamRoutine.route) {
             ExamRoutineScreen(onBackPress = navController::navigateUp)
@@ -281,6 +277,21 @@ fun SmartCRApp() {
         }
         // endregion
 
+        // region: EventList
+        composable(MainRoute.EventList.route) { _ ->
+            EventListScreen(
+                viewModel = hiltViewModel(),
+                navigateToEventEdit = {
+                    navController.navigate(MainRoute.EventEdit.uri())
+                },
+                navigateToEventDetail = {
+                    navController.navigate(MainRoute.EventDetail.uri(it))
+                },
+                onBackPress = navController::navigateUp
+            )
+        }
+        // endregion
+
         // region: EventEdit
         composable(MainRoute.EventEdit.route) { backStack ->
             val eventId = MainRoute.EventEdit.getArgument(backStack)
@@ -350,11 +361,11 @@ object MainRoute {
         secondArgName = "sectionId"
     )
 
-    val Event = NoArgRoute("Event")
     val ExamRoutine = NoArgRoute("ExamRoutine")
     val FeesSchedule = NoArgRoute("FeesSchedule")
     val AboutApp = NoArgRoute("AboutApp")
 
+    val EventList = NoArgRoute("EventList")
     val EventEdit = SingleOptionalArgRoute("EventEdit", "eventId")
     val EventDetail = SingleArgRoute("EventDetail", "eventId")
 }

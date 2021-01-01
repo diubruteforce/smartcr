@@ -116,4 +116,13 @@ class ExtraFeatureRepository @Inject constructor(
             .collection(classRepository.historyPath)
             .add(newEvent)
     }
+
+    suspend fun getEventList(currentDateMillis: Long): List<Event> {
+        return db.collection(eventPath)
+            .whereActiveData()
+            .whereGreaterThanOrEqualTo("dateTimeMillis", currentDateMillis)
+            .get()
+            .await()
+            .map { it.toObject<Event>().copy(id = it.id) }
+    }
 }
