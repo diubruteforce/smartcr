@@ -31,7 +31,7 @@ android {
 
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             buildConfigField("String", "FOOD_VERSION", "\"${rootProject.APP_VERSION}\"")
         }
     }
@@ -178,7 +178,7 @@ dependencies {
     implementation 'com.github.mukeshsolanki:android-otpview-pinview:2.1.2'
 
     // Performance
-    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
+    // debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
 }
 
 kapt {
