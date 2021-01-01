@@ -21,6 +21,7 @@ import io.github.diubruteforce.smartcr.ui.theme.grayBorder
 
 data class SectionListItemState(
     val sectionId: String,
+    val courseCode: String,
     val name: String,
     val isJoined: Boolean
 )
@@ -93,7 +94,7 @@ private fun PreviewSectionListItem() {
         ) {
             (0..5).forEach {
                 SectionListItem(
-                    state = SectionListItemState("", "Section $it", it % 2 == 1),
+                    state = SectionListItemState("", "", "Section $it", it % 2 == 1),
                     itemClick = { },
                     onJoin = { },
                     onLeave = { }

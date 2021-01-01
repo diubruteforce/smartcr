@@ -5,7 +5,9 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import io.github.diubruteforce.smartcr.model.data.Course
 import io.github.diubruteforce.smartcr.model.data.Event
+import io.github.diubruteforce.smartcr.model.data.ExamRoutine
 import io.github.diubruteforce.smartcr.model.data.FeesSchedule
 import io.github.diubruteforce.smartcr.utils.extension.whereActiveData
 import kotlinx.coroutines.tasks.await
@@ -17,6 +19,7 @@ class ExtraFeatureRepository @Inject constructor(
     private val db by lazy { Firebase.firestore }
     private val feesSchedulePath = "feesSchedule"
     private val eventPath = "event"
+    private val examRoutinePath = "examRoutine"
 
     private suspend fun getFeesScheduleCollection() =
         db.collection(classRepository.departmentPath)
@@ -24,6 +27,11 @@ class ExtraFeatureRepository @Inject constructor(
             .collection(classRepository.semesterPath)
             .document(classRepository.getSemesterId())
             .collection(feesSchedulePath)
+
+    private suspend fun getExamRoutineCollection() =
+        classRepository
+            .getLatestSemesterPath()
+            .collection(examRoutinePath)
 
     suspend fun getFees(currentDateMillis: Long): List<FeesSchedule> {
         return getFeesScheduleCollection()
@@ -124,5 +132,58 @@ class ExtraFeatureRepository @Inject constructor(
             .get()
             .await()
             .map { it.toObject<Event>().copy(id = it.id) }
+    }
+
+    suspend fun saveExamRoutine(routine: ExamRoutine) {
+        val newRoutine = routine.copy(
+            updatedOn = Timestamp.now(),
+            updaterId = classRepository.getUserProfile().id,
+            updaterEmail = classRepository.getUserProfile().diuEmail
+        )
+
+        val routineId = if (newRoutine.id.isEmpty()) {
+            getExamRoutineCollection()
+                .add(newRoutine)
+                .await()
+                .id
+        } else {
+            getExamRoutineCollection()
+                .document(newRoutine.id)
+                .set(newRoutine, SetOptions.merge())
+                .await()
+
+            newRoutine.id
+        }
+
+        // Keeping the history
+        getExamRoutineCollection()
+            .document(routineId)
+            .collection(classRepository.historyPath)
+            .add(newRoutine.copy(id = routineId))
+    }
+
+    suspend fun getExamRoutineList(currentDateMillis: Long): List<ExamRoutine> {
+        return getExamRoutineCollection()
+            .whereActiveData()
+            .whereGreaterThanOrEqualTo("dateTimeMillis", currentDateMillis)
+            .get()
+            .await()
+            .map { it.toObject<ExamRoutine>().copy(id = it.id) }
+    }
+
+    suspend fun getJoinedCourseList(): List<Course> {
+        val userProfile = classRepository.getUserProfile()
+        val joinedCourses = userProfile.joinedCourseCode
+
+        if (joinedCourses.isEmpty()) return emptyList()
+
+        return db.collection(classRepository.departmentPath)
+            .document(userProfile.departmentId)
+            .collection(classRepository.coursePath)
+            .whereIn("courseCode", joinedCourses)
+            .get()
+            .await()
+            .map { it.toObject<Course>().copy(id = it.id) }
+            .sortedBy { it.courseTitle }
     }
 }

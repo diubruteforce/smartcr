@@ -151,4 +151,6 @@
     <string name="select_event_type">Select event type</string>
     <string name="event_details">Event details</string>
     <string name="event_delete">If you delete this post, no other student can view this anymore.</string>
+    <string name="exam_routine_delete">If you delete this exam routine, no other student can view this anymore.</string>
+    <string name="exam_routine_no_edit">You\'ve not joined any section yet. Please join to any section to add exam routine.</string>
 </resources>

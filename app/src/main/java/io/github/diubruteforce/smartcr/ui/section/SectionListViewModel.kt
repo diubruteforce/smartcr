@@ -54,16 +54,22 @@ class SectionListViewModel @ViewModelInject constructor(
 
         if (isJoined) joinedInAnotherSection = true
 
-        SectionListItemState(name = it.name, isJoined = isJoined, sectionId = it.id)
+        SectionListItemState(
+            name = it.name,
+            isJoined = isJoined,
+            sectionId = it.id,
+            courseCode = it.course.courseCode
+        )
     }
 
-    fun joinSection(sectionId: String) {
+    fun joinSection(sectionId: String, courseCode: String) {
         if (joinedInAnotherSection) setSideEffect {
             TypedSideEffectState.Fail("You have already joined in another section. Please leave from that section before joining a new section")
         } else launchInViewModelScope {
             setSideEffect { EmptyLoadingState }
 
-            profileData = classRepository.joinSection(sectionId)
+            profileData =
+                classRepository.joinSection(sectionId = sectionId, courseCode = courseCode)
 
             withState {
                 setState {
@@ -76,10 +82,10 @@ class SectionListViewModel @ViewModelInject constructor(
         }
     }
 
-    fun leaveSection(sectionId: String) = launchInViewModelScope {
+    fun leaveSection(sectionId: String, courseCode: String) = launchInViewModelScope {
         setSideEffect { EmptyLoadingState }
 
-        profileData = classRepository.leaveSection(sectionId)
+        profileData = classRepository.leaveSection(sectionId = sectionId, courseCode = courseCode)
 
         withState {
             setState {

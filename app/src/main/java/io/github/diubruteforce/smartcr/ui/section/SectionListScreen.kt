@@ -61,8 +61,8 @@ fun SectionListScreen(
 private fun SectionListScreenContent(
     stateFlow: StateFlow<SectionListState>,
     navigateToSectionDetail: (String) -> Unit,
-    joinSection: (String) -> Unit,
-    leaveSection: (String) -> Unit,
+    joinSection: (String, String) -> Unit,
+    leaveSection: (String, String) -> Unit,
     createNewSection: () -> Unit,
     onBackPress: () -> Unit
 ) {
@@ -125,8 +125,8 @@ private fun SectionListScreenContent(
                 SectionListItem(
                     state = item,
                     itemClick = { navigateToSectionDetail.invoke(item.sectionId) },
-                    onJoin = { joinSection.invoke(item.sectionId) },
-                    onLeave = { leaveSection.invoke(item.sectionId) }
+                    onJoin = { joinSection.invoke(item.sectionId, item.courseCode) },
+                    onLeave = { leaveSection.invoke(item.sectionId, item.courseCode) }
                 )
             }
         }

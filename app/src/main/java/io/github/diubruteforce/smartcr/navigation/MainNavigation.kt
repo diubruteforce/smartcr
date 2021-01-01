@@ -73,7 +73,13 @@ fun SmartCRApp() {
         // endregion
 
         composable(MainRoute.ExamRoutine.route) {
-            ExamRoutineScreen(onBackPress = navController::navigateUp)
+            ExamRoutineScreen(
+                viewModel = hiltViewModel(),
+                navigatetoCourseList = {
+                    navController.navigate(MainRoute.CourseList.uri())
+                },
+                onBackPress = navController::navigateUp
+            )
         }
 
         composable(MainRoute.FeesSchedule.route) {
@@ -306,11 +312,11 @@ fun SmartCRApp() {
 
         // region: EventDetail
         composable(MainRoute.EventDetail.route) { backStack ->
-            //val eventId = MainRoute.EventDetail.getArgument(backStack)
+            val eventId = MainRoute.EventDetail.getArgument(backStack)
 
             EventDetailScreen(
                 viewModel = hiltViewModel(),
-                eventId = "k061yl8WvDSaix5TCvSY",
+                eventId = eventId,
                 navigateToEventEdit = {
                     navController.navigate(MainRoute.EventEdit.uri(it))
                 },

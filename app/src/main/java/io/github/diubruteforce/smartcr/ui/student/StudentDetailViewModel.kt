@@ -44,6 +44,7 @@ class StudentDetailViewModel @ViewModelInject constructor(
         val joinedSectionList = sectionList.map {
             SectionListItemState(
                 sectionId = it.id,
+                courseCode = it.course.courseCode,
                 name = "${it.course.courseCode} (${it.name})",
                 isJoined = newStudent.joinedSection.contains(it.id)
             )
@@ -52,21 +53,23 @@ class StudentDetailViewModel @ViewModelInject constructor(
         setState { copy(student = newStudent, joinedSections = joinedSectionList) }
     }
 
-    fun joinSection(sectionId: String) {
+    fun joinSection(sectionId: String, courseCode: String) {
         launchInViewModelScope {
             setSideEffect { EmptyLoadingState }
 
-            val profileData = classRepository.joinSection(sectionId)
+            val profileData =
+                classRepository.joinSection(sectionId = sectionId, courseCode = courseCode)
             populateSuccessState(profileData)
 
             setSideEffect { TypedSideEffectState.Success(StudentDetailSuccess.SectionJoined) }
         }
     }
 
-    fun leaveSection(sectionId: String) = launchInViewModelScope {
+    fun leaveSection(sectionId: String, courseCode: String) = launchInViewModelScope {
         setSideEffect { EmptyLoadingState }
 
-        val profileData = classRepository.leaveSection(sectionId)
+        val profileData =
+            classRepository.leaveSection(sectionId = sectionId, courseCode = courseCode)
         populateSuccessState(profileData)
 
         setSideEffect { TypedSideEffectState.Success(StudentDetailSuccess.SectionLeft) }

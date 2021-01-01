@@ -15,7 +15,8 @@ data class Student(
     val level: String = "",
     val term: String = "",
     val batch: String = "",
-    val joinedSection: List<String> = emptyList()
+    val joinedSection: List<String> = emptyList(),
+    val joinedCourseCode: List<String> = emptyList()
 )
 
 data class MemberStudent(

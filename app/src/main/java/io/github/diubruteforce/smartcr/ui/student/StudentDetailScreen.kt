@@ -77,8 +77,8 @@ fun StudentDetailScreen(
 private fun StudentDetailScreenContent(
     stateFlow: StateFlow<StudentDetailState>,
     navigateToSectionDetail: (String) -> Unit,
-    joinSection: (String) -> Unit,
-    leaveSection: (String) -> Unit,
+    joinSection: (String, String) -> Unit,
+    leaveSection: (String, String) -> Unit,
     onProfileEdit: (String) -> Unit,
     onProfileDelete: (String) -> Unit,
     signOut: () -> Unit,
@@ -127,8 +127,8 @@ private fun StudentDetailScreenContent(
                 SectionListItem(
                     state = it,
                     itemClick = { navigateToSectionDetail.invoke(it.sectionId) },
-                    onJoin = { joinSection.invoke(it.sectionId) },
-                    onLeave = { leaveSection.invoke(it.sectionId) }
+                    onJoin = { joinSection.invoke(it.sectionId, it.courseCode) },
+                    onLeave = { leaveSection.invoke(it.sectionId, it.courseCode) }
                 )
             }
 

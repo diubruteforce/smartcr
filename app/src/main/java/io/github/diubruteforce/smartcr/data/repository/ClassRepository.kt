@@ -21,7 +21,7 @@ class ClassRepository @Inject constructor(
 ) {
     private val db by lazy { Firebase.firestore }
     val departmentPath = "department"
-    private val coursePath = "course"
+    val coursePath = "course"
     val semesterPath = "semester"
     private val sectionPath = "section"
     private val studentPath = "student"
@@ -87,6 +87,12 @@ class ClassRepository @Inject constructor(
 
         return response.toObject<Course>()?.copy(id = response.id)!!
     }
+
+    suspend fun getLatestSemesterPath() =
+        db.collection(departmentPath)
+            .document(getUserProfile().departmentId)
+            .collection(semesterPath)
+            .document(getSemesterId())
 
     private suspend fun getSectionCollectionPath() =
         db.collection(departmentPath)
@@ -176,7 +182,7 @@ class ClassRepository @Inject constructor(
             .await()
     }
 
-    suspend fun joinSection(sectionId: String): Student {
+    suspend fun joinSection(sectionId: String, courseCode: String): Student {
         getSectionCollectionPath()
             .document(sectionId)
             .collection(studentPath)
@@ -185,7 +191,11 @@ class ClassRepository @Inject constructor(
             .await()
 
         val updatedJoinedSection = getUserProfile().joinedSection + sectionId
-        val updatedProfile = getUserProfile().copy(joinedSection = updatedJoinedSection)
+        val updatedJoinedCourse = getUserProfile().joinedCourseCode + courseCode
+        val updatedProfile = getUserProfile().copy(
+            joinedSection = updatedJoinedSection,
+            joinedCourseCode = updatedJoinedCourse
+        )
 
         profileRepository.saveUserProfile(updatedProfile)
         _userProfile = updatedProfile
@@ -193,7 +203,7 @@ class ClassRepository @Inject constructor(
         return updatedProfile
     }
 
-    suspend fun leaveSection(sectionId: String): Student {
+    suspend fun leaveSection(sectionId: String, courseCode: String): Student {
         getSectionCollectionPath()
             .document(sectionId)
             .collection(studentPath)
@@ -202,7 +212,11 @@ class ClassRepository @Inject constructor(
             .await()
 
         val updatedJoinedSection = getUserProfile().joinedSection.filter { it != sectionId }
-        val updatedProfile = getUserProfile().copy(joinedSection = updatedJoinedSection)
+        val updatedJoinedCourse = getUserProfile().joinedCourseCode.filter { it != courseCode }
+        val updatedProfile = getUserProfile().copy(
+            joinedSection = updatedJoinedSection,
+            joinedCourseCode = updatedJoinedCourse
+        )
 
         profileRepository.saveUserProfile(updatedProfile)
         _userProfile = updatedProfile
