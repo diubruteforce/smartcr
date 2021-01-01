@@ -20,12 +20,12 @@ class ClassRepository @Inject constructor(
     val profileRepository: ProfileRepository
 ) {
     private val db by lazy { Firebase.firestore }
-    private val departmentPath = "department"
+    val departmentPath = "department"
     private val coursePath = "course"
-    private val semesterPath = "semester"
+    val semesterPath = "semester"
     private val sectionPath = "section"
     private val studentPath = "student"
-    private val historyPath = "history"
+    val historyPath = "history"
     private val routinePath = "routine"
     private val postPath = "post"
     private val groupPath = "group"
@@ -51,7 +51,7 @@ class ClassRepository @Inject constructor(
         return _userProfile!!
     }
 
-    private suspend fun getSemesterId(): String {
+    suspend fun getSemesterId(): String {
         if (_semesterId != null) return _semesterId!!
 
         _semesterId = db.collection(departmentPath)

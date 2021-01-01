@@ -90,7 +90,10 @@ fun SmartCRApp() {
         }
 
         composable(MainRoute.FeesSchedule.route) {
-            FeesScheduleScreen(onBackPress = navController::navigateUp)
+            FeesScheduleScreen(
+                viewModel = hiltViewModel(),
+                onBackPress = navController::navigateUp
+            )
         }
 
         composable(MainRoute.AboutApp.route) {

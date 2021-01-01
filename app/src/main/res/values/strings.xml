@@ -140,4 +140,9 @@
     <string name="no_todo">Nothing to do</string>
     <string name="no_todo_message">You have no job to do. Chill and have fun.</string>
     <string name="about_app">SmartCR has been built for the students of Daffodil International University with a view to change the regular procedure of collecting study related information that is felt to be difficult by the students</string>
+    <string name="batch_code">Batch code</string>
+    <string name="fees_for">Fees for</string>
+    <string name="last_date">Last date</string>
+    <string name="edit_fees_schedule">Edit Fees Schedule</string>
+    <string name="select_fees_for">Select fees for</string>
 </resources>

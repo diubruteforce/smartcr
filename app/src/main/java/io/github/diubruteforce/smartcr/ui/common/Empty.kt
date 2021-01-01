@@ -26,7 +26,7 @@ fun Empty(
     onAction: (() -> Unit)? = null
 ) {
     Column(
-        modifier = modifier.fillMaxSize().navigationBarsPadding(),
+        modifier = modifier.fillMaxSize().heightIn(min = 600.dp).navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 

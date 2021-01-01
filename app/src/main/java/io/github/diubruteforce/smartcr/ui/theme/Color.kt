@@ -17,6 +17,7 @@ val Colors.quiz: Color @Composable get() = MaterialTheme.colors.primary
 val Colors.assignment: Color @Composable get() = MaterialTheme.colors.primary
 val Colors.presentation: Color @Composable get() = MaterialTheme.colors.primary
 val Colors.project: Color @Composable get() = MaterialTheme.colors.primary
+val Colors.fees: Color @Composable get() = MaterialTheme.colors.primary
 
 val Colors.grayText: Color
     @Composable get() = AmbientContentColor.current.lighten(0.55f)

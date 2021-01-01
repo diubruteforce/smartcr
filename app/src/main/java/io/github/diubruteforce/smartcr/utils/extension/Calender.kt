@@ -28,8 +28,12 @@ fun Calendar.toDateStringWeek(): String {
 fun String.toDateTimeMillis(): Long = timeFormatter.parse(this)!!.time
 
 fun String.toCalender(): Calendar {
-    val calender = Calendar.getInstance(Locale.getDefault())
-    calender.time = dateFormatter.parse(this)!!
+    return try {
+        val calender = Calendar.getInstance(Locale.getDefault())
+        calender.time = dateFormatter.parse(this)!!
 
-    return calender
+        calender
+    } catch (ex: Exception) {
+        Calendar.getInstance(Locale.getDefault())
+    }
 }
