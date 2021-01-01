@@ -6,6 +6,7 @@ import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.about.AboutScreen
 import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
+import io.github.diubruteforce.smartcr.ui.event.EventDetailScreen
 import io.github.diubruteforce.smartcr.ui.event.EventEditScreen
 import io.github.diubruteforce.smartcr.ui.event.EventScreen
 import io.github.diubruteforce.smartcr.ui.examroutine.ExamRoutineScreen
@@ -30,7 +31,7 @@ fun SmartCRApp() {
 
     NavHost(
         navController = navController,
-        startDestination = MainRoute.EventEdit.route
+        startDestination = MainRoute.EventDetail.route
     ) {
         authNavigation(
             navController = navController,
@@ -56,27 +57,16 @@ fun SmartCRApp() {
                     navController.navigate(MainRoute.StudentProfileDetail.uri())
                 },
                 onMenuClick = { menu ->
-                    when (menu) {
-                        Menu.FIND_FACULTY -> {
-                            navController.navigate(MainRoute.TeacherList.uri())
-                        }
-                        Menu.FIND_COURSE -> {
-                            navController.navigate(MainRoute.CourseList.uri())
-                        }
-                        Menu.Event -> {
-                            navController.navigate(MainRoute.Event.uri())
-                        }
-                        Menu.EXAM_ROUTINE -> {
-                            navController.navigate(MainRoute.ExamRoutine.uri())
-
-                        }
-                        Menu.FEES_SCHEDULE -> {
-                            navController.navigate(MainRoute.FeesSchedule.uri())
-                        }
-                        Menu.ABOUT_APP -> {
-                            navController.navigate(MainRoute.AboutApp.uri())
-                        }
+                    val uri = when (menu) {
+                        Menu.FIND_FACULTY -> MainRoute.TeacherList.uri()
+                        Menu.FIND_COURSE -> MainRoute.CourseList.uri()
+                        Menu.Event -> MainRoute.Event.uri()
+                        Menu.EXAM_ROUTINE -> MainRoute.ExamRoutine.uri()
+                        Menu.FEES_SCHEDULE -> MainRoute.FeesSchedule.uri()
+                        Menu.ABOUT_APP -> MainRoute.AboutApp.uri()
                     }
+
+                    navController.navigate(uri)
                 }
             )
         }
@@ -301,6 +291,22 @@ fun SmartCRApp() {
                 onBackPress = navController::navigateUp
             )
         }
+        // endregion
+
+        // region: EventDetail
+        composable(MainRoute.EventDetail.route) { backStack ->
+            //val eventId = MainRoute.EventDetail.getArgument(backStack)
+
+            EventDetailScreen(
+                viewModel = hiltViewModel(),
+                eventId = "k061yl8WvDSaix5TCvSY",
+                navigateToEventEdit = {
+                    navController.navigate(MainRoute.EventEdit.uri(it))
+                },
+                onBackPress = navController::navigateUp
+            )
+        }
+        // endregion
 
     }
 }
@@ -350,5 +356,5 @@ object MainRoute {
     val AboutApp = NoArgRoute("AboutApp")
 
     val EventEdit = SingleOptionalArgRoute("EventEdit", "eventId")
-
+    val EventDetail = SingleArgRoute("EventDetail", "eventId")
 }

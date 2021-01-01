@@ -61,11 +61,12 @@ class ExtraFeatureRepository @Inject constructor(
     suspend fun getEvent(eventId: String?): Event {
         if (eventId == null) return Event()
 
-        return db.collection(eventPath)
+        val response = db.collection(eventPath)
             .document(eventId)
             .get()
             .await()
-            .toObject<Event>()!!
+
+        return response.toObject<Event>()!!.copy(id = response.id)
     }
 
     suspend fun saveEvent(event: Event) {
@@ -94,5 +95,25 @@ class ExtraFeatureRepository @Inject constructor(
             .document(eventId)
             .collection(classRepository.historyPath)
             .add(newEvent.copy(id = eventId))
+    }
+
+    suspend fun deleteEvent(event: Event) {
+        val newEvent = event.copy(
+            isActive = false,
+            updatedOn = Timestamp.now(),
+            updaterId = classRepository.getUserProfile().id,
+            updaterEmail = classRepository.getUserProfile().diuEmail,
+        )
+
+        db.collection(eventPath)
+            .document(newEvent.id)
+            .set(newEvent, SetOptions.merge())
+            .await()
+
+        // Keeping the history
+        db.collection(eventPath)
+            .document(newEvent.id)
+            .collection(classRepository.historyPath)
+            .add(newEvent)
     }
 }
