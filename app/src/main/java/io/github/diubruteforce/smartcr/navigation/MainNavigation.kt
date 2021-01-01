@@ -6,6 +6,7 @@ import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.about.AboutScreen
 import io.github.diubruteforce.smartcr.ui.course.CourseListScreen
+import io.github.diubruteforce.smartcr.ui.event.EventEditScreen
 import io.github.diubruteforce.smartcr.ui.event.EventScreen
 import io.github.diubruteforce.smartcr.ui.examroutine.ExamRoutineScreen
 import io.github.diubruteforce.smartcr.ui.feesschedule.FeesScheduleScreen
@@ -29,7 +30,7 @@ fun SmartCRApp() {
 
     NavHost(
         navController = navController,
-        startDestination = MainRoute.Auth.route
+        startDestination = MainRoute.EventEdit.route
     ) {
         authNavigation(
             navController = navController,
@@ -290,6 +291,17 @@ fun SmartCRApp() {
         }
         // endregion
 
+        // region: EventEdit
+        composable(MainRoute.EventEdit.route) { backStack ->
+            val eventId = MainRoute.EventEdit.getArgument(backStack)
+
+            EventEditScreen(
+                viewModel = hiltViewModel(),
+                eventId = eventId,
+                onBackPress = navController::navigateUp
+            )
+        }
+
     }
 }
 
@@ -336,4 +348,7 @@ object MainRoute {
     val ExamRoutine = NoArgRoute("ExamRoutine")
     val FeesSchedule = NoArgRoute("FeesSchedule")
     val AboutApp = NoArgRoute("AboutApp")
+
+    val EventEdit = SingleOptionalArgRoute("EventEdit", "eventId")
+
 }

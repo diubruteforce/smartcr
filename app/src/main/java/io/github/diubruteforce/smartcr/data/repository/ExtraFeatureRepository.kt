@@ -5,6 +5,7 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import io.github.diubruteforce.smartcr.model.data.Event
 import io.github.diubruteforce.smartcr.model.data.FeesSchedule
 import io.github.diubruteforce.smartcr.utils.extension.whereActiveData
 import kotlinx.coroutines.tasks.await
@@ -15,6 +16,7 @@ class ExtraFeatureRepository @Inject constructor(
 ) {
     private val db by lazy { Firebase.firestore }
     private val feesSchedulePath = "feesSchedule"
+    private val eventPath = "event"
 
     private suspend fun getFeesScheduleCollection() =
         db.collection(classRepository.departmentPath)
@@ -54,5 +56,43 @@ class ExtraFeatureRepository @Inject constructor(
             .document(feesScheduleId)
             .collection(classRepository.historyPath)
             .add(newFeesSchedule.copy(id = feesScheduleId))
+    }
+
+    suspend fun getEvent(eventId: String?): Event {
+        if (eventId == null) return Event()
+
+        return db.collection(eventPath)
+            .document(eventId)
+            .get()
+            .await()
+            .toObject<Event>()!!
+    }
+
+    suspend fun saveEvent(event: Event) {
+        val newEvent = event.copy(
+            updatedOn = Timestamp.now(),
+            updaterId = classRepository.getUserProfile().id,
+            updaterEmail = classRepository.getUserProfile().diuEmail,
+        )
+
+        val eventId = if (newEvent.id.isEmpty()) {
+            db.collection(eventPath)
+                .add(newEvent)
+                .await()
+                .id
+        } else {
+            db.collection(eventPath)
+                .document(newEvent.id)
+                .set(newEvent, SetOptions.merge())
+                .await()
+
+            newEvent.id
+        }
+
+        // Keeping the history
+        db.collection(eventPath)
+            .document(eventId)
+            .collection(classRepository.historyPath)
+            .add(newEvent.copy(id = eventId))
     }
 }

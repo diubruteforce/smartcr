@@ -145,4 +145,8 @@
     <string name="last_date">Last date</string>
     <string name="edit_fees_schedule">Edit Fees Schedule</string>
     <string name="select_fees_for">Select fees for</string>
+    <string name="edit_event">Edit Event</string>
+    <string name="title">Title</string>
+    <string name="date">Date</string>
+    <string name="select_event_type">Select event type</string>
 </resources>
