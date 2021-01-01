@@ -38,7 +38,7 @@ import kotlinx.coroutines.flow.StateFlow
 @Composable
 fun ExamRoutineScreen(
     viewModel: ExamRoutineViewModel,
-    navigatetoCourseList: () -> Unit,
+    navigateToCourseList: () -> Unit,
     onBackPress: () -> Unit
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
@@ -80,7 +80,7 @@ fun ExamRoutineScreen(
             denialText = "",
             onAffirmation = {
                 showNoEditAlert = false
-                navigatetoCourseList.invoke()
+                navigateToCourseList.invoke()
             },
             affirmationText = stringResource(id = R.string.join_section),
             onDismissRequest = { showNoEditAlert = false }

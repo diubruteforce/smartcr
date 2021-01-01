@@ -75,7 +75,7 @@ fun SmartCRApp() {
         composable(MainRoute.ExamRoutine.route) {
             ExamRoutineScreen(
                 viewModel = hiltViewModel(),
-                navigatetoCourseList = {
+                navigateToCourseList = {
                     navController.navigate(MainRoute.CourseList.uri())
                 },
                 onBackPress = navController::navigateUp
