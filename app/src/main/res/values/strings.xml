@@ -71,14 +71,14 @@
     <string name="time">Time</string>
     <string name="counseling_hour">Counseling Hour</string>
     <string name="select_day">Select Day</string>
-    <string name="facult_profile">Faculty Profile</string>
+    <string name="facult_profile">Teacher Profile</string>
     <string name="start_time">Start Time</string>
     <string name="end_time">End Time</string>
     <string name="are_you_sure">Are you sure?</string>
     <string name="counseling_hour_delete">You are going to delete this counseling hour. If you delete this other students can\'t view this.</string>
     <string name="teacher_profile_delete">If you delete this teacher profile no other student can view this.</string>
     <string name="select_designation">Select Designation</string>
-    <string name="faculty">Faculty</string>
+    <string name="faculty">Teacher</string>
     <string name="search_teacher">Search Teacher</string>
     <string name="student_id">Student ID</string>
     <string name="sign_out">Sign Out</string>
@@ -153,4 +153,5 @@
     <string name="event_delete">If you delete this post, no other student can view this anymore.</string>
     <string name="exam_routine_delete">If you delete this exam routine, no other student can view this anymore.</string>
     <string name="exam_routine_no_edit">You\'ve not joined any section yet. Please join to any section to add exam routine.</string>
+    <string name="upload">Upload</string>
 </resources>

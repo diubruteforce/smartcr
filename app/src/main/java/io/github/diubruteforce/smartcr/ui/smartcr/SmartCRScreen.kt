@@ -3,10 +3,7 @@ package io.github.diubruteforce.smartcr.ui.smartcr
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.AccountCircle
-import androidx.compose.material.icons.outlined.Grading
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Menu
+import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.savedinstancestate.savedInstanceState
@@ -22,6 +19,7 @@ import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.di.hiltViewModel
 import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.common.InsetAwareTopAppBar
+import io.github.diubruteforce.smartcr.ui.resource.ResourceScreen
 import io.github.diubruteforce.smartcr.ui.smartcr.home.HomeScreen
 import io.github.diubruteforce.smartcr.ui.smartcr.menu.Menu
 import io.github.diubruteforce.smartcr.ui.smartcr.menu.MenuScreen
@@ -37,17 +35,21 @@ fun SmartCRScreen(
     navigateToProfileDetail: () -> Unit,
     onMenuClick: (Menu) -> Unit
 ) {
-    var currentScreen by savedInstanceState { HomeRoute.HOME }
+    var currentScreen by savedInstanceState { HomeRoute.Resource }
 
     Scaffold(
-        modifier = Modifier.fillMaxSize().navigationBarsWithImePadding(),
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsWithImePadding(),
         topBar = {
             InsetAwareTopAppBar {
                 IconButton(onClick = {}) {
 
                 }
                 Text(
-                    modifier = Modifier.align(Alignment.CenterVertically).weight(1f),
+                    modifier = Modifier
+                        .align(Alignment.CenterVertically)
+                        .weight(1f),
                     text = stringResource(id = R.string.app_name),
                     style = MaterialTheme.typography.h6,
                     textAlign = TextAlign.Center,
@@ -93,9 +95,11 @@ fun SmartCRScreen(
                     navigateToPostEdit = { navigateToPostEdit.invoke(it, null) }
                 )
             }
-            /*HomeRoute.Resource -> {
-                ResourceScreen()
-            }*/
+            HomeRoute.Resource -> {
+                ResourceScreen(
+                    viewModel = hiltViewModel()
+                )
+            }
             HomeRoute.TODO -> {
                 ToDoScreen(
                     viewModel = hiltViewModel(),
@@ -112,7 +116,7 @@ fun SmartCRScreen(
 private enum class HomeRoute(val route: String, val imageVector: ImageVector) {
     HOME("Home", Icons.Outlined.Home),
 
-    //Resource("Resource", Icons.Outlined.Book),
+    Resource("Resource", Icons.Outlined.Book),
     TODO("To Do", Icons.Outlined.Grading),
     MENU("Menu", Icons.Outlined.Menu)
 }
