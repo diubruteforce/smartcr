@@ -23,4 +23,16 @@ class StorageRepository @Inject constructor() {
 
         return reference.downloadUrl.await()
     }
+
+    suspend fun uploadResource(filePath: Uri, imageName: String) {
+        val reference = storage.reference.child("$resourceFolder/$imageName")
+
+        reference.putFile(filePath).await()
+    }
+
+    suspend fun downloadResource(filePath: Uri, imageName: String) {
+        val reference = storage.reference.child("$resourceFolder/$imageName")
+
+        reference.getFile(filePath)
+    }
 }
