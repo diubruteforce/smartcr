@@ -10,6 +10,7 @@ data class Resource(
     val sectionName: String = "",
     val path: String = "", // storage download path
     val name: String = "",
+    val mimeType: String = "",
     val size: Long = -1,
     val uploadedBy: String = "",
 

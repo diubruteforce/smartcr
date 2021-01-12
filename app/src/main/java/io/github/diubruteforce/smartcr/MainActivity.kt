@@ -64,6 +64,26 @@ class MainActivity : AppCompatActivity() {
     }
     // endregion
 
+    // region: FilePicker
+    private lateinit var onFilePicked: (uri: Uri?) -> Unit
+
+    private val filePicker = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { intent ->
+        Timber.tag("UploadProfile").d("Result Found $intent")
+        onFilePicked.invoke(intent.data?.data)
+    }
+
+    fun pickFile(onFilePicked: (uri: Uri?) -> Unit) {
+        this.onFilePicked = onFilePicked
+
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.addCategory(Intent.CATEGORY_OPENABLE)
+        intent.type = "*/*"
+        filePicker.launch(intent)
+    }
+    // endregion
+
     /*
     * This method is called by fragment to get the theme
     * By changing this theme I am changing the splash theme

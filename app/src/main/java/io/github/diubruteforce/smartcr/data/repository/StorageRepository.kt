@@ -1,15 +1,30 @@
 package io.github.diubruteforce.smartcr.data.repository
 
+import android.annotation.TargetApi
+import android.content.ContentValues
+import android.content.Context
+import android.database.Cursor
+import android.media.MediaScannerConnection
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
+import android.provider.MediaStore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
+import dagger.hilt.android.qualifiers.ApplicationContext
+import io.github.diubruteforce.smartcr.model.data.Resource
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import java.io.File
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class StorageRepository @Inject constructor() {
+class StorageRepository @Inject constructor(
+    @ApplicationContext private val context: Context
+) {
     private val storage = Firebase.storage
     private val profileFolder = "profile"
     private val resourceFolder = "resource"
@@ -24,15 +39,103 @@ class StorageRepository @Inject constructor() {
         return reference.downloadUrl.await()
     }
 
-    suspend fun uploadResource(filePath: Uri, imageName: String) {
-        val reference = storage.reference.child("$resourceFolder/$imageName")
+    suspend fun listTitles() =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            listTitlesQ()
+        } else {
+            listTitlesLegacy()
+        }
 
-        reference.putFile(filePath).await()
+
+    @TargetApi(29)
+    private suspend fun listTitlesQ(): List<String> {
+        val projection = arrayOf(MediaStore.Downloads.TITLE)
+        val sortOrder = MediaStore.Downloads.DATE_ADDED
+
+        return withContext(Dispatchers.IO) {
+            val resolver = context.contentResolver
+
+            resolver.query(
+                MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                projection,
+                null,
+                null,
+                sortOrder
+            )?.use { cursor ->
+                cursor.mapToList { it.getString(0) }
+            } ?: emptyList()
+        }
     }
 
-    suspend fun downloadResource(filePath: Uri, imageName: String) {
-        val reference = storage.reference.child("$resourceFolder/$imageName")
+    @Suppress("DEPRECATION")
+    private suspend fun listTitlesLegacy(): List<String> = withContext(Dispatchers.IO) {
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+            ?.listFiles()
+            ?.map { it.name } ?: emptyList()
+    }
 
-        reference.getFile(filePath)
+    suspend fun uploadResource(resource: Resource, uri: Uri) {
+        val reference = storage.reference.child("$resourceFolder/${resource.path}")
+
+        reference.putFile(uri).await()
+    }
+
+    suspend fun download(filename: String, mimeType: String) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            downloadQ(filename, mimeType)
+        } else {
+            downloadLegacy(filename, mimeType)
+        }
+    }
+
+    @TargetApi(29)
+    private suspend fun downloadQ(
+        filename: String,
+        mimeType: String
+    ) = withContext(Dispatchers.IO) {
+        val reference = storage.reference.child("$resourceFolder/$filename")
+
+        val values = ContentValues().apply {
+            put(MediaStore.Downloads.DISPLAY_NAME, filename)
+            put(MediaStore.Downloads.MIME_TYPE, mimeType)
+            put(MediaStore.Downloads.IS_PENDING, 1)
+        }
+
+        val resolver = context.contentResolver
+        val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
+
+        uri?.let {
+            reference.getFile(uri).await()
+
+            values.clear()
+            values.put(MediaStore.Downloads.IS_PENDING, 0)
+            resolver.update(uri, values, null, null)
+        } ?: throw RuntimeException("MediaStore failed for some reason")
+    }
+
+    @Suppress("DEPRECATION")
+    private suspend fun downloadLegacy(
+        filename: String,
+        mimeType: String
+    ) = withContext(Dispatchers.IO) {
+        val file = File(
+            Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+            filename
+        )
+
+        val reference = storage.reference.child("$resourceFolder/$filename")
+
+        reference.getFile(file).await()
+
+        MediaScannerConnection.scanFile(
+            context,
+            arrayOf(file.absolutePath),
+            arrayOf(mimeType),
+            null
+        )
     }
 }
+
+private fun <T : Any> Cursor.mapToList(predicate: (Cursor) -> T): List<T> =
+    generateSequence { if (moveToNext()) predicate(this) else null }
+        .toList()

@@ -32,6 +32,15 @@ fun ResourceListItem(
     progressType: ProgressType,
     onClick: () -> Unit,
 ) {
+    var teacherName = resource.instructor.initial
+    if (teacherName.isEmpty()) {
+        teacherName = resource.instructor
+            .fullName
+            .split(" ")
+            .take(2)
+            .joinToString(separator = " ")
+    }
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CornerRadius.normal),
@@ -46,7 +55,7 @@ fun ResourceListItem(
             ) {
                 Text(text = "Course: ${resource.course.courseCode}")
                 Spacer(modifier = Modifier.weight(1f))
-                Text(text = "Teacher: ${resource.instructor.initial}")
+                Text(text = "Teacher: $teacherName")
             }
 
             Text(
