@@ -10,7 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
-import androidx.core.net.toUri
+import androidx.core.content.FileProvider
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -93,7 +93,15 @@ class StorageRepository @Inject constructor(
     private suspend fun listTitlesLegacy(): Map<String, Uri> = withContext(Dispatchers.IO) {
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             ?.listFiles()
-            ?.map { it.name to it.toUri() }?.toMap() ?: emptyMap()
+            ?.map {
+                val uri = FileProvider.getUriForFile(
+                    context,
+                    context.applicationContext.packageName + ".provider",
+                    it
+                )
+
+                it.name to uri
+            }?.toMap() ?: emptyMap()
     }
 
     suspend fun uploadResource(resource: Resource, uri: Uri) {
