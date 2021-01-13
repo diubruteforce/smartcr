@@ -76,7 +76,7 @@ fun ResourceListItem(
                 Text(text = "Uploaded by: ${resource.uploadedBy}")
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "${resource.size} KB",
+                    text = resource.sizeString,
                     color = MaterialTheme.colors.error
                 )
             }
@@ -94,7 +94,7 @@ fun ResourceListItem(
 private fun PreviewResourceListItem() {
     SmartCRTheme {
         ScrollableColumn(modifier = Modifier.fillMaxWidth()) {
-            (0..3).forEach {
+            (0..3).forEach { _ ->
                 ResourceListItem(
                     modifier = Modifier.padding(Margin.normal),
                     resource = Resource(

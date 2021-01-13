@@ -1,9 +1,6 @@
 package io.github.diubruteforce.smartcr.ui.resource
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -16,6 +13,7 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.AmbientFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.input.ImeAction
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
@@ -71,6 +69,7 @@ fun ResourceScreen(
     ) {
         ResourceScreenContent(
             stateFlow = viewModel.state,
+            onQueryChange = viewModel::search,
             onNameChange = viewModel::onTitleChange,
             changeSection = { sheetState.show() },
             changeFile = {
@@ -87,7 +86,8 @@ fun ResourceScreen(
             },
             startEdit = viewModel::startEditing,
             cancelEdit = viewModel::cancelEditing,
-            uploadFile = viewModel::uploadFile
+            uploadFile = viewModel::uploadFile,
+            downloadFile = viewModel::downloadFile
         )
     }
 }
@@ -96,16 +96,19 @@ fun ResourceScreen(
 @Composable
 private fun ResourceScreenContent(
     stateFlow: StateFlow<ResourceState>,
+    onQueryChange: (String) -> Unit,
     onNameChange: (String) -> Unit,
     changeSection: () -> Unit,
     changeFile: () -> Unit,
     startEdit: (Resource) -> Unit,
     cancelEdit: () -> Unit,
     uploadFile: () -> Unit,
+    downloadFile: (Resource) -> Unit
 ) {
     val state = stateFlow.collectAsState().value
 
     val inset = AmbientWindowInsets.current
+    val focusManager = AmbientFocusManager.current
 
     Scaffold(
         floatingActionButton = {
@@ -139,19 +142,37 @@ private fun ResourceScreenContent(
                         uploadFile = uploadFile
                     )
                 }
-                state.resources.isEmpty() -> item {
+                state.resources.isEmpty() && state.query.value.isEmpty() -> item {
                     Empty(
                         title = stringResource(id = R.string.no_resource),
                         message = stringResource(id = R.string.no_resource_message),
                         image = vectorResource(id = R.drawable.no_exam)
                     )
                 }
-                else -> items(state.resources) {
-                    ResourceListItem(
-                        resource = it.first,
-                        progressType = it.second,
-                        onClick = { /*TODO*/ }
-                    )
+                else -> {
+                    item {
+                        FullName(
+                            modifier = Modifier
+                                .padding(horizontal = Margin.normal)
+                                .padding(top = Margin.normal),
+                            state = state.query,
+                            placeHolder = stringResource(id = R.string.search_resource),
+                            onValueChange = onQueryChange,
+                            imeAction = ImeAction.Search,
+                            focusRequester = FocusRequester(),
+                            onImeActionPerformed = {
+                                focusManager.clearFocus()
+                            }
+                        )
+                    }
+
+                    items(state.resources) {
+                        ResourceListItem(
+                            resource = it.first,
+                            progressType = it.second,
+                            onClick = { downloadFile(it.first) }
+                        )
+                    }
                 }
             }
 

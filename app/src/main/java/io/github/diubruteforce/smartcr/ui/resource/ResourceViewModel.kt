@@ -19,6 +19,7 @@ import java.util.*
 data class ResourceState(
     val resources: List<Pair<Resource, ProgressType>> = emptyList(),
     val editingResource: Resource? = null,
+    val query: InputState = InputState.EmptyState,
     val title: InputState = InputState.NotEmptyState,
     val section: InputState = InputState.NotEmptyState,
     val file: InputState = InputState.NotEmptyState,
@@ -35,13 +36,13 @@ class ResourceViewModel @ViewModelInject constructor(
 ) : BaseViewModel<ResourceState, Any, ResourceSuccess, String>(
     initialState = ResourceState()
 ) {
-    private var downloadedResources: List<Resource> = emptyList()
-
     private var selectedSection: Section? = null
     private var selectedFile: Uri? = null
 
     private var _joinedSections: List<Section> = emptyList()
     val joinedSections get() = _joinedSections
+
+    private lateinit var resourceMap: List<Pair<Resource, ProgressType>>
 
     init {
         setSideEffect { EmptyLoadingState }
@@ -50,15 +51,39 @@ class ResourceViewModel @ViewModelInject constructor(
 
     fun loadData() = launchInViewModelScope {
         _joinedSections = classRepository.getJoinedSectionList()
-        val resourceList = classRepository.getResources().map { it to ProgressType.Download }
+
+        val titleList = storageRepository.listTitles()
+        resourceMap = classRepository.getResources().map { resource ->
+            val hasDownloaded = titleList.contains(resource.fileName)
+
+            val progressType = if (hasDownloaded) ProgressType.View(Uri.parse(resource.name))
+            else ProgressType.Download
+
+            resource to progressType
+        }
 
         withState {
             setState {
-                copy(resources = resourceList)
+                copy(resources = resourceMap)
             }
         }
 
         setSideEffect { TypedSideEffectState.Success(ResourceSuccess.Loaded) }
+    }
+
+    fun search(newQuery: String) = withState {
+        val newResourceMap = resourceMap.filter {
+            it.first.fileName.contains(newQuery)
+                    || it.first.course.courseTitle.contains(newQuery)
+                    || it.first.instructor.fullName.contains(newQuery)
+                    || it.first.instructor.initial.contains(newQuery)
+                    || it.first.instructor.department.contains(newQuery)
+                    || it.first.instructor.departmentCode.contains(newQuery)
+                    || it.first.uploadedBy.contains(newQuery)
+                    || it.first.updaterEmail.contains(newQuery)
+        }
+
+        setState { copy(resources = newResourceMap, query = query.copy(value = newQuery)) }
     }
 
     fun startEditing(resource: Resource) = withState {
@@ -148,8 +173,14 @@ class ResourceViewModel @ViewModelInject constructor(
             classRepository.saveResource(newResource, selectedFile)
 
             setState { copy(editingResource = null) }
-            setSideEffect { TypedSideEffectState.Success(ResourceSuccess.Saved) }
+            loadData()
         }
+    }
+
+    fun downloadFile(resource: Resource) = launchInViewModelScope {
+        setSideEffect { EmptyLoadingState }
+        storageRepository.download(resource)
+        loadData()
     }
 
     override fun onCoroutineException(exception: Throwable) {

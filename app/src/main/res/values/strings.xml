@@ -155,4 +155,5 @@
     <string name="exam_routine_no_edit">You\'ve not joined any section yet. Please join to any section to add exam routine.</string>
     <string name="upload">Upload</string>
     <string name="select_file">Select File</string>
+    <string name="search_resource">Search Resource</string>
 </resources>

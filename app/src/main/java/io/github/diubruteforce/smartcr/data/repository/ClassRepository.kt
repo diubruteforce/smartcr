@@ -498,7 +498,7 @@ class ClassRepository @Inject constructor(
             .collection(studentPath)
             .get()
             .await()
-            .map { it.toObject<MemberStudent>() }
+            .map { it.toObject() }
     }
 
     suspend fun getGroupList(postId: String): List<Group> {
@@ -607,5 +607,6 @@ class ClassRepository @Inject constructor(
             .get()
             .await()
             .map { it.toObject<Resource>().copy(id = it.id) }
+            .sortedByDescending { it.updatedOn }
     }
 }

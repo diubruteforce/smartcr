@@ -80,24 +80,23 @@ class StorageRepository @Inject constructor(
         reference.putFile(uri).await()
     }
 
-    suspend fun download(filename: String, mimeType: String) {
+    suspend fun download(resource: Resource) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            downloadQ(filename, mimeType)
+            downloadQ(resource)
         } else {
-            downloadLegacy(filename, mimeType)
+            downloadLegacy(resource)
         }
     }
 
     @TargetApi(29)
     private suspend fun downloadQ(
-        filename: String,
-        mimeType: String
+        resource: Resource
     ) = withContext(Dispatchers.IO) {
-        val reference = storage.reference.child("$resourceFolder/$filename")
+        val reference = storage.reference.child("$resourceFolder/${resource.path}")
 
         val values = ContentValues().apply {
-            put(MediaStore.Downloads.DISPLAY_NAME, filename)
-            put(MediaStore.Downloads.MIME_TYPE, mimeType)
+            put(MediaStore.Downloads.DISPLAY_NAME, resource.fileName)
+            put(MediaStore.Downloads.MIME_TYPE, resource.mimeType)
             put(MediaStore.Downloads.IS_PENDING, 1)
         }
 
@@ -115,22 +114,21 @@ class StorageRepository @Inject constructor(
 
     @Suppress("DEPRECATION")
     private suspend fun downloadLegacy(
-        filename: String,
-        mimeType: String
+        resource: Resource
     ) = withContext(Dispatchers.IO) {
         val file = File(
             Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-            filename
+            resource.fileName
         )
 
-        val reference = storage.reference.child("$resourceFolder/$filename")
+        val reference = storage.reference.child("$resourceFolder/${resource.path}")
 
         reference.getFile(file).await()
 
         MediaScannerConnection.scanFile(
             context,
             arrayOf(file.absolutePath),
-            arrayOf(mimeType),
+            arrayOf(resource.mimeType),
             null
         )
     }

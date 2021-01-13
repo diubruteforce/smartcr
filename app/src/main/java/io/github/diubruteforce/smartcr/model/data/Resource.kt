@@ -1,7 +1,9 @@
 package io.github.diubruteforce.smartcr.model.data
 
+import android.webkit.MimeTypeMap
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ServerTimestamp
+import java.util.*
 
 data class Resource(
     val course: Course = Course(),
@@ -19,4 +21,16 @@ data class Resource(
     override val updaterId: String = "",
     override val updaterEmail: String = "",
     @ServerTimestamp override val updatedOn: Timestamp = Timestamp.now()
-) : EditableModel()
+) : EditableModel() {
+    val extension: String? get() = MimeTypeMap.getSingleton().getExtensionFromMimeType(mimeType)
+
+    val fileName: String get() = "$name - ${course.courseCode} ($sectionName).$extension"
+
+    val sizeString: String
+        get() {
+            val kb = size.toDouble() / 1024
+
+            return if (kb < 1024) "%.2f KB".format(Locale.getDefault(), kb)
+            else "%.2f MB".format(Locale.getDefault(), kb / 1024)
+        }
+}
