@@ -1,6 +1,7 @@
 package io.github.diubruteforce.smartcr.data.repository
 
 import android.annotation.TargetApi
+import android.content.ContentUris
 import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
@@ -9,6 +10,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Environment
 import android.provider.MediaStore
+import androidx.core.net.toUri
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.ktx.storage
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -16,6 +18,9 @@ import io.github.diubruteforce.smartcr.model.data.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import okio.buffer
+import okio.sink
+import okio.source
 import java.io.File
 import java.util.*
 import javax.inject.Inject
@@ -48,8 +53,12 @@ class StorageRepository @Inject constructor(
 
 
     @TargetApi(29)
-    private suspend fun listTitlesQ(): List<String> {
-        val projection = arrayOf(MediaStore.Downloads.TITLE)
+    private suspend fun listTitlesQ(): Map<String, Uri> {
+        val projection = arrayOf(
+            MediaStore.Downloads.DISPLAY_NAME,
+            MediaStore.Downloads._ID,
+        )
+
         val sortOrder = MediaStore.Downloads.DATE_ADDED
 
         return withContext(Dispatchers.IO) {
@@ -62,16 +71,29 @@ class StorageRepository @Inject constructor(
                 null,
                 sortOrder
             )?.use { cursor ->
-                cursor.mapToList { it.getString(0) }
-            } ?: emptyList()
+                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Downloads._ID)
+                val nameColumn = cursor.getColumnIndexOrThrow(MediaStore.Downloads.DISPLAY_NAME)
+
+                cursor.mapToList {
+                    val id = cursor.getLong(idColumn)
+                    val name = cursor.getString(nameColumn)
+
+                    val contentUri: Uri = ContentUris.withAppendedId(
+                        MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                        id
+                    )
+
+                    name to contentUri
+                }
+            }?.toMap() ?: emptyMap()
         }
     }
 
     @Suppress("DEPRECATION")
-    private suspend fun listTitlesLegacy(): List<String> = withContext(Dispatchers.IO) {
+    private suspend fun listTitlesLegacy(): Map<String, Uri> = withContext(Dispatchers.IO) {
         Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             ?.listFiles()
-            ?.map { it.name } ?: emptyList()
+            ?.map { it.name to it.toUri() }?.toMap() ?: emptyMap()
     }
 
     suspend fun uploadResource(resource: Resource, uri: Uri) {
@@ -88,11 +110,11 @@ class StorageRepository @Inject constructor(
         }
     }
 
+    @Suppress("BlockingMethodInNonBlockingContext")
     @TargetApi(29)
     private suspend fun downloadQ(
         resource: Resource
     ) = withContext(Dispatchers.IO) {
-        val reference = storage.reference.child("$resourceFolder/${resource.path}")
 
         val values = ContentValues().apply {
             put(MediaStore.Downloads.DISPLAY_NAME, resource.fileName)
@@ -104,7 +126,17 @@ class StorageRepository @Inject constructor(
         val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
 
         uri?.let {
-            reference.getFile(uri).await()
+            val reference = storage.reference.child("$resourceFolder/${resource.path}")
+            //reference.getFile(uri).await()
+
+            val response = reference.stream.await()
+
+            resolver.openOutputStream(uri)?.use { outputStream ->
+                val sink = outputStream.sink().buffer()
+
+                response?.stream?.source()?.let { sink.writeAll(it) }
+                sink.close()
+            }
 
             values.clear()
             values.put(MediaStore.Downloads.IS_PENDING, 0)
@@ -122,7 +154,6 @@ class StorageRepository @Inject constructor(
         )
 
         val reference = storage.reference.child("$resourceFolder/${resource.path}")
-
         reference.getFile(file).await()
 
         MediaScannerConnection.scanFile(

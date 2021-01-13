@@ -1,5 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.resource
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -29,6 +31,7 @@ import io.github.diubruteforce.smartcr.utils.extension.getName
 import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBottomSheetState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
+
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
@@ -87,7 +90,15 @@ fun ResourceScreen(
             startEdit = viewModel::startEditing,
             cancelEdit = viewModel::cancelEditing,
             uploadFile = viewModel::uploadFile,
-            downloadFile = viewModel::downloadFile
+            downloadFile = viewModel::downloadFile,
+            openFile = { uri, mimeType ->
+
+                val intent = Intent()
+                intent.action = Intent.ACTION_VIEW
+                intent.setDataAndType(uri, mimeType)
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                mainActivity.startActivity(intent)
+            }
         )
     }
 }
@@ -103,7 +114,8 @@ private fun ResourceScreenContent(
     startEdit: (Resource) -> Unit,
     cancelEdit: () -> Unit,
     uploadFile: () -> Unit,
-    downloadFile: (Resource) -> Unit
+    downloadFile: (Resource) -> Unit,
+    openFile: (Uri, String) -> Unit
 ) {
     val state = stateFlow.collectAsState().value
 
@@ -170,7 +182,15 @@ private fun ResourceScreenContent(
                         ResourceListItem(
                             resource = it.first,
                             progressType = it.second,
-                            onClick = { downloadFile(it.first) }
+                            onClick = {
+                                val progressType = it.second
+
+                                if (progressType is ProgressType.View) openFile(
+                                    progressType.uri,
+                                    it.first.mimeType
+                                )
+                                else downloadFile(it.first)
+                            }
                         )
                     }
                 }

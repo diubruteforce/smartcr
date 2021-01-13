@@ -62,7 +62,7 @@ fun ResourceListItem(
                 modifier = Modifier
                     .padding(horizontal = Margin.normal)
                     .padding(bottom = Margin.normal, top = Margin.small),
-                text = resource.name,
+                text = "${resource.name}.${resource.extension}",
                 fontWeight = FontWeight.W400,
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.secondary

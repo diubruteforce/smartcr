@@ -54,10 +54,11 @@ class ResourceViewModel @ViewModelInject constructor(
 
         val titleList = storageRepository.listTitles()
         resourceMap = classRepository.getResources().map { resource ->
-            val hasDownloaded = titleList.contains(resource.fileName)
+            val hasDownloaded = titleList.keys.contains(resource.fileName)
 
-            val progressType = if (hasDownloaded) ProgressType.View(Uri.parse(resource.name))
-            else ProgressType.Download
+            val progressType =
+                if (hasDownloaded) ProgressType.View(titleList.getValue(resource.fileName))
+                else ProgressType.Download
 
             resource to progressType
         }
