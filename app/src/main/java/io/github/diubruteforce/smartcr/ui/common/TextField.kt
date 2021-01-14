@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -194,11 +194,14 @@ fun Description(
             }
         ) {
             Box(
-                modifier = Modifier.heightIn(min = 112.dp).padding(Margin.normal),
+                modifier = Modifier
+                    .heightIn(min = 112.dp)
+                    .padding(Margin.normal),
                 contentAlignment = Alignment.TopStart
             ) {
                 BasicTextField(
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .focusRequester(focusRequester),
                     value = state.value,
                     onValueChange = onValueChange,
@@ -245,7 +248,9 @@ private fun CRTextField(
         }
     ) {
         ScrollableRow(
-            modifier = Modifier.fillMaxWidth().heightIn(min = 56.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 56.dp),
             contentPadding = PaddingValues(start = Margin.medium, end = Margin.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -255,7 +260,8 @@ private fun CRTextField(
                 BasicTextField(
                     value = value,
                     onValueChange = onValueChange,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
                         .focusRequester(focusRequester),
                     textStyle = MaterialTheme.typography.body1,
                     keyboardOptions = keyboardOptions,

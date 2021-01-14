@@ -1,7 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.common
 
 import android.net.Uri
-import androidx.compose.animation.animate
+import androidx.compose.animation.core.animateAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.background
@@ -32,6 +32,20 @@ fun ResourceListItem(
     progressType: ProgressType,
     onClick: () -> Unit,
 ) {
+    var teacherName = resource.instructor.initial
+    if (teacherName.isEmpty()) {
+        teacherName = resource.instructor
+            .fullName
+            .split(" ")
+            .take(2)
+            .joinToString(separator = " ")
+    }
+
+    val uploadedBy = resource.uploadedBy
+        .split(" ")
+        .take(2)
+        .joinToString(separator = " ")
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CornerRadius.normal),
@@ -46,14 +60,14 @@ fun ResourceListItem(
             ) {
                 Text(text = "Course: ${resource.course.courseCode}")
                 Spacer(modifier = Modifier.weight(1f))
-                Text(text = "Teacher: ${resource.instructor.initial}")
+                Text(text = "Teacher: $teacherName")
             }
 
             Text(
                 modifier = Modifier
                     .padding(horizontal = Margin.normal)
                     .padding(bottom = Margin.normal, top = Margin.small),
-                text = resource.name,
+                text = "${resource.name}.${resource.extension}",
                 fontWeight = FontWeight.W400,
                 style = MaterialTheme.typography.h6,
                 color = MaterialTheme.colors.secondary
@@ -64,10 +78,10 @@ fun ResourceListItem(
                     .padding(horizontal = Margin.normal)
                     .padding(bottom = Margin.normal)
             ) {
-                Text(text = "Uploaded by: ${resource.uploadedBy}")
+                Text(text = "Uploaded by: $uploadedBy")
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "${resource.size} KB",
+                    text = resource.sizeString,
                     color = MaterialTheme.colors.error
                 )
             }
@@ -85,7 +99,7 @@ fun ResourceListItem(
 private fun PreviewResourceListItem() {
     SmartCRTheme {
         ScrollableColumn(modifier = Modifier.fillMaxWidth()) {
-            (0..3).forEach {
+            (0..3).forEach { _ ->
                 ResourceListItem(
                     modifier = Modifier.padding(Margin.normal),
                     resource = Resource(
@@ -151,7 +165,7 @@ private fun ProgressButton(
         Box(
             modifier = clickableModifier
                 .fillMaxHeight()
-                .fillMaxWidth(animate(type.progress))
+                .fillMaxWidth(animateAsState(type.progress).value)
                 .background(color = color)
         )
 

@@ -3,6 +3,7 @@ package io.github.diubruteforce.smartcr.ui.smartcr.menu
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,9 +19,11 @@ fun MenuScreen(
     onMenuClick: (Menu) -> Unit
 ) {
     LazyColumn(
-        modifier = Modifier.navigationBarsPadding(),
-        verticalArrangement = Arrangement.spacedBy(Margin.normal),
-        contentPadding = PaddingValues(top = Margin.normal, bottom = Margin.large)
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding(),
+        verticalArrangement = Arrangement.SpaceAround,
+        contentPadding = PaddingValues(top = Margin.normal, bottom = Margin.medium)
     ) {
         items(Menu.values().toPairList()) {
             MenuRow(

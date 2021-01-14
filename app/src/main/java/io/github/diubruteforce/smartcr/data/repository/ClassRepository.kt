@@ -1,14 +1,21 @@
 package io.github.diubruteforce.smartcr.data.repository
 
+import android.content.Context
+import android.net.Uri
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
+import dagger.hilt.android.qualifiers.ApplicationContext
 import io.github.diubruteforce.smartcr.model.data.*
+import io.github.diubruteforce.smartcr.utils.extension.getMimeType
+import io.github.diubruteforce.smartcr.utils.extension.getSize
 import io.github.diubruteforce.smartcr.utils.extension.toDateString
 import io.github.diubruteforce.smartcr.utils.extension.whereActiveData
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import java.util.*
@@ -17,7 +24,9 @@ import javax.inject.Singleton
 
 @Singleton
 class ClassRepository @Inject constructor(
-    val profileRepository: ProfileRepository
+    val profileRepository: ProfileRepository,
+    private val storageRepository: StorageRepository,
+    @ApplicationContext private val context: Context
 ) {
     private val db by lazy { Firebase.firestore }
     val departmentPath = "department"
@@ -29,6 +38,7 @@ class ClassRepository @Inject constructor(
     private val routinePath = "routine"
     private val postPath = "post"
     private val groupPath = "group"
+    private val resourcePath = "resource"
 
     private var _semesterId: String? = null
     private var _userProfile: Student? = null
@@ -488,7 +498,7 @@ class ClassRepository @Inject constructor(
             .collection(studentPath)
             .get()
             .await()
-            .map { it.toObject<MemberStudent>() }
+            .map { it.toObject() }
     }
 
     suspend fun getGroupList(postId: String): List<Group> {
@@ -535,5 +545,68 @@ class ClassRepository @Inject constructor(
             .document(profileMember.studentId)
             .set(profileMember, SetOptions.merge())
             .await()
+    }
+
+    suspend fun saveResource(resource: Resource, uri: Uri) = coroutineScope {
+        val contentResolver = context.contentResolver
+        val userProfile = getUserProfile()
+
+        val newResource = resource.copy(
+            mimeType = uri.getMimeType(contentResolver)!!,
+            size = uri.getSize(contentResolver)!!,
+            uploadedBy = userProfile.fullName,
+
+            updatedOn = Timestamp.now(),
+            updaterId = userProfile.id,
+            updaterEmail = userProfile.diuEmail
+        )
+
+        val resourceId = async {
+            if (resource.id.isEmpty()) {
+                db.collection(departmentPath)
+                    .document(getUserProfile().departmentId)
+                    .collection(resourcePath)
+                    .add(newResource)
+                    .await()
+                    .id
+            } else {
+                db.collection(departmentPath)
+                    .document(getUserProfile().departmentId)
+                    .collection(resourcePath)
+                    .document(resource.id)
+                    .set(resource)
+                    .await()
+
+                resource.id
+            }
+        }
+
+        val upload = async {
+            if (newResource.id.isEmpty()) {
+                storageRepository.uploadResource(resource, uri)
+            }
+        }
+
+        // Keeping the history
+        db.collection(departmentPath)
+            .document(getUserProfile().departmentId)
+            .collection(resourcePath)
+            .document(resourceId.await())
+            .collection(historyPath)
+            .add(newResource.copy(id = resourceId.await()))
+            .await()
+
+        upload.await()
+    }
+
+    suspend fun getResources(): List<Resource> {
+        return db.collection(departmentPath)
+            .document(getUserProfile().departmentId)
+            .collection(resourcePath)
+            .whereActiveData()
+            .get()
+            .await()
+            .map { it.toObject<Resource>().copy(id = it.id) }
+            .sortedByDescending { it.updatedOn }
     }
 }

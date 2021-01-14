@@ -16,3 +16,5 @@ val EmptyFailState = TypedSideEffectState.Fail(3)
 typealias StringFailSideEffectState = TypedSideEffectState<Any, Any, String>
 
 val String.Companion.Error get() = "Something went wrong"
+val String.Companion.ReadPermissionError get() = "We need read permission to upload resources."
+val String.Companion.WritePermissionError get() = "We need write permission to download resources."
