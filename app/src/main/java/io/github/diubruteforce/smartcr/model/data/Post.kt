@@ -1,7 +1,9 @@
 package io.github.diubruteforce.smartcr.model.data
 
+import androidx.compose.ui.graphics.Color
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.ServerTimestamp
+import io.github.diubruteforce.smartcr.ui.theme.*
 
 sealed class Post : EditableModel() {
     abstract val postType: String
@@ -17,8 +19,12 @@ sealed class Post : EditableModel() {
     abstract val place: String
 }
 
-enum class PostType {
-    Quiz, Assignment, Presentation, Project, Routine
+enum class PostType(val color: Color) {
+    Quiz(color = quiz),
+    Assignment(color = assignment),
+    Presentation(color = presentation),
+    Project(color = project),
+    Routine(color = routine)
 }
 
 enum class GroupType {

@@ -13,14 +13,15 @@ val orange500 = Color(0xFFF39200)
 val redError = Color(0xFFe91c1c)
 val green500 = Color(0xFF1FA363)
 
-val Colors.routine: Color @Composable get() = MaterialTheme.colors.primary
-val Colors.quiz: Color @Composable get() = MaterialTheme.colors.primary
-val Colors.assignment: Color @Composable get() = MaterialTheme.colors.primary
-val Colors.presentation: Color @Composable get() = MaterialTheme.colors.primary
-val Colors.project: Color @Composable get() = MaterialTheme.colors.primary
-val Colors.fees: Color @Composable get() = MaterialTheme.colors.primary
-val Colors.event: Color @Composable get() = MaterialTheme.colors.primary
-val Colors.examRoutine: Color @Composable get() = MaterialTheme.colors.primary
+val routine = Color(0xFFF39200)
+val quiz = Color(0xFFF76357)
+val assignment = Color(0xFFCF5486)
+val presentation = Color(0xFF8A5995)
+val project = Color(0xFF495681)
+
+val Colors.fees: Color @Composable get() = Color(0xFFF39200)
+val Colors.event: Color @Composable get() = Color(0xFFF39200)
+val Colors.examRoutine: Color @Composable get() = Color(0xFFF39200)
 
 val Colors.grayText: Color
     @Composable get() = AmbientContentColor.current.lighten(0.55f)

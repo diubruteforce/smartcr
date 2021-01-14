@@ -2,15 +2,17 @@ package io.github.diubruteforce.smartcr.ui.todo
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.onActive
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import dev.chrisbanes.accompanist.insets.navigationBarsHeight
+import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.PostType
 import io.github.diubruteforce.smartcr.ui.common.Empty
@@ -54,7 +56,9 @@ private fun ToDoScreenContent(
 
     if (state.posts.isNotEmpty()) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding(),
             verticalArrangement = Arrangement.spacedBy(Margin.normal),
             contentPadding = PaddingValues(Margin.normal)
         ) {
@@ -63,11 +67,15 @@ private fun ToDoScreenContent(
                     title = post.title,
                     firstRow = post.firstRow,
                     secondRow = post.secondRow,
-                    color = MaterialTheme.colors.primary,
+                    color = post.type.color,
                     onItemClick = {
                         navigateToPostDetail.invoke(post.type, post.postId)
                     }
                 )
+            }
+
+            item {
+                Spacer(modifier = Modifier.navigationBarsHeight())
             }
         }
     } else {

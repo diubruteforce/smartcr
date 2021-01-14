@@ -17,6 +17,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.PostType
@@ -122,7 +123,7 @@ private fun HomeScreenContent(
         ) {
             if (state.hasJoinedSection) {
                 Row(
-                    modifier = Modifier.padding(Margin.normal),
+                    modifier = Modifier.padding(Margin.small),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = onPreviousDay) {
@@ -151,7 +152,9 @@ private fun HomeScreenContent(
 
                 if (state.posts.isNotEmpty()) {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .navigationBarsPadding(),
                         verticalArrangement = Arrangement.spacedBy(Margin.normal),
                         contentPadding = PaddingValues(Margin.normal)
                     ) {
@@ -160,7 +163,7 @@ private fun HomeScreenContent(
                                 title = post.title,
                                 firstRow = post.firstRow,
                                 secondRow = post.secondRow,
-                                color = MaterialTheme.colors.primary,
+                                color = post.type.color,
                                 onItemClick = {
                                     if (post.type == PostType.Routine) {
                                         navigateToSectionDetail.invoke(post.sectionId)
@@ -169,6 +172,10 @@ private fun HomeScreenContent(
                                     }
                                 }
                             )
+                        }
+
+                        item {
+                            Spacer(modifier = Modifier.navigationBarsHeight())
                         }
                     }
                 } else {
