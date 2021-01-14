@@ -35,7 +35,7 @@ fun SmartCRScreen(
     navigateToProfileDetail: () -> Unit,
     onMenuClick: (Menu) -> Unit
 ) {
-    var currentScreen by savedInstanceState { HomeRoute.Resource }
+    var currentScreen by savedInstanceState { HomeRoute.HOME }
 
     Scaffold(
         modifier = Modifier
@@ -95,7 +95,7 @@ fun SmartCRScreen(
                     navigateToPostEdit = { navigateToPostEdit.invoke(it, null) }
                 )
             }
-            HomeRoute.Resource -> {
+            HomeRoute.RESOURCE -> {
                 ResourceScreen(
                     viewModel = hiltViewModel()
                 )
@@ -116,7 +116,7 @@ fun SmartCRScreen(
 private enum class HomeRoute(val route: String, val imageVector: ImageVector) {
     HOME("Home", Icons.Outlined.Home),
 
-    Resource("Resource", Icons.Outlined.Book),
+    RESOURCE("Resource", Icons.Outlined.Book),
     TODO("To Do", Icons.Outlined.Grading),
     MENU("Menu", Icons.Outlined.Menu)
 }
