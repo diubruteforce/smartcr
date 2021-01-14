@@ -187,4 +187,8 @@ class ResourceViewModel @ViewModelInject constructor(
     override fun onCoroutineException(exception: Throwable) {
         setSideEffect { TypedSideEffectState.Fail(exception.message ?: String.Error) }
     }
+
+    fun permissionNotGranted(failMessage: String) {
+        setSideEffect { TypedSideEffectState.Fail(failMessage) }
+    }
 }

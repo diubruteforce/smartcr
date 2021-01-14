@@ -84,6 +84,22 @@ class MainActivity : AppCompatActivity() {
     }
     // endregion
 
+    // region: Permission Requester
+    private lateinit var onPermission: (isGranted: Boolean) -> Unit
+
+    private val permissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) {
+        onPermission.invoke(it)
+    }
+
+    fun requestPermission(permission: String, onPermission: (Boolean) -> Unit) {
+        this.onPermission = onPermission
+
+        permissionLauncher.launch(permission)
+    }
+    // endregion
+
     /*
     * This method is called by fragment to get the theme
     * By changing this theme I am changing the splash theme

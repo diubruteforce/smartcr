@@ -10,9 +10,9 @@ import timber.log.Timber
 fun <Loading, Success, Fail> SideEffect(
     sideEffectState: TypedSideEffectState<Loading, Success, Fail>,
     onSuccess: (Success) -> Unit,
-    onFailAlertDismissRequest: () -> Unit,
-    onFailAlertDenial: () -> Unit = onFailAlertDismissRequest,
-    onFailAlertAffirmation: () -> Unit = onFailAlertDismissRequest,
+    onFailAlertDismissRequest: (Fail) -> Unit,
+    onFailAlertDenial: (Fail) -> Unit = onFailAlertDismissRequest,
+    onFailAlertAffirmation: (Fail) -> Unit = onFailAlertDismissRequest,
     title: String = stringResource(id = R.string.error),
     affirmationText: String = stringResource(id = R.string.try_again),
     denialText: String = stringResource(id = R.string.cancel)
@@ -34,11 +34,11 @@ fun <Loading, Success, Fail> SideEffect(
             CRAlertDialog(
                 title = title,
                 message = message,
-                onDenial = onFailAlertDenial,
+                onDenial = { onFailAlertDenial.invoke(sideEffectState.type) },
                 denialText = denialText,
-                onAffirmation = onFailAlertAffirmation,
+                onAffirmation = { onFailAlertAffirmation.invoke(sideEffectState.type) },
                 affirmationText = affirmationText,
-                onDismissRequest = onFailAlertDismissRequest
+                onDismissRequest = { onFailAlertDismissRequest.invoke(sideEffectState.type) }
             )
         }
     }

@@ -37,7 +37,7 @@ abstract class BaseViewModel<State, Loading, Success, Fail>(
         _sideEffect.value = block.invoke()
     }
 
-    fun clearSideEffect() = setSideEffect { TypedSideEffectState.Uninitialized }
+    fun clearSideEffect(fail: Fail) = setSideEffect { TypedSideEffectState.Uninitialized }
 
     // region: This will handle the unHandled exception inside coroutine
     private val handler = CoroutineExceptionHandler { _, ex ->

@@ -1,7 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.common
 
 import android.net.Uri
-import androidx.compose.animation.animate
+import androidx.compose.animation.core.animateAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.background
@@ -41,6 +41,11 @@ fun ResourceListItem(
             .joinToString(separator = " ")
     }
 
+    val uploadedBy = resource.uploadedBy
+        .split(" ")
+        .take(2)
+        .joinToString(separator = " ")
+
     Card(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(CornerRadius.normal),
@@ -73,7 +78,7 @@ fun ResourceListItem(
                     .padding(horizontal = Margin.normal)
                     .padding(bottom = Margin.normal)
             ) {
-                Text(text = "Uploaded by: ${resource.uploadedBy}")
+                Text(text = "Uploaded by: $uploadedBy")
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
                     text = resource.sizeString,
@@ -160,7 +165,7 @@ private fun ProgressButton(
         Box(
             modifier = clickableModifier
                 .fillMaxHeight()
-                .fillMaxWidth(animate(type.progress))
+                .fillMaxWidth(animateAsState(type.progress).value)
                 .background(color = color)
         )
 

@@ -1,7 +1,10 @@
 package io.github.diubruteforce.smartcr.ui.resource
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Build
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -10,18 +13,22 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.HistoryEdu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.onActive
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.AmbientFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.core.content.ContextCompat
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.toPaddingValues
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.Resource
+import io.github.diubruteforce.smartcr.model.ui.ReadPermissionError
+import io.github.diubruteforce.smartcr.model.ui.WritePermissionError
 import io.github.diubruteforce.smartcr.ui.bottomsheet.SheetHeader
 import io.github.diubruteforce.smartcr.ui.bottomsheet.SheetListItem
 import io.github.diubruteforce.smartcr.ui.common.*
@@ -42,10 +49,41 @@ fun ResourceScreen(
     val sideEffect = viewModel.sideEffect.collectAsState().value
     val mainActivity = getMainActivity()
 
+    onActive {
+        val readPermission = ContextCompat.checkSelfPermission(
+            mainActivity,
+            Manifest.permission.READ_EXTERNAL_STORAGE
+        )
+
+        if (readPermission == PackageManager.PERMISSION_GRANTED) {
+            viewModel.loadData()
+        } else {
+            mainActivity.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE) {
+                if (it) viewModel.loadData()
+                else viewModel.permissionNotGranted(String.ReadPermissionError)
+            }
+        }
+    }
+
     SideEffect(
         sideEffectState = sideEffect,
         onSuccess = {},
-        onFailAlertDismissRequest = viewModel::clearSideEffect
+        onFailAlertDismissRequest = {
+            if (it != String.ReadPermissionError) {
+                viewModel.clearSideEffect(it)
+            }
+        },
+        denialText = "",
+        onFailAlertAffirmation = { failType ->
+            if (failType == String.ReadPermissionError) {
+                mainActivity.requestPermission(Manifest.permission.READ_EXTERNAL_STORAGE) {
+                    if (it) viewModel.loadData()
+                    else viewModel.permissionNotGranted(String.ReadPermissionError)
+                }
+            }
+
+            viewModel.clearSideEffect(failType)
+        }
     )
 
     ModalBottomSheetLayout(
@@ -90,9 +128,26 @@ fun ResourceScreen(
             startEdit = viewModel::startEditing,
             cancelEdit = viewModel::cancelEditing,
             uploadFile = viewModel::uploadFile,
-            downloadFile = viewModel::downloadFile,
-            openFile = { uri, mimeType ->
+            downloadFile = { resource ->
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    viewModel.downloadFile(resource)
+                } else {
+                    val readPermission = ContextCompat.checkSelfPermission(
+                        mainActivity,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    )
 
+                    if (readPermission == PackageManager.PERMISSION_GRANTED) {
+                        viewModel.downloadFile(resource)
+                    } else {
+                        mainActivity.requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) {
+                            if (it) viewModel.downloadFile(resource)
+                            else viewModel.permissionNotGranted(String.WritePermissionError)
+                        }
+                    }
+                }
+            },
+            openFile = { uri, mimeType ->
                 val intent = Intent()
                 intent.action = Intent.ACTION_VIEW
                 intent.setDataAndType(uri, mimeType)

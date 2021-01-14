@@ -38,7 +38,7 @@ fun VerificationScreen(
         affirmationText = stringResource(id = R.string.sign_in),
         onFailAlertAffirmation = {
             viewModel.sendVerificationEmail()
-            viewModel.clearSideEffect()
+            viewModel.clearSideEffect(it)
             navigateToSignIn.invoke()
         }
     )
@@ -57,7 +57,8 @@ private fun VerificationScreenContent(
     sendVerificationEmail: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .fillMaxSize()
             .padding(horizontal = Margin.big)
             .navigationBarsWithImePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -72,7 +73,9 @@ private fun VerificationScreenContent(
         )
 
         Image(
-            modifier = Modifier.fillMaxSize(0.35f).aspectRatio(1f),
+            modifier = Modifier
+                .fillMaxSize(0.35f)
+                .aspectRatio(1f),
             imageVector = vectorResource(id = R.drawable.email)
         )
 
