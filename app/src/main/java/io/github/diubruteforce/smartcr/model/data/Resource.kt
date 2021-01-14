@@ -26,6 +26,8 @@ data class Resource(
 
     val fileName: String get() = "$name - ${course.courseCode} ($sectionName).$extension"
 
+    val nameWithType: String get() = "$name${if (extension != null) ".$extension" else ""}"
+
     val sizeString: String
         get() {
             val kb = size.toDouble() / 1024

@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import io.github.diubruteforce.smartcr.BuildConfig
@@ -25,12 +26,18 @@ fun AboutScreen(
     Scaffold(topBar = {
         BackPressTopAppBar(onBackPress = onBackPress, title = "About App")
     }) {
-        Column(modifier = Modifier.fillMaxSize().navigationBarsPadding()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsPadding()
+        ) {
 
             Spacer(modifier = Modifier.size(Margin.large))
 
             Image(
-                modifier = Modifier.size(100.dp).align(Alignment.CenterHorizontally),
+                modifier = Modifier
+                    .size(100.dp)
+                    .align(Alignment.CenterHorizontally),
                 imageVector = vectorResource(id = R.drawable.logo_primary)
             )
 
@@ -38,7 +45,8 @@ fun AboutScreen(
 
             Text(
                 modifier = Modifier.padding(horizontal = Margin.large),
-                text = stringResource(id = R.string.about_app)
+                text = stringResource(id = R.string.about_app),
+                textAlign = TextAlign.Justify
             )
 
             Spacer(modifier = Modifier.weight(1f))

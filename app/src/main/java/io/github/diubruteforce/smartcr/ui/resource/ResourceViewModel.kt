@@ -1,19 +1,17 @@
 package io.github.diubruteforce.smartcr.ui.resource
 
 import android.net.Uri
-import androidx.hilt.Assisted
 import androidx.hilt.lifecycle.ViewModelInject
-import androidx.lifecycle.SavedStateHandle
 import io.github.diubruteforce.smartcr.data.repository.ClassRepository
 import io.github.diubruteforce.smartcr.data.repository.StorageRepository
 import io.github.diubruteforce.smartcr.model.data.Resource
 import io.github.diubruteforce.smartcr.model.data.Section
 import io.github.diubruteforce.smartcr.model.ui.EmptyLoadingState
-import io.github.diubruteforce.smartcr.model.ui.Error
+import io.github.diubruteforce.smartcr.model.ui.EmptySuccessState
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.ui.common.ProgressType
-import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
+import io.github.diubruteforce.smartcr.utils.base.StringFailSideEffectViewModel
 import java.util.*
 
 data class ResourceState(
@@ -25,15 +23,10 @@ data class ResourceState(
     val file: InputState = InputState.NotEmptyState,
 )
 
-enum class ResourceSuccess {
-    Loaded, Filtered, Saved, Deleted
-}
-
 class ResourceViewModel @ViewModelInject constructor(
     private val classRepository: ClassRepository,
     private val storageRepository: StorageRepository,
-    @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel<ResourceState, Any, ResourceSuccess, String>(
+) : StringFailSideEffectViewModel<ResourceState>(
     initialState = ResourceState()
 ) {
     private var selectedSection: Section? = null
@@ -69,7 +62,7 @@ class ResourceViewModel @ViewModelInject constructor(
             }
         }
 
-        setSideEffect { TypedSideEffectState.Success(ResourceSuccess.Loaded) }
+        setSideEffect { EmptySuccessState }
     }
 
     fun search(newQuery: String) = withState {
@@ -94,9 +87,9 @@ class ResourceViewModel @ViewModelInject constructor(
         setState {
             copy(
                 editingResource = resource,
-                title = title.copy(value = resource.name),
-                section = section.copy(value = sectionName),
-                file = file.copy(value = resource.path)
+                title = title.copy(value = resource.name, isError = false),
+                section = section.copy(value = sectionName, isError = false),
+                file = file.copy(value = resource.nameWithType, isError = false)
             )
         }
     }
@@ -155,23 +148,40 @@ class ResourceViewModel @ViewModelInject constructor(
         val selectedSection = selectedSection
 
         if (
-            isError.not() && selectedFile != null
-            && selectedSection != null
+            isError.not()
             && editingResource != null
         ) launchInViewModelScope {
             setSideEffect { EmptyLoadingState }
 
-            val newResource = editingResource.copy(
-                course = selectedSection.course,
-                instructor = selectedSection.instructor,
-                sectionId = selectedSection.id,
-                sectionName = selectedSection.name,
-                path = if (editingResource.id.isEmpty()) UUID.randomUUID().toString()
-                else editingResource.id, //TODO: change this logic
-                name = title.value
-            )
+            if (selectedFile != null && selectedSection != null) { // for new resource
+                val newResource = editingResource.copy(
+                    course = selectedSection.course,
+                    instructor = selectedSection.instructor,
+                    sectionId = selectedSection.id,
+                    sectionName = selectedSection.name,
+                    path = if (editingResource.id.isEmpty()) UUID.randomUUID().toString()
+                    else editingResource.id, //TODO: change this logic
+                    name = title.value
+                )
 
-            classRepository.saveResource(newResource, selectedFile)
+                classRepository.saveResource(newResource, selectedFile)
+            } else if (selectedSection != null) { // for update resource which section has changed
+                val newResource = editingResource.copy(
+                    course = selectedSection.course,
+                    instructor = selectedSection.instructor,
+                    sectionId = selectedSection.id,
+                    sectionName = selectedSection.name,
+                    name = title.value
+                )
+
+                classRepository.updateResource(newResource)
+            } else if (editingResource.name != title.value) { // for update resource which name has changed
+                val newResource = editingResource.copy(
+                    name = title.value
+                )
+
+                classRepository.updateResource(newResource)
+            }
 
             setState { copy(editingResource = null) }
             loadData()
@@ -184,11 +194,19 @@ class ResourceViewModel @ViewModelInject constructor(
         loadData()
     }
 
-    override fun onCoroutineException(exception: Throwable) {
-        setSideEffect { TypedSideEffectState.Fail(exception.message ?: String.Error) }
-    }
-
     fun permissionNotGranted(failMessage: String) {
         setSideEffect { TypedSideEffectState.Fail(failMessage) }
+    }
+
+    fun deleteFile(resource: Resource) = withState {
+        launchInViewModelScope {
+            setSideEffect { EmptyLoadingState }
+
+            val newResource = resource.copy(isActive = false)
+
+            classRepository.updateResource(newResource)
+
+            loadData()
+        }
     }
 }

@@ -3,6 +3,7 @@ package io.github.diubruteforce.smartcr.ui.theme
 import androidx.compose.ui.unit.dp
 
 object Margin {
+    val inset = 55.dp
     val tiny = 4.dp
     val small = 8.dp
     val normal = 16.dp

@@ -17,7 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.PostType
@@ -109,7 +108,7 @@ private fun HomeScreenContent(
         floatingActionButton = {
             if (state.hasJoinedSection) {
                 FloatingActionButton(
-                    modifier = Modifier.navigationBarsPadding(),
+                    modifier = Modifier.padding(bottom = Margin.inset),
                     backgroundColor = MaterialTheme.colors.primary,
                     onClick = createNewPost
                 ) {
@@ -174,9 +173,7 @@ private fun HomeScreenContent(
                             )
                         }
 
-                        item {
-                            Spacer(modifier = Modifier.navigationBarsHeight())
-                        }
+                        item { Spacer(modifier = Modifier.height(Margin.inset)) }
                     }
                 } else {
                     Empty(

@@ -609,4 +609,32 @@ class ClassRepository @Inject constructor(
             .map { it.toObject<Resource>().copy(id = it.id) }
             .sortedByDescending { it.updatedOn }
     }
+
+    suspend fun updateResource(resource: Resource) {
+        val userProfile = getUserProfile()
+
+        val newResource = resource.copy(
+            uploadedBy = userProfile.fullName,
+
+            updatedOn = Timestamp.now(),
+            updaterId = userProfile.id,
+            updaterEmail = userProfile.diuEmail
+        )
+
+        db.collection(departmentPath)
+            .document(getUserProfile().departmentId)
+            .collection(resourcePath)
+            .document(newResource.id)
+            .set(newResource)
+            .await()
+
+        // Keeping the history
+        db.collection(departmentPath)
+            .document(getUserProfile().departmentId)
+            .collection(resourcePath)
+            .document(newResource.id)
+            .collection(historyPath)
+            .add(newResource)
+            .await()
+    }
 }

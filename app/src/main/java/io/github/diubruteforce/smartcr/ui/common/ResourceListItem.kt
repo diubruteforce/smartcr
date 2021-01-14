@@ -31,6 +31,8 @@ fun ResourceListItem(
     resource: Resource,
     progressType: ProgressType,
     onClick: () -> Unit,
+    onEdit: (() -> Unit)? = null,
+    onDelete: (() -> Unit)? = null
 ) {
     var teacherName = resource.instructor.initial
     if (teacherName.isEmpty()) {
@@ -52,44 +54,57 @@ fun ResourceListItem(
         elevation = 4.dp,
         border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder)
     ) {
-        Column {
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = Margin.normal)
-                    .padding(top = Margin.normal)
-            ) {
-                Text(text = "Course: ${resource.course.courseCode}")
-                Spacer(modifier = Modifier.weight(1f))
-                Text(text = "Teacher: $teacherName")
-            }
+        Box {
+            Column {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = Margin.normal)
+                        .padding(top = Margin.normal)
+                ) {
+                    Text(text = "Course: ${resource.course.courseCode}")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(text = "Teacher: $teacherName")
+                }
 
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = Margin.normal)
-                    .padding(bottom = Margin.normal, top = Margin.small),
-                text = "${resource.name}.${resource.extension}",
-                fontWeight = FontWeight.W400,
-                style = MaterialTheme.typography.h6,
-                color = MaterialTheme.colors.secondary
-            )
-
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = Margin.normal)
-                    .padding(bottom = Margin.normal)
-            ) {
-                Text(text = "Uploaded by: $uploadedBy")
-                Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = resource.sizeString,
-                    color = MaterialTheme.colors.error
+                    modifier = Modifier
+                        .padding(horizontal = Margin.normal)
+                        .padding(bottom = Margin.normal, top = Margin.small),
+                    text = resource.nameWithType,
+                    fontWeight = FontWeight.W400,
+                    style = MaterialTheme.typography.h6,
+                    color = MaterialTheme.colors.secondary
+                )
+
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = Margin.normal)
+                        .padding(bottom = Margin.normal)
+                ) {
+                    Text(text = "Uploaded by: $uploadedBy")
+                    Spacer(modifier = Modifier.weight(1f))
+                    Text(
+                        text = resource.sizeString,
+                        color = MaterialTheme.colors.error
+                    )
+                }
+
+                ProgressButton(
+                    type = progressType,
+                    onClick = onClick
                 )
             }
 
-            ProgressButton(
-                type = progressType,
-                onClick = onClick
-            )
+            if (onEdit != null && onDelete != null) {
+                UpdateDeleteMenu(
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = 0.dp, y = (-16).dp),
+                    iconColor = MaterialTheme.colors.grayText,
+                    onEdit = onEdit,
+                    onDelete = onDelete
+                )
+            }
         }
     }
 }

@@ -244,7 +244,7 @@ class PostEditViewModel @ViewModelInject constructor(
             setSideEffect { TypedSideEffectState.Success(PostEditSuccess.Saved) }
         }
         else setSideEffect {
-            TypedSideEffectState.Fail("Some of inputs are invalid. Please check and try again.")
+            TypedSideEffectState.Fail("Some of your inputs are invalid. Please check and try again.")
         }
     }
 

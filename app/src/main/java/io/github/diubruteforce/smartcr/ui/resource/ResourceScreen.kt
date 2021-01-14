@@ -11,9 +11,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.HistoryEdu
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.onActive
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.AmbientFocusManager
@@ -22,8 +20,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.core.content.ContextCompat
 import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
-import dev.chrisbanes.accompanist.insets.navigationBarsHeight
-import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.toPaddingValues
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.Resource
@@ -39,7 +35,6 @@ import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
 
-
 @OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
 fun ResourceScreen(
@@ -48,6 +43,7 @@ fun ResourceScreen(
     val sheetState = rememberBackPressAwareBottomSheetState()
     val sideEffect = viewModel.sideEffect.collectAsState().value
     val mainActivity = getMainActivity()
+    var deleteEvent by remember { mutableStateOf<Resource?>(null) }
 
     onActive {
         val readPermission = ContextCompat.checkSelfPermission(
@@ -63,6 +59,21 @@ fun ResourceScreen(
                 else viewModel.permissionNotGranted(String.ReadPermissionError)
             }
         }
+    }
+
+    if (deleteEvent != null) {
+        CRAlertDialog(
+            title = stringResource(id = R.string.are_you_sure),
+            message = stringResource(id = R.string.resource_delete),
+            onDenial = {
+                viewModel.deleteFile(deleteEvent!!)
+                deleteEvent = null
+            },
+            denialText = stringResource(id = R.string.delete),
+            onAffirmation = { deleteEvent = null },
+            affirmationText = stringResource(id = R.string.cancel),
+            onDismissRequest = { deleteEvent = null }
+        )
     }
 
     SideEffect(
@@ -105,7 +116,7 @@ fun ResourceScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.navigationBarsHeight())
+            Spacer(modifier = Modifier.height(height = Margin.inset))
         }
     ) {
         ResourceScreenContent(
@@ -153,7 +164,9 @@ fun ResourceScreen(
                 intent.setDataAndType(uri, mimeType)
                 intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                 mainActivity.startActivity(intent)
-            }
+            },
+            deleteFile = { deleteEvent = it },
+            updateFile = viewModel::startEditing
         )
     }
 }
@@ -169,6 +182,8 @@ private fun ResourceScreenContent(
     startEdit: (Resource) -> Unit,
     cancelEdit: () -> Unit,
     uploadFile: () -> Unit,
+    updateFile: (Resource) -> Unit,
+    deleteFile: (Resource) -> Unit,
     downloadFile: (Resource) -> Unit,
     openFile: (Uri, String) -> Unit
 ) {
@@ -181,7 +196,7 @@ private fun ResourceScreenContent(
         floatingActionButton = {
             if (state.editingResource == null) {
                 ExtendedFloatingActionButton(
-                    modifier = Modifier.navigationBarsPadding(),
+                    modifier = Modifier.padding(bottom = Margin.inset),
                     text = { Text(text = stringResource(id = R.string.upload)) },
                     icon = { Icon(imageVector = Icons.Outlined.Add) },
                     backgroundColor = MaterialTheme.colors.primary,
@@ -245,13 +260,15 @@ private fun ResourceScreenContent(
                                     it.first.mimeType
                                 )
                                 else downloadFile(it.first)
-                            }
+                            },
+                            onDelete = { deleteFile.invoke(it.first) },
+                            onEdit = { updateFile.invoke(it.first) }
                         )
                     }
                 }
             }
 
-            item { Spacer(modifier = Modifier.navigationBarsHeight()) }
+            item { Spacer(modifier = Modifier.height(Margin.inset)) }
         }
     }
 }
