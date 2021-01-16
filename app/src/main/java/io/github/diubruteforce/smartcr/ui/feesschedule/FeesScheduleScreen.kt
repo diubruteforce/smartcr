@@ -26,6 +26,8 @@ import dev.chrisbanes.accompanist.insets.toPaddingValues
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.FeesReason
 import io.github.diubruteforce.smartcr.model.data.FeesSchedule
+import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
+import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.ui.bottomsheet.DatePickerBottomSheet
 import io.github.diubruteforce.smartcr.ui.bottomsheet.SheetHeader
 import io.github.diubruteforce.smartcr.ui.bottomsheet.SheetListItem
@@ -83,6 +85,7 @@ fun FeesScheduleScreen(
         }
     ) {
         FeesScheduleScreenContent(
+            sideEffectState = sideEffect,
             stateFlow = viewModel.state,
             onEdit = viewModel::startEditing,
             onDelete = viewModel::deleteFeesSchedule,
@@ -107,6 +110,7 @@ fun FeesScheduleScreen(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun FeesScheduleScreenContent(
+    sideEffectState: StringFailSideEffectState,
     stateFlow: StateFlow<FeesScheduleState>,
     onEdit: (FeesSchedule) -> Unit,
     onDelete: (FeesSchedule) -> Unit,
@@ -166,7 +170,8 @@ private fun FeesScheduleScreenContent(
                         cancelEditing = cancelEditing
                     )
                 }
-                state.feesSchedules.isEmpty() -> {
+                sideEffectState is TypedSideEffectState.Success
+                        && state.feesSchedules.isEmpty() -> {
                     Empty(
                         title = "No Schedule",
                         message = "No schedule found. Please check later for fees schedule",

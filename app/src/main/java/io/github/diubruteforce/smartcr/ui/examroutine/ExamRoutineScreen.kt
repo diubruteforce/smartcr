@@ -21,6 +21,8 @@ import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.toPaddingValues
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.ExamRoutine
+import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
+import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.ui.bottomsheet.DatePickerBottomSheet
 import io.github.diubruteforce.smartcr.ui.bottomsheet.SheetHeader
 import io.github.diubruteforce.smartcr.ui.bottomsheet.SheetListItem
@@ -110,6 +112,7 @@ fun ExamRoutineScreen(
         }
     ) {
         ExamRoutineScreenContent(
+            sideEffectState = sideEffect,
             stateFlow = viewModel.state,
             startEdit = {
                 if (viewModel.canEdit()) viewModel.startEditing(it)
@@ -137,6 +140,7 @@ fun ExamRoutineScreen(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun ExamRoutineScreenContent(
+    sideEffectState: StringFailSideEffectState,
     stateFlow: StateFlow<ExamRoutineState>,
     startEdit: (ExamRoutine) -> Unit,
     onDelete: (ExamRoutine) -> Unit,
@@ -183,7 +187,8 @@ private fun ExamRoutineScreenContent(
                         saveExamRoutine = saveExamRoutine
                     )
                 }
-                state.routines.isEmpty() -> {
+                sideEffectState is TypedSideEffectState.Success
+                        && state.routines.isEmpty() -> {
                     Empty(
                         title = "No Exam Routine",
                         message = "No routine found. Please check later for exam routines",
