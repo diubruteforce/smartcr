@@ -11,6 +11,8 @@ import androidx.compose.ui.res.vectorResource
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.PostType
+import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
+import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.ui.common.Empty
 import io.github.diubruteforce.smartcr.ui.common.PostCard
 import io.github.diubruteforce.smartcr.ui.common.SideEffect
@@ -37,6 +39,7 @@ fun ToDoScreen(
     )
 
     ToDoScreenContent(
+        sideEffectState = sideEffect,
         stateFlow = viewModel.state,
         navigateToPostDetail = navigateToPostDetail
     )
@@ -45,6 +48,7 @@ fun ToDoScreen(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun ToDoScreenContent(
+    sideEffectState: StringFailSideEffectState,
     stateFlow: StateFlow<ToDoState>,
     navigateToPostDetail: (PostType, String) -> Unit
 ) {
@@ -72,7 +76,7 @@ private fun ToDoScreenContent(
 
             item { Spacer(modifier = Modifier.height(Margin.inset)) }
         }
-    } else {
+    } else if (sideEffectState is TypedSideEffectState.Success) {
         Empty(
             title = stringResource(id = R.string.no_todo),
             message = stringResource(id = R.string.no_todo_message),

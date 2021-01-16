@@ -20,6 +20,8 @@ import androidx.compose.ui.text.style.TextAlign
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.PostType
+import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
+import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.ui.bottomsheet.ListBottomSheet
 import io.github.diubruteforce.smartcr.ui.common.Empty
 import io.github.diubruteforce.smartcr.ui.common.PostCard
@@ -69,6 +71,7 @@ fun HomeScreen(
         }
     ) {
         HomeScreenContent(
+            sideEffectState = sideEffect,
             stateFlow = viewModel.state,
             navigateToSectionDetail = navigateToSectionDetail,
             navigateToPostDetail = navigateToPostDetail,
@@ -94,6 +97,7 @@ fun HomeScreen(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun HomeScreenContent(
+    sideEffectState: StringFailSideEffectState,
     stateFlow: StateFlow<HomeState>,
     navigateToSectionDetail: (String) -> Unit,
     navigateToPostDetail: (PostType, String) -> Unit,
@@ -175,14 +179,14 @@ private fun HomeScreenContent(
 
                         item { Spacer(modifier = Modifier.height(Margin.inset)) }
                     }
-                } else {
+                } else if (sideEffectState is TypedSideEffectState.Success) {
                     Empty(
                         title = stringResource(id = R.string.no_class_today),
                         message = stringResource(id = R.string.no_class_today_message),
                         image = vectorResource(id = R.drawable.new_class)
                     )
                 }
-            } else {
+            } else if (sideEffectState is TypedSideEffectState.Success) {
                 Empty(
                     title = stringResource(id = R.string.new_semester),
                     message = stringResource(id = R.string.new_semester_message),

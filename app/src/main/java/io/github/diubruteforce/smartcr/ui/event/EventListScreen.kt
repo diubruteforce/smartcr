@@ -24,6 +24,8 @@ import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.toPaddingValues
 import io.github.diubruteforce.smartcr.R
+import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
+import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.ui.common.BackPressTopAppBar
 import io.github.diubruteforce.smartcr.ui.common.Empty
 import io.github.diubruteforce.smartcr.ui.common.SideEffect
@@ -55,6 +57,7 @@ fun EventListScreen(
     )
 
     EVentListScreenContent(
+        sideEffectState = sideEffect,
         stateFlow = viewModel.state,
         createNewEvent = navigateToEventEdit,
         navigateToEventDetail = navigateToEventDetail,
@@ -65,6 +68,7 @@ fun EventListScreen(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun EVentListScreenContent(
+    sideEffectState: StringFailSideEffectState,
     stateFlow: StateFlow<EventListState>,
     createNewEvent: () -> Unit,
     navigateToEventDetail: (String) -> Unit,
@@ -87,7 +91,7 @@ private fun EVentListScreenContent(
             }
         }
     ) {
-        if (state.events.isEmpty()) {
+        if (sideEffectState is TypedSideEffectState.Success && state.events.isEmpty()) {
             Empty(
                 title = "No Event",
                 message = "No event found. Please check later for new events",
@@ -139,7 +143,8 @@ private fun EventCard(
         border = BorderStroke(1.dp, eventColor.copy(alpha = 0.4f))
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .indication(interactionState, AmbientIndication.current())
                 .padding(horizontal = Margin.normal, vertical = Margin.small),
         ) {

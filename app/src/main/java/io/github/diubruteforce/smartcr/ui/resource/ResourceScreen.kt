@@ -24,6 +24,8 @@ import dev.chrisbanes.accompanist.insets.toPaddingValues
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.Resource
 import io.github.diubruteforce.smartcr.model.ui.ReadPermissionError
+import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
+import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
 import io.github.diubruteforce.smartcr.model.ui.WritePermissionError
 import io.github.diubruteforce.smartcr.ui.bottomsheet.SheetHeader
 import io.github.diubruteforce.smartcr.ui.bottomsheet.SheetListItem
@@ -120,6 +122,7 @@ fun ResourceScreen(
         }
     ) {
         ResourceScreenContent(
+            sideEffectState = sideEffect,
             stateFlow = viewModel.state,
             onQueryChange = viewModel::search,
             onNameChange = viewModel::onTitleChange,
@@ -174,6 +177,7 @@ fun ResourceScreen(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun ResourceScreenContent(
+    sideEffectState: StringFailSideEffectState,
     stateFlow: StateFlow<ResourceState>,
     onQueryChange: (String) -> Unit,
     onNameChange: (String) -> Unit,
@@ -224,7 +228,9 @@ private fun ResourceScreenContent(
                         uploadFile = uploadFile
                     )
                 }
-                state.resources.isEmpty() && state.query.value.isEmpty() -> item {
+                sideEffectState is TypedSideEffectState.Success
+                        && state.query.value.isEmpty()
+                        && state.resources.isEmpty() -> item {
                     Empty(
                         title = stringResource(id = R.string.no_resource),
                         message = stringResource(id = R.string.no_resource_message),
