@@ -12,6 +12,7 @@ import io.github.diubruteforce.smartcr.utils.base.BaseViewModel
 import io.github.diubruteforce.smartcr.utils.extension.filterByQuery
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 
 data class SectionEditState(
     val sectionName: InputState = InputState.NotEmptyState,
@@ -54,12 +55,19 @@ class SectionEditViewModel @ViewModelInject constructor(
     private val _courseState = MutableStateFlow(SectionEditCourseState())
     val courseState: StateFlow<SectionEditCourseState> get() = _courseState
 
+    init {
+        launchInViewModelScope {
+            teacherRepository.teacherListFlow.collect { teacherList ->
+                allTeacher = teacherList
+                _teacherState.value = _teacherState.value.copy(teacherList = allTeacher)
+                searchTeacher(_teacherState.value.query.value)
+            }
+        }
+    }
+
     fun loadDate(sectionId: String?, courseId: String) {
         launchInViewModelScope {
             setSideEffect { EmptyLoadingState }
-
-            allTeacher = teacherRepository.getAllTeacher()
-            _teacherState.value = _teacherState.value.copy(teacherList = allTeacher)
 
             allCourse = classRepository.getCourseList()
             _courseState.value = _courseState.value.copy(courseList = allCourse)
@@ -83,7 +91,6 @@ class SectionEditViewModel @ViewModelInject constructor(
                 }
             }
 
-            searchTeacher(_teacherState.value.query.value)
             setSideEffect { TypedSideEffectState.Success(SectionEditSuccess.Loaded) }
         }
     }

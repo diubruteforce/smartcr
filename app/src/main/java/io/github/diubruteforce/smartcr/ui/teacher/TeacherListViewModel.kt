@@ -8,6 +8,7 @@ import io.github.diubruteforce.smartcr.model.ui.EmptySuccessState
 import io.github.diubruteforce.smartcr.model.ui.InputState
 import io.github.diubruteforce.smartcr.utils.base.StringFailSideEffectViewModel
 import io.github.diubruteforce.smartcr.utils.extension.filterByQuery
+import kotlinx.coroutines.flow.collect
 
 data class TeacherListState(
     val teacherList: List<Teacher> = emptyList(),
@@ -21,17 +22,19 @@ class TeacherListViewModel @ViewModelInject constructor(
 ) {
     private var allTeacher: List<Teacher> = emptyList()
 
-    fun loadData() {
+    init {
+        setSideEffect { EmptyLoadingState }
+
         launchInViewModelScope {
-            setSideEffect { EmptyLoadingState }
+            teacherRepository.teacherListFlow.collect { teacherList ->
+                allTeacher = teacherList
 
-            allTeacher = teacherRepository.getAllTeacher()
+                withState {
+                    setState { copy(teacherList = allTeacher.filterByQuery(query.value)) }
+                }
 
-            withState {
-                setState { copy(teacherList = allTeacher) }
+                if (allTeacher.isNotEmpty()) setSideEffect { EmptySuccessState }
             }
-
-            setSideEffect { EmptySuccessState }
         }
     }
 

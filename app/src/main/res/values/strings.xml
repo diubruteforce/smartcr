@@ -157,4 +157,5 @@
     <string name="select_file">Select File</string>
     <string name="search_resource">Search Resource</string>
     <string name="resource_delete">If you delete this resource, no other student can\'t view and download this anymore.</string>
+    <string name="create_teacher_profile">Create teacher profile</string>
 </resources>

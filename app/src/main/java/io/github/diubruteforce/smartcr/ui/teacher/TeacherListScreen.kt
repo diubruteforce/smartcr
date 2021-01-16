@@ -13,21 +13,20 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.onActive
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.AmbientFocusManager
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
-import io.github.diubruteforce.smartcr.ui.common.FullName
-import io.github.diubruteforce.smartcr.ui.common.InsetAwareTopAppBar
-import io.github.diubruteforce.smartcr.ui.common.ProfileListItem
-import io.github.diubruteforce.smartcr.ui.common.SideEffect
+import io.github.diubruteforce.smartcr.model.ui.StringFailSideEffectState
+import io.github.diubruteforce.smartcr.model.ui.TypedSideEffectState
+import io.github.diubruteforce.smartcr.ui.common.*
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -42,10 +41,6 @@ fun TeacherListScreen(
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
 
-    onActive {
-        viewModel.loadData()
-    }
-
     SideEffect(
         sideEffectState = sideEffect,
         onSuccess = { },
@@ -53,6 +48,7 @@ fun TeacherListScreen(
     )
 
     TeacherListContent(
+        sideEffectState = sideEffect,
         stateFlow = viewModel.state,
         onQueryChange = viewModel::changeQuery,
         onBackPress = onBackPress,
@@ -64,6 +60,7 @@ fun TeacherListScreen(
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
 private fun TeacherListContent(
+    sideEffectState: StringFailSideEffectState,
     stateFlow: StateFlow<TeacherListState>,
     onQueryChange: (String) -> Unit,
     onBackPress: () -> Unit,
@@ -75,7 +72,10 @@ private fun TeacherListContent(
     val state = stateFlow.collectAsState().value
 
     Column(
-        modifier = Modifier.navigationBarsWithImePadding(),
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsWithImePadding()
+            .background(Color.White),
     ) {
         Card(
             shape = RoundedCornerShape(0.dp),
@@ -122,13 +122,25 @@ private fun TeacherListContent(
             verticalArrangement = Arrangement.spacedBy(Margin.normal),
             contentPadding = PaddingValues(Margin.normal)
         ) {
-            items(state.teacherList) { teacher ->
-                ProfileListItem(
-                    title = teacher.fullName,
-                    subTitle = "Department: ${teacher.departmentCode}",
-                    profileUrl = teacher.profileUrl,
-                    itemClick = { navigateToTeacherDetail.invoke(teacher.id) }
-                )
+            if (sideEffectState is TypedSideEffectState.Success && state.teacherList.isEmpty()) {
+                item {
+                    Empty(
+                        title = "No Teacher Found",
+                        message = "There is no teacher found at this point",
+                        actionTitle = stringResource(id = R.string.create_teacher_profile),
+                        onAction = addNewTeacher,
+                        image = vectorResource(id = R.drawable.new_semseter)
+                    )
+                }
+            } else {
+                items(state.teacherList) { teacher ->
+                    ProfileListItem(
+                        title = teacher.fullName,
+                        subTitle = "Department: ${teacher.departmentCode}",
+                        profileUrl = teacher.profileUrl,
+                        itemClick = { navigateToTeacherDetail.invoke(teacher.id) }
+                    )
+                }
             }
         }
     }

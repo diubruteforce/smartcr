@@ -9,6 +9,13 @@ import com.google.firebase.ktx.Firebase
 import io.github.diubruteforce.smartcr.model.data.CounselingHourState
 import io.github.diubruteforce.smartcr.model.data.Teacher
 import io.github.diubruteforce.smartcr.utils.extension.whereActiveData
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -189,12 +196,27 @@ class TeacherRepository @Inject constructor(
             .await()
     }
 
-    suspend fun getAllTeacher(): List<Teacher> {
-        return db.collection(teacherProfilePath)
-            .whereActiveData()
-            .get()
-            .await()
-            .map { it.toObject<Teacher>().copy(id = it.id) }
-            .sortedBy { it.fullName }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val teacherListFlow: StateFlow<List<Teacher>> by lazy {
+        callbackFlow<List<Teacher>> {
+            val callback = db.collection(teacherProfilePath)
+                .whereActiveData()
+                .addSnapshotListener { value, error ->
+                    if (error != null) offer(emptyList())
+                    else if (value != null) {
+                        val response = value.documents
+                            .mapNotNull { it.toObject<Teacher>()?.copy(id = it.id) }
+                            .sortedBy { it.fullName }
+
+                        offer(response)
+                    }
+                }
+
+            awaitClose { callback.remove() }
+        }.stateIn(
+            scope = GlobalScope,
+            started = SharingStarted.WhileSubscribed(),
+            initialValue = emptyList()
+        )
     }
 }
