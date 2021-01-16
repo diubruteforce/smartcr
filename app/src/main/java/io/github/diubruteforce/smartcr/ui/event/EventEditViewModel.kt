@@ -90,8 +90,7 @@ class EventEditViewModel @ViewModelInject constructor(
                 type = newType,
                 date = newDate,
                 time = newTime,
-                place = newPlace,
-                details = newDetails
+                place = newPlace
             )
         }
 
@@ -99,8 +98,7 @@ class EventEditViewModel @ViewModelInject constructor(
                 newType.isError ||
                 newDate.isError ||
                 newTime.isError ||
-                newPlace.isError ||
-                newDetails.isError
+                newPlace.isError
 
         if (isError.not()) launchInViewModelScope {
             setSideEffect { EmptyLoadingState }

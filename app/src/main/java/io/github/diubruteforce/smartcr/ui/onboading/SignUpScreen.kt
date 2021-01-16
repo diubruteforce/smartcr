@@ -1,6 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.ButtonDefaults
 import androidx.compose.material.MaterialTheme
@@ -11,6 +12,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.AmbientFocusManager
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
@@ -65,7 +67,9 @@ private fun SignUpScreenContent(
     onRePasswordChange: (String) -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .background(Color.White)
+            .fillMaxSize()
             .padding(horizontal = Margin.big)
             .statusBarsPadding()
             .navigationBarsWithImePadding(),
@@ -80,7 +84,9 @@ private fun SignUpScreenContent(
 
         if (ime.isVisible.not()) {
             Image(
-                modifier = Modifier.fillMaxWidth(0.5f).aspectRatio(1f),
+                modifier = Modifier
+                    .fillMaxWidth(0.5f)
+                    .aspectRatio(1f),
                 bitmap = imageResource(id = R.drawable.sign_up)
             )
         }

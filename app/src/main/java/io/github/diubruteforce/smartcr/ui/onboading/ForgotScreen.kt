@@ -1,6 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.onboading
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -8,6 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.AmbientFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
@@ -67,7 +69,9 @@ private fun ForgotScreenContent(
     requestResetPassword: () -> Unit
 ) {
     Column(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier
+            .background(Color.White)
+            .fillMaxSize()
             .padding(horizontal = Margin.big)
             .navigationBarsWithImePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -88,7 +92,9 @@ private fun ForgotScreenContent(
 
         if (ime.isVisible.not()) {
             Image(
-                modifier = Modifier.fillMaxSize(0.35f).aspectRatio(1f),
+                modifier = Modifier
+                    .fillMaxSize(0.35f)
+                    .aspectRatio(1f),
                 imageVector = vectorResource(id = R.drawable.forgot_password)
             )
         } else {
