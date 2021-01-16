@@ -4,7 +4,8 @@
         <!-- Status bar color. -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
 
-        <item name="android:windowLightStatusBar" tools:targetApi="23">@bool/use_light_system_bars
+        <item name="android:windowLightStatusBar" tools:targetApi="23">
+            @bool/use_light_system_bars
         </item>
         <item name="android:windowLightNavigationBar" tools:targetApi="27">
             @bool/use_light_system_bars

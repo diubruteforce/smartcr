@@ -1,6 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.teacher
 
 import androidx.compose.foundation.ScrollableColumn
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -169,6 +170,7 @@ private fun TeacherEditScreenContent(
                     }
                 }
             },
+            actions = { TextButton(onClick = {}) { Text(text = "") } },
             imageCaption = {
                 TextButton(
                     onClick = changeImage,
@@ -183,7 +185,9 @@ private fun TeacherEditScreenContent(
         )
 
         ScrollableColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.White),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.tiny)
         ) {
