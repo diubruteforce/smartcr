@@ -209,4 +209,8 @@ class ResourceViewModel @ViewModelInject constructor(
             loadData()
         }
     }
+
+    fun setFileNotUpLoadable() {
+        setSideEffect { TypedSideEffectState.Fail("File size is more than 5 MB. Please choose a file less than 5 MB") }
+    }
 }

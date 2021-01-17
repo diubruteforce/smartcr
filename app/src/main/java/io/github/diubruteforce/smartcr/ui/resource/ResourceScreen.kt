@@ -33,6 +33,7 @@ import io.github.diubruteforce.smartcr.ui.common.*
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 import io.github.diubruteforce.smartcr.utils.extension.getMainActivity
 import io.github.diubruteforce.smartcr.utils.extension.getName
+import io.github.diubruteforce.smartcr.utils.extension.isUpLoadable
 import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBottomSheetState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
@@ -131,10 +132,14 @@ fun ResourceScreen(
                 if (viewModel.canChangeFile()) {
                     mainActivity.pickFile {
                         it?.let {
-                            viewModel.changeFile(
-                                newFile = it,
-                                fileName = it.getName(mainActivity.contentResolver) ?: ""
-                            )
+                            if (it.isUpLoadable(mainActivity.contentResolver)) {
+                                viewModel.changeFile(
+                                    newFile = it,
+                                    fileName = it.getName(mainActivity.contentResolver) ?: ""
+                                )
+                            } else {
+                                viewModel.setFileNotUpLoadable()
+                            }
                         }
                     }
                 }

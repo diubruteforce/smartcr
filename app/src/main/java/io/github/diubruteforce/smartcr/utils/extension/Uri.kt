@@ -29,3 +29,9 @@ fun Uri.getSize(contentResolver: ContentResolver): Long? {
 
     return null
 }
+
+fun Uri.isUpLoadable(contentResolver: ContentResolver): Boolean {
+    val size = getSize(contentResolver) ?: return false
+
+    return size <= 5_242_880
+}
