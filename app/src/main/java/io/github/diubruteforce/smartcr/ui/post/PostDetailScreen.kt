@@ -206,10 +206,11 @@ private fun ColumnScope.GroupInformation(
     Spacer(modifier = Modifier.size(Margin.normal))
 
     OutlinedButton(
-        modifier = Modifier.fillMaxWidth(0.8f)
+        modifier = Modifier
+            .fillMaxWidth(0.8f)
             .align(Alignment.CenterHorizontally),
         onClick = navigateToGroupList
     ) {
-        Text(text = stringResource(id = R.string.join_or_creat_section))
+        Text(text = stringResource(id = R.string.join_or_creat_group))
     }
 }

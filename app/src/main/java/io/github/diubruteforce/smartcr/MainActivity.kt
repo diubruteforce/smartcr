@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
 
         startActivity(intent)
     }
+    // endregion
 
     // region: ImagePicker
     private lateinit var onImagePicked: (uri: Uri?) -> Unit

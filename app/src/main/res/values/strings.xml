@@ -158,4 +158,5 @@
     <string name="search_resource">Search Resource</string>
     <string name="resource_delete">If you delete this resource, no other student can\'t view and download this anymore.</string>
     <string name="create_teacher_profile">Create teacher profile</string>
+    <string name="join_or_creat_group">Create/Join Group</string>
 </resources>
