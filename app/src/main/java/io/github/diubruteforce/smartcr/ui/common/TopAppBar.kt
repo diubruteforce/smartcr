@@ -48,7 +48,8 @@ fun ProfileTopAppBar(
                             height = Dimension.fillToConstraints
                         },
                     contentScale = ContentScale.Crop,
-                    bitmap = imageResource(id = R.drawable.profile_bg)
+                    bitmap = imageResource(id = R.drawable.profile_bg),
+                    contentDescription = "Topbar background"
                 )
             }
 
@@ -85,7 +86,9 @@ fun ProfileTopAppBar(
                     Spacer(modifier = Modifier.size(Margin.medium))
 
                     Card(
-                        modifier = Modifier.fillMaxWidth(0.3f).aspectRatio(1f),
+                        modifier = Modifier
+                            .fillMaxWidth(0.3f)
+                            .aspectRatio(1f),
                         backgroundColor = Color.LightGray,
                         shape = RoundedCornerShape(8.dp),
                         elevation = 8.dp
@@ -119,7 +122,10 @@ fun BackPressTopAppBar(
             modifier = Modifier.align(Alignment.CenterVertically),
             onClick = onBackPress
         ) {
-            Icon(imageVector = Icons.Outlined.KeyboardArrowLeft)
+            Icon(
+                imageVector = Icons.Outlined.KeyboardArrowLeft,
+                contentDescription = "Back"
+            )
         }
 
         Spacer(modifier = Modifier.weight(1f))

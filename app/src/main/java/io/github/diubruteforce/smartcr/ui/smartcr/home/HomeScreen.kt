@@ -2,6 +2,7 @@ package io.github.diubruteforce.smartcr.ui.smartcr.home
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -116,7 +117,10 @@ private fun HomeScreenContent(
                     backgroundColor = MaterialTheme.colors.primary,
                     onClick = createNewPost
                 ) {
-                    Icon(imageVector = Icons.Outlined.Add)
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        contentDescription = "Add"
+                    )
                 }
             }
         }
@@ -132,7 +136,8 @@ private fun HomeScreenContent(
                     IconButton(onClick = onPreviousDay) {
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowLeft,
-                            tint = MaterialTheme.colors.primary
+                            tint = MaterialTheme.colors.primary,
+                            contentDescription = "Back"
                         )
                     }
 
@@ -148,7 +153,8 @@ private fun HomeScreenContent(
                     IconButton(onClick = onNextDay) {
                         Icon(
                             imageVector = Icons.Outlined.KeyboardArrowRight,
-                            tint = MaterialTheme.colors.primary
+                            tint = MaterialTheme.colors.primary,
+                            contentDescription = "Back"
                         )
                     }
                 }

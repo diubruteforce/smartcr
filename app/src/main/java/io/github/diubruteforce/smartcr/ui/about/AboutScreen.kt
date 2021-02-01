@@ -38,7 +38,8 @@ fun AboutScreen(
                 modifier = Modifier
                     .size(100.dp)
                     .align(Alignment.CenterHorizontally),
-                imageVector = vectorResource(id = R.drawable.logo_primary)
+                imageVector = vectorResource(id = R.drawable.logo_primary),
+                contentDescription = "SmartCR"
             )
 
             Spacer(modifier = Modifier.size(Margin.medium))

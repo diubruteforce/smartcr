@@ -8,6 +8,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Book
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -137,7 +138,7 @@ fun TeacherEditScreen(
     }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun TeacherEditScreenContent(
     stateFlow: StateFlow<TeacherEditState>,
@@ -166,7 +167,10 @@ private fun TeacherEditScreenContent(
             navigationIcon = {
                 onBackPress?.let {
                     IconButton(onClick = it) {
-                        Icon(imageVector = Icons.Outlined.KeyboardArrowLeft)
+                        Icon(
+                            imageVector = Icons.Outlined.KeyboardArrowLeft,
+                            contentDescription = "Back"
+                        )
                     }
                 }
             },

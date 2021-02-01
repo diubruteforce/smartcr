@@ -92,7 +92,10 @@ private fun StudentDetailScreenContent(
                 title = stringResource(id = R.string.student_profile),
                 navigationIcon = {
                     IconButton(onClick = onBackPress) {
-                        Icon(imageVector = Icons.Outlined.KeyboardArrowLeft)
+                        Icon(
+                            imageVector = Icons.Outlined.KeyboardArrowLeft,
+                            contentDescription = "Back"
+                        )
                     }
                 },
                 actions = { IconButton(onClick = { }) {} },

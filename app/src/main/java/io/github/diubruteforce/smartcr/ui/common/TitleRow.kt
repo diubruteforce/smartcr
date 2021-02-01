@@ -33,7 +33,8 @@ fun TitleRow(
         IconButton(onClick = onEdit) {
             Icon(
                 imageVector = icon,
-                tint = MaterialTheme.colors.grayText
+                tint = MaterialTheme.colors.grayText,
+                contentDescription = "Title Icon"
             )
         }
     }

@@ -146,7 +146,10 @@ private fun FeesScheduleScreenContent(
                     onClick = { onEdit.invoke(FeesSchedule()) },
                     backgroundColor = MaterialTheme.colors.primary
                 ) {
-                    Icon(imageVector = Icons.Outlined.Add)
+                    Icon(
+                        imageVector = Icons.Outlined.Add,
+                        contentDescription = "Add"
+                    )
                 }
             }
         }

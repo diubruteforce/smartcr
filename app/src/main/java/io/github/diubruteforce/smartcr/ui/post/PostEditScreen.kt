@@ -12,6 +12,7 @@ import androidx.compose.material.icons.outlined.Grade
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material.icons.outlined.SettingsCell
 import androidx.compose.runtime.*
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.AmbientFocusManager
@@ -176,7 +177,7 @@ fun PostEditScreen(
     }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun PostEditScreenContent(
     stateFlow: StateFlow<PostEditState>,

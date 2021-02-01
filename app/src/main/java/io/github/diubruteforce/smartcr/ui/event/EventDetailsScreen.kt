@@ -82,7 +82,10 @@ private fun EventDetailScreenContent(
                     modifier = Modifier.align(Alignment.CenterVertically),
                     onClick = onBackPress
                 ) {
-                    Icon(imageVector = Icons.Outlined.KeyboardArrowLeft)
+                    Icon(
+                        imageVector = Icons.Outlined.KeyboardArrowLeft,
+                        contentDescription = "Back"
+                    )
                 }
 
                 Spacer(modifier = Modifier.weight(1f))

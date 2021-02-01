@@ -19,13 +19,17 @@ fun ColumnScope.SheetHeader(title: String, icon: ImageVector, onClose: () -> Uni
         onClick = onClose,
         modifier = Modifier.align(Alignment.End)
     ) {
-        Icon(imageVector = Icons.Outlined.Clear)
+        Icon(
+            imageVector = Icons.Outlined.Clear,
+            contentDescription = "SmartCR"
+        )
     }
 
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Margin.normal),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
             .padding(start = Margin.medium, bottom = Margin.normal)
     ) {
         Card(
@@ -37,7 +41,8 @@ fun ColumnScope.SheetHeader(title: String, icon: ImageVector, onClose: () -> Uni
             Icon(
                 imageVector = icon,
                 modifier = Modifier.size(IconSize.normal),
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colors.primary,
+                contentDescription = "Sheet Header Icon"
             )
         }
 

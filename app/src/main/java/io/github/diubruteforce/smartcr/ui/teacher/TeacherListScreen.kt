@@ -3,6 +3,7 @@ package io.github.diubruteforce.smartcr.ui.teacher
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
@@ -86,7 +87,10 @@ private fun TeacherListContent(
                     elevation = 0.dp
                 ) {
                     IconButton(onClick = onBackPress) {
-                        Icon(imageVector = Icons.Outlined.KeyboardArrowLeft)
+                        Icon(
+                            imageVector = Icons.Outlined.KeyboardArrowLeft,
+                            contentDescription = "Back"
+                        )
                     }
 
                     Spacer(modifier = Modifier.weight(1f))
@@ -99,7 +103,10 @@ private fun TeacherListContent(
                     Spacer(modifier = Modifier.weight(1f))
 
                     IconButton(onClick = addNewTeacher) {
-                        Icon(imageVector = Icons.Outlined.Add)
+                        Icon(
+                            imageVector = Icons.Outlined.Add,
+                            contentDescription = "Add"
+                        )
                     }
                 }
 

@@ -26,7 +26,10 @@ fun Empty(
     onAction: (() -> Unit)? = null
 ) {
     Column(
-        modifier = modifier.fillMaxSize().heightIn(min = 600.dp).navigationBarsPadding(),
+        modifier = modifier
+            .fillMaxSize()
+            .heightIn(min = 600.dp)
+            .navigationBarsPadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
@@ -34,7 +37,8 @@ fun Empty(
 
         Image(
             modifier = Modifier.fillMaxWidth(0.4f),
-            imageVector = image
+            imageVector = image,
+            contentDescription = "Empty Screen Image"
         )
 
         Spacer(modifier = Modifier.weight(0.3f))
@@ -58,7 +62,9 @@ fun Empty(
 
         if (actionTitle != null && onAction != null) {
             OutlinedButton(
-                modifier = Modifier.fillMaxWidth().padding(horizontal = Margin.big),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = Margin.big),
                 border = BorderStroke(1.dp, MaterialTheme.colors.primary),
                 onClick = onAction
             ) {

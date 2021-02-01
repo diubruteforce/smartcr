@@ -79,7 +79,8 @@ private fun VerificationScreenContent(
             modifier = Modifier
                 .fillMaxSize(0.35f)
                 .aspectRatio(1f),
-            imageVector = vectorResource(id = R.drawable.email)
+            imageVector = vectorResource(id = R.drawable.email),
+            contentDescription = "Email"
         )
 
         Text(

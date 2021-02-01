@@ -24,7 +24,8 @@ fun UpdateDeleteMenu(
             IconButton(onClick = { isExpanded = true }) {
                 Icon(
                     imageVector = icon,
-                    tint = iconColor
+                    tint = iconColor,
+                    contentDescription = "Menu"
                 )
             }
         },

@@ -164,7 +164,10 @@ private fun ExamRoutineScreenContent(
                 onClick = { startEdit.invoke(ExamRoutine()) },
                 backgroundColor = MaterialTheme.colors.primary
             ) {
-                Icon(imageVector = Icons.Outlined.Add)
+                Icon(
+                    imageVector = Icons.Outlined.Add,
+                    contentDescription = "Add"
+                )
             }
         }
     ) {

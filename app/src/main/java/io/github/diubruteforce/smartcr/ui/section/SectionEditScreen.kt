@@ -3,6 +3,7 @@ package io.github.diubruteforce.smartcr.ui.section
 import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AccountCircle
@@ -10,6 +11,7 @@ import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material.icons.outlined.SettingsCell
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.AmbientFocusManager
@@ -33,7 +35,11 @@ private enum class SectionEditSheet {
     Course, Instructor, SectionName, NoCourse, NoSectionName
 }
 
-@OptIn(ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
+@OptIn(
+    ExperimentalCoroutinesApi::class,
+    ExperimentalMaterialApi::class,
+    ExperimentalComposeUiApi::class
+)
 @Composable
 fun SectionEditScreen(
     viewModel: SectionEditViewModel,
@@ -68,8 +74,10 @@ fun SectionEditScreen(
             when (currentSheet) {
                 SectionEditSheet.Course -> {
                     Column(
-                        modifier = Modifier.statusBarsPadding()
-                            .navigationBarsWithImePadding().fillMaxSize()
+                        modifier = Modifier
+                            .statusBarsPadding()
+                            .navigationBarsWithImePadding()
+                            .fillMaxSize()
                     ) {
                         SheetHeader(
                             title = stringResource(id = R.string.select_course),
@@ -115,8 +123,10 @@ fun SectionEditScreen(
                 }
                 SectionEditSheet.Instructor -> {
                     Column(
-                        modifier = Modifier.statusBarsPadding()
-                            .navigationBarsWithImePadding().fillMaxSize()
+                        modifier = Modifier
+                            .statusBarsPadding()
+                            .navigationBarsWithImePadding()
+                            .fillMaxSize()
                     ) {
                         SheetHeader(
                             title = stringResource(id = R.string.select_instructor),
@@ -257,7 +267,7 @@ fun SectionEditScreen(
     }
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun SectionEditScreenContent(
     stateFlow: StateFlow<SectionEditState>,
@@ -283,7 +293,9 @@ private fun SectionEditScreenContent(
         val state = stateFlow.collectAsState().value
 
         ScrollableColumn(
-            modifier = Modifier.fillMaxSize().navigationBarsWithImePadding(),
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsWithImePadding(),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.tiny)
         ) {

@@ -3,6 +3,7 @@ package io.github.diubruteforce.smartcr.ui.common
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -40,18 +41,27 @@ fun MenuItem(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
-                modifier = Modifier.weight(1f).aspectRatio(1f).padding(Margin.normal),
-                imageVector = icon
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1f)
+                    .padding(Margin.normal),
+                imageVector = icon,
+                contentDescription = "Menu Item"
             )
 
             Text(
-                modifier = Modifier.background(MaterialTheme.colors.primary)
+                modifier = Modifier
+                    .background(MaterialTheme.colors.primary)
                     .fillMaxWidth()
                     .padding(vertical = Margin.small),
                 text = title,
                 color = MaterialTheme.colors.onPrimary,
                 textAlign = TextAlign.Center
             )
+
+            Button(onClick = { /*TODO*/ }) {
+
+            }
         }
     }
 }
@@ -69,7 +79,9 @@ fun MenuRow(
         Spacer(modifier = Modifier.size(Margin.medium))
 
         MenuItem(
-            modifier = Modifier.weight(1f).aspectRatio(1f),
+            modifier = Modifier
+                .weight(1f)
+                .aspectRatio(1f),
             icon = leftIcon,
             title = leftTitle,
             onClick = leftOnClick
@@ -78,7 +90,9 @@ fun MenuRow(
         Spacer(modifier = Modifier.size(Margin.medium))
 
         MenuItem(
-            modifier = Modifier.weight(1f).aspectRatio(1f),
+            modifier = Modifier
+                .weight(1f)
+                .aspectRatio(1f),
             icon = rightIcon,
             title = rightTitle,
             onClick = rightOnClick

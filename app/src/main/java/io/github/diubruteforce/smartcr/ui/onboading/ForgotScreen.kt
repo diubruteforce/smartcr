@@ -95,7 +95,8 @@ private fun ForgotScreenContent(
                 modifier = Modifier
                     .fillMaxSize(0.35f)
                     .aspectRatio(1f),
-                imageVector = vectorResource(id = R.drawable.forgot_password)
+                imageVector = vectorResource(id = R.drawable.forgot_password),
+                contentDescription = "Forgot Password"
             )
         } else {
             Spacer(modifier = Modifier.weight(1f))

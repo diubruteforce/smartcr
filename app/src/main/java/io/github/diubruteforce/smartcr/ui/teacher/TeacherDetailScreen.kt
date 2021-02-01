@@ -148,7 +148,10 @@ private fun TeacherDetailScreenContent(
                 title = stringResource(id = R.string.facult_profile),
                 navigationIcon = {
                     IconButton(onClick = onBackPress) {
-                        Icon(imageVector = Icons.Outlined.KeyboardArrowLeft)
+                        Icon(
+                            imageVector = Icons.Outlined.KeyboardArrowLeft,
+                            contentDescription = "Back"
+                        )
                     }
                 },
                 actions = { IconButton(onClick = { }) {} },
@@ -233,7 +236,8 @@ private fun TeacherDetailScreenContent(
                     IconButton(onClick = onCounselingHourAdd) {
                         Icon(
                             imageVector = Icons.Outlined.Add,
-                            tint = MaterialTheme.colors.primary
+                            tint = MaterialTheme.colors.primary,
+                            contentDescription = "Add"
                         )
                     }
                 }

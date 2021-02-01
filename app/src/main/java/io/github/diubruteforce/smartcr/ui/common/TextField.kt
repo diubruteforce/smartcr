@@ -1,6 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.common
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.InteractionState
 import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -11,6 +12,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
@@ -189,7 +191,10 @@ fun Description(
             shape = RoundedCornerShape(CornerRadius.normal),
             elevation = 4.dp,
             border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder),
-            modifier = modifier.clickable(indication = null) {
+            modifier = modifier.clickable(
+                interactionState = remember { InteractionState() },
+                indication = null
+            ) {
                 focusRequester.requestFocus()
             }
         ) {
@@ -207,7 +212,7 @@ fun Description(
                     onValueChange = onValueChange,
                     textStyle = MaterialTheme.typography.body1,
                     keyboardOptions = KeyboardOptions(
-                        imeAction = ImeAction.Unspecified,
+                        imeAction = ImeAction.Default,
                         keyboardType = KeyboardType.Text
                     ),
                     cursorColor = MaterialTheme.colors.primary
@@ -243,7 +248,10 @@ private fun CRTextField(
         shape = RoundedCornerShape(CornerRadius.normal),
         elevation = 4.dp,
         border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder),
-        modifier = modifier.clickable(indication = null) {
+        modifier = modifier.clickable(
+            interactionState = remember { InteractionState() },
+            indication = null
+        ) {
             focusRequester.requestFocus()
         }
     ) {

@@ -62,7 +62,8 @@ fun SmartCRScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.AccountCircle,
-                        tint = MaterialTheme.colors.grayText
+                        tint = MaterialTheme.colors.grayText,
+                        contentDescription = "Account"
                     )
                 }
             }
@@ -73,7 +74,7 @@ fun SmartCRScreen(
             ) {
                 HomeRoute.values().forEach { screen ->
                     BottomNavigationItem(
-                        icon = { Icon(screen.imageVector) },
+                        icon = { Icon(screen.imageVector, contentDescription = screen.route) },
                         label = { Text(screen.route) },
                         selected = currentScreen == screen,
                         selectedContentColor = MaterialTheme.colors.primary,

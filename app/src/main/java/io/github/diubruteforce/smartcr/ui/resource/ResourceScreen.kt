@@ -7,6 +7,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -207,7 +208,12 @@ private fun ResourceScreenContent(
                 ExtendedFloatingActionButton(
                     modifier = Modifier.padding(bottom = Margin.inset),
                     text = { Text(text = stringResource(id = R.string.upload)) },
-                    icon = { Icon(imageVector = Icons.Outlined.Add) },
+                    icon = {
+                        Icon(
+                            imageVector = Icons.Outlined.Add,
+                            contentDescription = "Add"
+                        )
+                    },
                     backgroundColor = MaterialTheme.colors.primary,
                     onClick = { startEdit.invoke(Resource()) }
                 )

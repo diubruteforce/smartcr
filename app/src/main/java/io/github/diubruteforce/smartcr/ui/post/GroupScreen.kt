@@ -92,12 +92,17 @@ private fun GroupScreenContent(
                 onClick = { startEditing.invoke(Group()) },
                 backgroundColor = MaterialTheme.colors.primary
             ) {
-                Icon(imageVector = Icons.Outlined.Add)
+                Icon(
+                    imageVector = Icons.Outlined.Add,
+                    contentDescription = "SmartCR"
+                )
             }
         }
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().navigationBarsWithImePadding(),
+            modifier = Modifier
+                .fillMaxSize()
+                .navigationBarsWithImePadding(),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.normal)
         ) {

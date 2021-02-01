@@ -1,9 +1,10 @@
 package io.github.diubruteforce.smartcr.ui.bottomsheet
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -21,12 +22,14 @@ fun <T> ListBottomSheet(
     Column(modifier = modifier) {
         SheetHeader(title = title, icon = icon, onClose = onClose)
 
-        ScrollableColumn {
-            list.forEach {
+        LazyColumn {
+            items(list) {
                 SheetListItem(name = it.toString(), onSelected = { onItemClick.invoke(it) })
             }
 
-            Spacer(modifier = Modifier.height(Margin.inset))
+            item {
+                Spacer(modifier = Modifier.height(Margin.inset))
+            }
         }
     }
 }

@@ -57,7 +57,8 @@ private fun SplashScreenContent(
         contentAlignment = Alignment.Center
     ) {
         Image(
-            imageVector = vectorResource(id = R.drawable.logo_primary)
+            imageVector = vectorResource(id = R.drawable.logo_primary),
+            contentDescription = "SmartCR"
         )
     }
 }

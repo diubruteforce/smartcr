@@ -10,6 +10,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
@@ -56,7 +57,7 @@ fun SignUpScreen(
     )
 }
 
-@OptIn(ExperimentalCoroutinesApi::class)
+@OptIn(ExperimentalCoroutinesApi::class, ExperimentalComposeUiApi::class)
 @Composable
 private fun SignUpScreenContent(
     stateFlow: StateFlow<SignUpState>,
@@ -87,7 +88,8 @@ private fun SignUpScreenContent(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .aspectRatio(1f),
-                bitmap = imageResource(id = R.drawable.sign_up)
+                bitmap = imageResource(id = R.drawable.sign_up),
+                contentDescription = "Sign Up"
             )
         }
 
