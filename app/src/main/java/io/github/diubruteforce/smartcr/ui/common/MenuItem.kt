@@ -3,7 +3,6 @@ package io.github.diubruteforce.smartcr.ui.common
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -58,10 +57,6 @@ fun MenuItem(
                 color = MaterialTheme.colors.onPrimary,
                 textAlign = TextAlign.Center
             )
-
-            Button(onClick = { /*TODO*/ }) {
-
-            }
         }
     }
 }
