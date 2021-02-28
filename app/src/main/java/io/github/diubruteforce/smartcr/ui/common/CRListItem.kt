@@ -1,6 +1,10 @@
 package io.github.diubruteforce.smartcr.ui.common
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -28,12 +32,12 @@ fun CRListItem(
     text: String,
     itemClick: () -> Unit
 ) {
-    val interactionState = remember { InteractionState() }
+    val interactionState = remember { MutableInteractionSource() }
 
     Card(
         modifier = modifier.clickable(
             onClick = itemClick,
-            interactionState = interactionState,
+            interactionSource = interactionState,
             indication = null
         ),
         shape = RoundedCornerShape(CornerRadius.normal),
@@ -41,8 +45,9 @@ fun CRListItem(
         border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
-                .indication(interactionState, AmbientIndication.current())
+            modifier = Modifier
+                .fillMaxWidth()
+                .indication(interactionState, LocalIndication.current)
                 .heightIn(min = 56.dp)
                 .padding(start = Margin.medium, end = Margin.medium),
             verticalAlignment = Alignment.CenterVertically
@@ -57,7 +62,8 @@ fun CRListItem(
 
             Icon(
                 imageVector = Icons.Outlined.KeyboardArrowRight,
-                tint = MaterialTheme.colors.primary
+                tint = MaterialTheme.colors.primary,
+                contentDescription = null
             )
         }
     }

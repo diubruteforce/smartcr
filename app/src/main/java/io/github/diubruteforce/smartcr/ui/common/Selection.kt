@@ -1,6 +1,10 @@
 package io.github.diubruteforce.smartcr.ui.common
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -30,12 +34,12 @@ fun CRSelection(
     onClick: () -> Unit
 ) {
     InputLayout(isError = state.isError, errorText = state.errorText) {
-        val interactionState = remember { InteractionState() }
+        val interactionState = remember { MutableInteractionSource() }
 
         Card(
             modifier = modifier.clickable(
                 onClick = onClick,
-                interactionState = interactionState,
+                interactionSource = interactionState,
                 indication = null
             ),
             shape = RoundedCornerShape(CornerRadius.normal),
@@ -43,8 +47,9 @@ fun CRSelection(
             border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth()
-                    .indication(interactionState, AmbientIndication.current())
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .indication(interactionState, LocalIndication.current)
                     .heightIn(min = 56.dp)
                     .padding(start = Margin.medium, end = Margin.medium),
                 verticalAlignment = Alignment.CenterVertically
@@ -67,7 +72,8 @@ fun CRSelection(
                 if (icon != null) {
                     Icon(
                         imageVector = icon,
-                        tint = MaterialTheme.colors.primary
+                        tint = MaterialTheme.colors.primary,
+                        contentDescription = null
                     )
                 }
             }

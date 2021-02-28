@@ -13,10 +13,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.AmbientFocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.ui.common.DiuEmail
@@ -85,8 +85,8 @@ private fun SignInScreenContent(
             .navigationBarsWithImePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val ime = AmbientWindowInsets.current.ime
-        val focusManager = AmbientFocusManager.current
+        val ime = LocalWindowInsets.current.ime
+        val focusManager = LocalFocusManager.current
         val diuEmailFocusRequester = remember { FocusRequester() }
         val passwordFocusRequester = remember { FocusRequester() }
         val state = stateFlow.collectAsState().value

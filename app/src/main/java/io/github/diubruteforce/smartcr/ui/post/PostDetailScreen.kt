@@ -1,7 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.post
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
@@ -32,7 +32,7 @@ fun PostDetailScreen(
     val sideEffect = viewModel.sideEffect.collectAsState().value
     var deletePost by remember { mutableStateOf(false) }
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData(postType, postId)
     }
 
@@ -114,65 +114,99 @@ private fun PostDetailScreenContent(
             }
         }
     ) {
-        ScrollableColumn(
+        LazyColumn(
             modifier = Modifier.navigationBarsPadding(),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.tiny)
         ) {
             state.post?.let { post ->
-                Spacer(modifier = Modifier.size(Margin.normal))
+                item { Spacer(modifier = Modifier.size(Margin.normal)) }
 
-                LabelText(label = stringResource(id = R.string.course), text = post.courseName)
-                LabelText(label = stringResource(id = R.string.section), text = post.sectionName)
-                LabelText(label = stringResource(id = R.string.place), text = post.place)
-                LabelText(label = stringResource(id = R.string.submission_date), text = post.date)
-                LabelText(label = stringResource(id = R.string.submission_time), text = post.time)
+                item {
+                    LabelText(
+                        label = stringResource(id = R.string.course),
+                        text = post.courseName
+                    )
+                }
+                item {
+                    LabelText(
+                        label = stringResource(id = R.string.section),
+                        text = post.sectionName
+                    )
+                }
+                item { LabelText(label = stringResource(id = R.string.place), text = post.place) }
+                item {
+                    LabelText(
+                        label = stringResource(id = R.string.submission_date),
+                        text = post.date
+                    )
+                }
+                item {
+                    LabelText(
+                        label = stringResource(id = R.string.submission_time),
+                        text = post.time
+                    )
+                }
 
                 when (post) {
                     is Quiz -> {
-                        TitleRow(
-                            title = stringResource(id = R.string.syllabus),
-                            onEdit = navigateToPostEdit
-                        )
+                        item {
+                            TitleRow(
+                                title = stringResource(id = R.string.syllabus),
+                                onEdit = navigateToPostEdit
+                            )
+                        }
 
-                        Text(text = post.syllabus)
+                        item {
+                            Text(text = post.syllabus)
+                        }
                     }
                     is Assignment -> if (post.groupType == GroupType.Group.name) {
-                        GroupInformation(
-                            navigateToGroupList = { navigateToGroupList.invoke(post.sectionId) },
-                            maxMember = post.maxMember,
-                            joinedGroup = state.joinedGroup
-                        )
+                        item {
+                            GroupInformation(
+                                navigateToGroupList = { navigateToGroupList.invoke(post.sectionId) },
+                                maxMember = post.maxMember,
+                                joinedGroup = state.joinedGroup
+                            )
+                        }
                     }
                     is Presentation -> if (post.groupType == GroupType.Group.name) {
-                        GroupInformation(
-                            navigateToGroupList = { navigateToGroupList.invoke(post.sectionId) },
-                            maxMember = post.maxMember,
-                            joinedGroup = state.joinedGroup
-                        )
+                        item {
+                            GroupInformation(
+                                navigateToGroupList = { navigateToGroupList.invoke(post.sectionId) },
+                                maxMember = post.maxMember,
+                                joinedGroup = state.joinedGroup
+                            )
+                        }
                     }
                     is Project -> if (post.groupType == GroupType.Group.name) {
-                        GroupInformation(
-                            navigateToGroupList = { navigateToGroupList.invoke(post.sectionId) },
-                            maxMember = post.maxMember,
-                            joinedGroup = state.joinedGroup
-                        )
+                        item {
+                            GroupInformation(
+                                navigateToGroupList = { navigateToGroupList.invoke(post.sectionId) },
+                                maxMember = post.maxMember,
+                                joinedGroup = state.joinedGroup
+                            )
+                        }
                     }
                 }
 
-                TitleRow(
-                    title = stringResource(id = R.string.detail),
-                    onEdit = navigateToPostEdit
-                )
+                item {
+                    TitleRow(
+                        title = stringResource(id = R.string.detail),
+                        onEdit = navigateToPostEdit
+                    )
+                }
 
-                Text(text = post.details)
+                item {
+                    Text(text = post.details)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ColumnScope.GroupInformation(
+private fun GroupInformation(
     navigateToGroupList: () -> Unit,
     maxMember: Int,
     joinedGroup: Group?
@@ -208,12 +242,14 @@ private fun ColumnScope.GroupInformation(
 
     Spacer(modifier = Modifier.size(Margin.normal))
 
-    OutlinedButton(
-        modifier = Modifier
-            .fillMaxWidth(0.8f)
-            .align(Alignment.CenterHorizontally),
-        onClick = navigateToGroupList
-    ) {
-        Text(text = stringResource(id = R.string.join_or_creat_group))
+    Box(modifier = Modifier.fillMaxWidth()) {
+        OutlinedButton(
+            modifier = Modifier
+                .fillMaxWidth(0.8f)
+                .align(Alignment.Center),
+            onClick = navigateToGroupList
+        ) {
+            Text(text = stringResource(id = R.string.join_or_creat_group))
+        }
     }
 }

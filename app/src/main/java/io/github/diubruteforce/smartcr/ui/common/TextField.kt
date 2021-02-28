@@ -1,12 +1,13 @@
 package io.github.diubruteforce.smartcr.ui.common
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.InteractionState
-import androidx.compose.foundation.ScrollableRow
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -17,8 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -39,7 +40,7 @@ fun FullName(
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Next,
-    onImeActionPerformed: (ImeAction) -> Unit = {}
+    onImeActionPerformed: () -> Unit = {}
 ) {
     InputLayout(
         modifier = modifier,
@@ -67,7 +68,7 @@ fun DiuEmail(
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Next,
-    onImeActionPerformed: (ImeAction) -> Unit = {}
+    onImeActionPerformed: () -> Unit = {}
 ) {
     InputLayout(
         modifier = modifier,
@@ -95,7 +96,7 @@ fun PhoneNumber(
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Next,
-    onImeActionPerformed: (ImeAction) -> Unit = {}
+    onImeActionPerformed: () -> Unit = {}
 ) {
     InputLayout(
         modifier = modifier,
@@ -123,7 +124,7 @@ fun DiuId(
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Next,
-    onImeActionPerformed: (ImeAction) -> Unit = {}
+    onImeActionPerformed: () -> Unit = {}
 ) {
     InputLayout(
         modifier = modifier,
@@ -152,7 +153,7 @@ fun Password(
     onValueChange: (String) -> Unit,
     focusRequester: FocusRequester,
     imeAction: ImeAction = ImeAction.Done,
-    onImeActionPerformed: (ImeAction) -> Unit = {}
+    onImeActionPerformed: () -> Unit = {}
 ) {
     InputLayout(
         modifier = modifier,
@@ -192,7 +193,7 @@ fun Description(
             elevation = 4.dp,
             border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder),
             modifier = modifier.clickable(
-                interactionState = remember { InteractionState() },
+                interactionSource = remember { MutableInteractionSource() },
                 indication = null
             ) {
                 focusRequester.requestFocus()
@@ -215,7 +216,7 @@ fun Description(
                         imeAction = ImeAction.Default,
                         keyboardType = KeyboardType.Text
                     ),
-                    cursorColor = MaterialTheme.colors.primary
+                    cursorBrush = SolidColor(MaterialTheme.colors.primary)
                 )
 
                 if (state.value.isEmpty()) {
@@ -240,8 +241,7 @@ private fun CRTextField(
     placeHolder: String,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     visualTransformation: VisualTransformation = VisualTransformation.None,
-    onTextInputStarted: (SoftwareKeyboardController) -> Unit = {},
-    onImeActionPerformed: (ImeAction) -> Unit = {},
+    onImeActionPerformed: () -> Unit = {},
     focusRequester: FocusRequester
 ) {
     Card(
@@ -249,44 +249,48 @@ private fun CRTextField(
         elevation = 4.dp,
         border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder),
         modifier = modifier.clickable(
-            interactionState = remember { InteractionState() },
+            interactionSource = remember { MutableInteractionSource() },
             indication = null
         ) {
             focusRequester.requestFocus()
         }
     ) {
-        ScrollableRow(
+        LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
                 .heightIn(min = 56.dp),
             contentPadding = PaddingValues(start = Margin.medium, end = Margin.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                contentAlignment = Alignment.CenterStart
-            ) {
-                BasicTextField(
-                    value = value,
-                    onValueChange = onValueChange,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .focusRequester(focusRequester),
-                    textStyle = MaterialTheme.typography.body1,
-                    keyboardOptions = keyboardOptions,
-                    onTextInputStarted = onTextInputStarted,
-                    maxLines = 1,
-                    visualTransformation = visualTransformation,
-                    cursorColor = MaterialTheme.colors.primary,
-                    onImeActionPerformed = onImeActionPerformed
-                )
-
-                if (value.isEmpty()) {
-                    Text(
-                        text = placeHolder,
-                        modifier = Modifier,
-                        color = MaterialTheme.colors.grayText,
-                        style = MaterialTheme.typography.body1
+            item {
+                Box(
+                    contentAlignment = Alignment.CenterStart
+                ) {
+                    BasicTextField(
+                        value = value,
+                        onValueChange = onValueChange,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .focusRequester(focusRequester),
+                        textStyle = MaterialTheme.typography.body1,
+                        keyboardOptions = keyboardOptions,
+                        maxLines = 1,
+                        visualTransformation = visualTransformation,
+                        cursorBrush = SolidColor(MaterialTheme.colors.primary),
+                        keyboardActions = KeyboardActions(
+                            onDone = { onImeActionPerformed.invoke() },
+                            onNext = { onImeActionPerformed.invoke() }
+                        )
                     )
+
+                    if (value.isEmpty()) {
+                        Text(
+                            text = placeHolder,
+                            modifier = Modifier,
+                            color = MaterialTheme.colors.grayText,
+                            style = MaterialTheme.typography.body1
+                        )
+                    }
                 }
             }
         }

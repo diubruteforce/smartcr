@@ -8,13 +8,20 @@ import androidx.compose.material.icons.outlined.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import io.github.diubruteforce.smartcr.ui.theme.IconSize
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 
 @Composable
-fun ColumnScope.SheetHeader(title: String, icon: ImageVector, onClose: () -> Unit) {
+fun ColumnScope.SheetHeader(title: String, imageVector: ImageVector, onClose: () -> Unit) {
+    SheetHeader(title = title, icon = rememberVectorPainter(imageVector), onClose = onClose)
+}
+
+@Composable
+fun ColumnScope.SheetHeader(title: String, icon: Painter, onClose: () -> Unit) {
     IconButton(
         onClick = onClose,
         modifier = Modifier.align(Alignment.End)
@@ -39,7 +46,7 @@ fun ColumnScope.SheetHeader(title: String, icon: ImageVector, onClose: () -> Uni
             backgroundColor = MaterialTheme.colors.primary.copy(alpha = 0.1f)
         ) {
             Icon(
-                imageVector = icon,
+                painter = icon,
                 modifier = Modifier.size(IconSize.normal),
                 tint = MaterialTheme.colors.primary,
                 contentDescription = "Sheet Header Icon"

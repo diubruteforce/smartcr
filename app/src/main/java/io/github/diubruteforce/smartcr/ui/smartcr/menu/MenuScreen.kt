@@ -6,7 +6,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.res.painterResource
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.ui.common.MenuRow
 import io.github.diubruteforce.smartcr.ui.theme.Margin
@@ -23,10 +23,10 @@ fun MenuScreen(
     ) {
         items(Menu.values().toPairList()) {
             MenuRow(
-                leftIcon = vectorResource(id = it.first.iconRes),
+                leftIcon = painterResource(id = it.first.iconRes),
                 leftTitle = it.first.title,
                 leftOnClick = { onMenuClick(it.first) },
-                rightIcon = vectorResource(id = it.second.iconRes),
+                rightIcon = painterResource(id = it.second.iconRes),
                 rightTitle = it.second.title,
                 rightOnClick = { onMenuClick(it.second) }
             )

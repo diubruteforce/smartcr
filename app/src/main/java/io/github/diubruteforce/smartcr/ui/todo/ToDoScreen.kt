@@ -4,11 +4,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.onActive
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.PostType
@@ -29,7 +29,7 @@ fun ToDoScreen(
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData()
     }
 
@@ -81,7 +81,7 @@ private fun ToDoScreenContent(
         Empty(
             title = stringResource(id = R.string.no_todo),
             message = stringResource(id = R.string.no_todo_message),
-            image = vectorResource(id = R.drawable.no_exam)
+            image = painterResource(id = R.drawable.no_exam)
         )
     }
 }

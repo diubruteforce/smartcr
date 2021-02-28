@@ -1,23 +1,24 @@
 package io.github.diubruteforce.smartcr.ui.event
 
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Event
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.onActive
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.AmbientContext
-import androidx.compose.ui.platform.AmbientFocusManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
@@ -34,6 +35,7 @@ import io.github.diubruteforce.smartcr.utils.extension.toCalender
 import io.github.diubruteforce.smartcr.utils.extension.toDateString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -44,9 +46,10 @@ fun EventEditScreen(
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
     val sheetState = rememberBackPressAwareBottomSheetState()
-    val activity = AmbientContext.current as AppCompatActivity
+    val activity = LocalContext.current as AppCompatActivity
+    val scope = rememberCoroutineScope()
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData(eventId)
     }
 
@@ -61,8 +64,8 @@ fun EventEditScreen(
         sheetContent = {
             SheetHeader(
                 title = stringResource(id = R.string.select_event_type),
-                icon = Icons.Outlined.Event,
-                onClose = sheetState::hide
+                imageVector = Icons.Outlined.Event,
+                onClose = { scope.launch { sheetState.hide() } }
             )
 
             EventType.values().forEach {
@@ -70,7 +73,7 @@ fun EventEditScreen(
                     name = it.name,
                     onSelected = {
                         viewModel.changeType(it)
-                        sheetState.hide()
+                        scope.launch { sheetState.hide() }
                     }
                 )
             }
@@ -81,7 +84,7 @@ fun EventEditScreen(
         EventEditScreenContent(
             stateFlow = viewModel.state,
             onTitleChange = viewModel::changeTitle,
-            selectType = sheetState::show,
+            selectType = { scope.launch { sheetState.show() } },
             selectDate = { date ->
                 val datePicker = DatePickerBottomSheet(date.toCalender()) {
                     viewModel.changeDate(it.toDateString())
@@ -116,7 +119,7 @@ private fun EventEditScreenContent(
 ) {
     val state = stateFlow.collectAsState().value
 
-    val focusManager = AmbientFocusManager.current
+    val focusManager = LocalFocusManager.current
     val (placeFocusRequester,
         titleFocusRequester,
         detailsFocusRequester) = FocusRequester.createRefs()
@@ -129,58 +132,72 @@ private fun EventEditScreenContent(
             )
         }
     ) {
-        ScrollableColumn(
+        LazyColumn(
             modifier = Modifier.navigationBarsWithImePadding(),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.small)
         ) {
-            FullName(
-                state = state.title,
-                onValueChange = onTitleChange,
-                placeHolder = stringResource(id = R.string.title),
-                focusRequester = titleFocusRequester,
-                onImeActionPerformed = {
-                    selectType.invoke()
-                    focusManager.clearFocus()
-                }
-            )
+            item {
+                FullName(
+                    state = state.title,
+                    onValueChange = onTitleChange,
+                    placeHolder = stringResource(id = R.string.title),
+                    focusRequester = titleFocusRequester,
+                    onImeActionPerformed = {
+                        selectType.invoke()
+                        focusManager.clearFocus()
+                    }
+                )
+            }
 
-            CRSelection(
-                state = state.type,
-                placeHolder = stringResource(id = R.string.type),
-                onClick = {
-                    selectType.invoke()
-                    focusManager.clearFocus()
-                }
-            )
+            item {
+                CRSelection(
+                    state = state.type,
+                    placeHolder = stringResource(id = R.string.type),
+                    onClick = {
+                        selectType.invoke()
+                        focusManager.clearFocus()
+                    }
+                )
+            }
 
-            CRSelection(
-                state = state.date,
-                placeHolder = stringResource(id = R.string.date),
-                onClick = { selectDate.invoke(state.date.value) }
-            )
+            item {
+                CRSelection(
+                    state = state.date,
+                    placeHolder = stringResource(id = R.string.date),
+                    onClick = { selectDate.invoke(state.date.value) }
+                )
+            }
 
-            CRSelection(
-                state = state.time,
-                placeHolder = stringResource(id = R.string.time),
-                onClick = { selectTime.invoke(state.time.value) }
-            )
+            item {
+                CRSelection(
+                    state = state.time,
+                    placeHolder = stringResource(id = R.string.time),
+                    onClick = { selectTime.invoke(state.time.value) }
+                )
+            }
 
-            Description(
-                state = state.place,
-                onValueChange = onPlaceChange,
-                placeHolder = stringResource(id = R.string.place),
-                focusRequester = placeFocusRequester
-            )
+            item {
+                Description(
+                    state = state.place,
+                    onValueChange = onPlaceChange,
+                    placeHolder = stringResource(id = R.string.place),
+                    focusRequester = placeFocusRequester
+                )
+            }
 
-            Description(
-                state = state.details,
-                onValueChange = onDetailsChange,
-                placeHolder = stringResource(id = R.string.detail),
-                focusRequester = detailsFocusRequester
-            )
+            item {
+                Description(
+                    state = state.details,
+                    onValueChange = onDetailsChange,
+                    placeHolder = stringResource(id = R.string.detail),
+                    focusRequester = detailsFocusRequester
+                )
+            }
 
-            LargeButton(text = stringResource(id = R.string.save), onClick = saveEvent)
+            item {
+                LargeButton(text = stringResource(id = R.string.save), onClick = saveEvent)
+            }
         }
     }
 }

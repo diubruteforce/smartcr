@@ -1,10 +1,13 @@
 package io.github.diubruteforce.smartcr.ui.common
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -35,12 +38,12 @@ fun SectionListItem(
     onLeave: () -> Unit
 
 ) {
-    val interactionState = remember { InteractionState() }
+    val interactionState = remember { MutableInteractionSource() }
 
     Card(
         modifier = modifier.clickable(
             onClick = itemClick,
-            interactionState = interactionState,
+            interactionSource = interactionState,
             indication = null
         ),
         shape = RoundedCornerShape(CornerRadius.normal),
@@ -48,8 +51,9 @@ fun SectionListItem(
         border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
-                .indication(interactionState, AmbientIndication.current())
+            modifier = Modifier
+                .fillMaxWidth()
+                .indication(interactionState, LocalIndication.current)
                 .padding(start = Margin.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -63,7 +67,9 @@ fun SectionListItem(
 
             if (state.isJoined) {
                 Button(
-                    modifier = Modifier.weight(1f).heightIn(min = 56.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 56.dp),
                     onClick = onLeave,
                     shape = RoundedCornerShape(CornerRadius.normal),
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error)
@@ -72,7 +78,9 @@ fun SectionListItem(
                 }
             } else {
                 OutlinedButton(
-                    modifier = Modifier.weight(1f).heightIn(min = 56.dp),
+                    modifier = Modifier
+                        .weight(1f)
+                        .heightIn(min = 56.dp),
                     shape = RoundedCornerShape(CornerRadius.normal),
                     border = BorderStroke(1.dp, MaterialTheme.colors.primary),
                     onClick = onJoin

@@ -1,10 +1,8 @@
 package io.github.diubruteforce.smartcr.ui.teacher
 
-import androidx.compose.foundation.ScrollableColumn
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
@@ -26,6 +24,7 @@ import io.github.diubruteforce.smartcr.utils.extension.getMainActivity
 import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBottomSheetState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
@@ -38,11 +37,12 @@ fun TeacherDetailScreen(
     val sheetState = rememberBackPressAwareBottomSheetState()
     val sideEffect = viewModel.sideEffect.collectAsState().value
     val mainActivity = getMainActivity()
+    val scope = rememberCoroutineScope()
 
     var deleteCounselingHour by remember { mutableStateOf<CounselingHourState?>(null) }
     var deleteTeacherProfile by remember { mutableStateOf<String?>(null) }
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadInitialData(teacherId)
     }
 
@@ -89,12 +89,14 @@ fun TeacherDetailScreen(
         sheetContent = {
             ListBottomSheet(
                 title = stringResource(id = R.string.select_day),
-                icon = Icons.Outlined.CalendarToday,
-                onClose = sheetState::hide,
+                imageVector = Icons.Outlined.CalendarToday,
+                onClose = { scope.launch { sheetState.hide() } },
                 list = Week.values().toList(),
                 onItemClick = {
-                    viewModel.changeDay(it)
-                    sheetState.hide()
+                    scope.launch {
+                        viewModel.changeDay(it)
+                        sheetState.hide()
+                    }
                 }
             )
         }
@@ -107,7 +109,7 @@ fun TeacherDetailScreen(
             onCounselingHourEdit = viewModel::startEditCounselingHour,
             onCounselingHourDelete = { deleteCounselingHour = it },
             onCounselingHourAdd = viewModel::startAddCounselingHour,
-            changeDay = sheetState::show,
+            changeDay = { scope.launch { sheetState.show() } },
             changeStartTime = {
                 val timePicker = TimePicker(time = it, onResult = viewModel::changeStartTime)
                 timePicker.show(mainActivity.supportFragmentManager, "StartTime")
@@ -162,7 +164,7 @@ private fun TeacherDetailScreenContent(
             )
         }
     ) {
-        ScrollableColumn(
+        LazyColumn(
             modifier = Modifier.navigationBarsWithImePadding(),
             verticalArrangement = Arrangement.spacedBy(Margin.normal),
             contentPadding = PaddingValues(
@@ -173,76 +175,92 @@ private fun TeacherDetailScreenContent(
             )
         ) {
             if (state.isEditMode) {
-                Text(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    text = state.editTitle,
-                    style = MaterialTheme.typography.h5
-                )
-
-                CRSelection(
-                    state = state.day,
-                    placeHolder = stringResource(id = R.string.select_day),
-                    onClick = changeDay
-                )
-
-                CRSelection(
-                    state = state.startTime,
-                    placeHolder = stringResource(id = R.string.start_time),
-                    onClick = { changeStartTime.invoke(state.startTime.value) }
-                )
-
-                CRSelection(
-                    state = state.endTime,
-                    placeHolder = stringResource(id = R.string.end_time),
-                    onClick = { changeEndTime.invoke(state.endTime.value) }
-                )
-
-                Row(horizontalArrangement = Arrangement.spacedBy(Margin.normal)) {
-                    OutlinedButton(
-                        modifier = Modifier.weight(1f),
-                        onClick = cancelCounselingEditing
-                    ) {
-                        Text(text = stringResource(id = R.string.cancel))
+                item {
+                    Box(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            text = state.editTitle,
+                            style = MaterialTheme.typography.h5
+                        )
                     }
+                }
 
-                    Button(
-                        modifier = Modifier.weight(1f),
-                        onClick = saveCounseling
-                    ) {
-                        Text(text = stringResource(id = R.string.save))
+                item {
+                    CRSelection(
+                        state = state.day,
+                        placeHolder = stringResource(id = R.string.select_day),
+                        onClick = changeDay
+                    )
+                }
+
+                item {
+                    CRSelection(
+                        state = state.startTime,
+                        placeHolder = stringResource(id = R.string.start_time),
+                        onClick = { changeStartTime.invoke(state.startTime.value) }
+                    )
+                }
+
+                item {
+                    CRSelection(
+                        state = state.endTime,
+                        placeHolder = stringResource(id = R.string.end_time),
+                        onClick = { changeEndTime.invoke(state.endTime.value) }
+                    )
+                }
+
+                item {
+                    Row(horizontalArrangement = Arrangement.spacedBy(Margin.normal)) {
+                        OutlinedButton(
+                            modifier = Modifier.weight(1f),
+                            onClick = cancelCounselingEditing
+                        ) {
+                            Text(text = stringResource(id = R.string.cancel))
+                        }
+
+                        Button(
+                            modifier = Modifier.weight(1f),
+                            onClick = saveCounseling
+                        ) {
+                            Text(text = stringResource(id = R.string.save))
+                        }
                     }
                 }
 
             } else {
                 state.teacher?.let {
-                    TeacherProfileCard(
-                        teacher = it,
-                        onCall = onCall,
-                        onEdit = onProfileEdit,
-                        onDelete = onProfileDelete
-                    )
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.counseling_hour),
-                        style = MaterialTheme.typography.h5
-                    )
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    IconButton(onClick = onCounselingHourAdd) {
-                        Icon(
-                            imageVector = Icons.Outlined.Add,
-                            tint = MaterialTheme.colors.primary,
-                            contentDescription = "Add"
+                    item {
+                        TeacherProfileCard(
+                            teacher = it,
+                            onCall = onCall,
+                            onEdit = onProfileEdit,
+                            onDelete = onProfileDelete
                         )
                     }
                 }
 
-                state.counselingHours.forEach {
+                item {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.counseling_hour),
+                            style = MaterialTheme.typography.h5
+                        )
+
+                        Spacer(modifier = Modifier.weight(1f))
+
+                        IconButton(onClick = onCounselingHourAdd) {
+                            Icon(
+                                imageVector = Icons.Outlined.Add,
+                                tint = MaterialTheme.colors.primary,
+                                contentDescription = "Add"
+                            )
+                        }
+                    }
+                }
+
+                items(state.counselingHours) {
                     CounselingHour(
                         state = it,
                         onEdit = onCounselingHourEdit,

@@ -11,12 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import dev.chrisbanes.accompanist.coil.CoilImage
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.ui.theme.Margin
@@ -34,7 +36,7 @@ fun ProfileTopAppBar(
         elevation = 8.dp
     ) {
         ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
-            val ime = AmbientWindowInsets.current.ime
+            val ime = LocalWindowInsets.current.ime
             val (bgRef, contentRef) = createRefs()
 
             if (ime.isVisible.not()) {
@@ -48,7 +50,7 @@ fun ProfileTopAppBar(
                             height = Dimension.fillToConstraints
                         },
                     contentScale = ContentScale.Crop,
-                    bitmap = imageResource(id = R.drawable.profile_bg),
+                    painter = painterResource(id = R.drawable.profile_bg),
                     contentDescription = "Topbar background"
                 )
             }
@@ -96,7 +98,8 @@ fun ProfileTopAppBar(
                         CoilImage(
                             data = imageUrl,
                             fadeIn = true,
-                            contentScale = ContentScale.Crop
+                            contentScale = ContentScale.Crop,
+                            contentDescription = null
                         )
                     }
 

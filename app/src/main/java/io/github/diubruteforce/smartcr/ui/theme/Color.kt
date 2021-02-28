@@ -1,7 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.theme
 
-import androidx.compose.material.AmbientContentColor
 import androidx.compose.material.Colors
+import androidx.compose.material.LocalContentColor
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
@@ -24,7 +24,7 @@ val Colors.event: Color @Composable get() = Color(0xFFF39200)
 val Colors.examRoutine: Color @Composable get() = Color(0xFFF39200)
 
 val Colors.grayText: Color
-    @Composable get() = AmbientContentColor.current.lighten(0.55f)
+    @Composable get() = LocalContentColor.current.lighten(0.55f)
 
 
 val Colors.grayBackground: Color

@@ -1,8 +1,8 @@
 package io.github.diubruteforce.smartcr.ui.student
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.DepartureBoard
@@ -13,9 +13,10 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.AmbientFocusManager
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.R.string.select_your_level
@@ -54,7 +55,7 @@ fun StudentEditScreen(
 
     val mainActivity = getMainActivity()
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData()
     }
 
@@ -76,57 +77,65 @@ fun StudentEditScreen(
                 StudentEditSheet.Gender -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.select_your_gender),
-                        icon = vectorResource(id = R.drawable.gender),
-                        onClose = { sheetState.hide() },
+                        icon = painterResource(id = R.drawable.gender),
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = Gender.values().toList(),
                         onItemClick = {
-                            sheetState.hide()
-                            viewModel.changeGender(it)
+                            scope.launch {
+                                sheetState.hide()
+                                viewModel.changeGender(it)
+                            }
                         }
                     )
                 }
                 StudentEditSheet.Email -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.prohibited),
-                        icon = Icons.Outlined.Error,
-                        onClose = { sheetState.hide() },
+                        icon = rememberVectorPainter(Icons.Outlined.Error),
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = listOf("You can't change your email."),
-                        onItemClick = { sheetState.hide() }
+                        onItemClick = { scope.launch { sheetState.hide() } }
                     )
                 }
                 StudentEditSheet.Department -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.select_your_department),
-                        icon = Icons.Outlined.DepartureBoard,
-                        onClose = { sheetState.hide() },
+                        icon = rememberVectorPainter(Icons.Outlined.DepartureBoard),
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = state.departmentList,
                         onItemClick = {
-                            sheetState.hide()
-                            viewModel.changeDepartment(it)
+                            scope.launch {
+                                sheetState.hide()
+                                viewModel.changeDepartment(it)
+                            }
                         }
                     )
                 }
                 StudentEditSheet.Level -> {
                     ListBottomSheet(
                         title = stringResource(id = select_your_level),
-                        icon = Icons.Outlined.DepartureBoard,
-                        onClose = { sheetState.hide() },
+                        icon = rememberVectorPainter(Icons.Outlined.DepartureBoard),
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = (1..4).toList(),
                         onItemClick = {
-                            sheetState.hide()
-                            viewModel.changeLevel(it)
+                            scope.launch {
+                                sheetState.hide()
+                                viewModel.changeLevel(it)
+                            }
                         }
                     )
                 }
                 StudentEditSheet.Term -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.select_your_term),
-                        icon = Icons.Outlined.DepartureBoard,
-                        onClose = { sheetState.hide() },
+                        icon = rememberVectorPainter(Icons.Outlined.DepartureBoard),
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = (1..3).toList(),
                         onItemClick = {
-                            sheetState.hide()
-                            viewModel.changeTerm(it)
+                            scope.launch {
+                                sheetState.hide()
+                                viewModel.changeTerm(it)
+                            }
                         }
                     )
                 }
@@ -199,7 +208,7 @@ private fun StudentEditScreenContent(
     onBackPress: (() -> Unit)?
 ) {
     Column(modifier = Modifier.navigationBarsWithImePadding()) {
-        val focusManager = AmbientFocusManager.current
+        val focusManager = LocalFocusManager.current
         val (nameFocusRequester, idFocusRequester, phoneFocusRequester) = FocusRequester.createRefs()
         val state = stateFlow.collectAsState().value
 
@@ -229,102 +238,130 @@ private fun StudentEditScreenContent(
             }
         )
 
-        ScrollableColumn(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .background(Color.White),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.tiny)
         ) {
-            Text(
-                text = stringResource(id = R.string.personal_info),
-                style = MaterialTheme.typography.h5
-            )
+            item {
+                Text(
+                    text = stringResource(id = R.string.personal_info),
+                    style = MaterialTheme.typography.h5
+                )
+            }
 
-            Spacer(modifier = Modifier.size(Margin.small))
+            item {
+                Spacer(modifier = Modifier.size(Margin.small))
+            }
 
-            FullName(
-                state = state.fullName,
-                onValueChange = onFullNameChange,
-                focusRequester = nameFocusRequester,
-                onImeActionPerformed = { idFocusRequester.requestFocus() }
-            )
+            item {
+                FullName(
+                    state = state.fullName,
+                    onValueChange = onFullNameChange,
+                    focusRequester = nameFocusRequester,
+                    onImeActionPerformed = { idFocusRequester.requestFocus() }
+                )
+            }
 
-            DiuId(
-                state = state.diuId,
-                onValueChange = onDiuIdChange,
-                focusRequester = idFocusRequester,
-                onImeActionPerformed = {
-                    phoneFocusRequester.requestFocus()
-                }
-            )
+            item {
+                DiuId(
+                    state = state.diuId,
+                    onValueChange = onDiuIdChange,
+                    focusRequester = idFocusRequester,
+                    onImeActionPerformed = {
+                        phoneFocusRequester.requestFocus()
+                    }
+                )
+            }
 
-            CRSelection(
-                state = state.diuEmail,
-                placeHolder = stringResource(id = R.string.diu_email),
-                icon = null,
-                onClick = {
-                    onEmailClick.invoke()
-                    focusManager.clearFocus()
-                },
-            )
+            item {
+                CRSelection(
+                    state = state.diuEmail,
+                    placeHolder = stringResource(id = R.string.diu_email),
+                    icon = null,
+                    onClick = {
+                        onEmailClick.invoke()
+                        focusManager.clearFocus()
+                    },
+                )
+            }
 
-            PhoneNumber(
-                state = state.phoneNumber,
-                onValueChange = onPhoneChange,
-                focusRequester = phoneFocusRequester,
-                onImeActionPerformed = {
-                    focusManager.clearFocus()
-                    selectGender.invoke()
-                }
-            )
+            item {
+                PhoneNumber(
+                    state = state.phoneNumber,
+                    onValueChange = onPhoneChange,
+                    focusRequester = phoneFocusRequester,
+                    onImeActionPerformed = {
+                        focusManager.clearFocus()
+                        selectGender.invoke()
+                    }
+                )
+            }
 
-            CRSelection(
-                state = state.gender,
-                placeHolder = stringResource(id = R.string.gender),
-                onClick = {
-                    selectGender.invoke()
-                    focusManager.clearFocus()
-                },
-            )
+            item {
+                CRSelection(
+                    state = state.gender,
+                    placeHolder = stringResource(id = R.string.gender),
+                    onClick = {
+                        selectGender.invoke()
+                        focusManager.clearFocus()
+                    },
+                )
+            }
 
-            Spacer(modifier = Modifier.size(Margin.normal))
+            item {
+                Spacer(modifier = Modifier.size(Margin.normal))
+            }
 
-            Text(
-                text = stringResource(id = R.string.academic_info),
-                style = MaterialTheme.typography.h5
-            )
+            item {
+                Text(
+                    text = stringResource(id = R.string.academic_info),
+                    style = MaterialTheme.typography.h5
+                )
+            }
 
-            Spacer(modifier = Modifier.size(Margin.small))
+            item {
+                Spacer(modifier = Modifier.size(Margin.small))
+            }
 
-            CRSelection(
-                state = state.department,
-                placeHolder = stringResource(id = R.string.department),
-                onClick = {
-                    selectDepartment.invoke()
-                    focusManager.clearFocus()
-                }
-            )
+            item {
+                CRSelection(
+                    state = state.department,
+                    placeHolder = stringResource(id = R.string.department),
+                    onClick = {
+                        selectDepartment.invoke()
+                        focusManager.clearFocus()
+                    }
+                )
+            }
 
-            CRSelection(
-                state = state.level,
-                placeHolder = stringResource(id = R.string.level),
-                onClick = {
-                    selectLevel.invoke()
-                    focusManager.clearFocus()
-                },
-            )
+            item {
+                CRSelection(
+                    state = state.level,
+                    placeHolder = stringResource(id = R.string.level),
+                    onClick = {
+                        selectLevel.invoke()
+                        focusManager.clearFocus()
+                    },
+                )
+            }
 
-            CRSelection(
-                state = state.term,
-                placeHolder = stringResource(id = R.string.term),
-                onClick = {
-                    selectTerm.invoke()
-                    focusManager.clearFocus()
-                },
-            )
+            item {
+                CRSelection(
+                    state = state.term,
+                    placeHolder = stringResource(id = R.string.term),
+                    onClick = {
+                        selectTerm.invoke()
+                        focusManager.clearFocus()
+                    },
+                )
+            }
 
-            LargeButton(text = stringResource(id = R.string.save), onClick = saveStudentProfile)
+            item {
+                LargeButton(text = stringResource(id = R.string.save), onClick = saveStudentProfile)
+            }
         }
     }
 }

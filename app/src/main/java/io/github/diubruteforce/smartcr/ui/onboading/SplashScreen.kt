@@ -6,11 +6,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.onActive
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import io.github.diubruteforce.smartcr.R
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ fun SplashScreen(
 ){
     val coroutineScope = rememberCoroutineScope()
 
-    onActive {
+    LaunchedEffect(true) {
         coroutineScope.launch {
             if (viewModel.isAuthenticated()) {
                 if (viewModel.isEmailVerified()) {
@@ -57,7 +57,7 @@ private fun SplashScreenContent(
         contentAlignment = Alignment.Center
     ) {
         Image(
-            imageVector = vectorResource(id = R.drawable.logo_primary),
+            painter = painterResource(id = R.drawable.logo_primary),
             contentDescription = "SmartCR"
         )
     }

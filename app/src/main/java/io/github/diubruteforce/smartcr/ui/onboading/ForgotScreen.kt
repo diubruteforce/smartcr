@@ -10,12 +10,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.AmbientFocusManager
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.ui.InputState
@@ -76,8 +76,8 @@ private fun ForgotScreenContent(
             .navigationBarsWithImePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val ime = AmbientWindowInsets.current.ime
-        val focusManager = AmbientFocusManager.current
+        val ime = LocalWindowInsets.current.ime
+        val focusManager = LocalFocusManager.current
         val focusRequester = FocusRequester()
 
         val emailState = stateFlow.collectAsState().value
@@ -95,7 +95,7 @@ private fun ForgotScreenContent(
                 modifier = Modifier
                     .fillMaxSize(0.35f)
                     .aspectRatio(1f),
-                imageVector = vectorResource(id = R.drawable.forgot_password),
+                painter = painterResource(id = R.drawable.forgot_password),
                 contentDescription = "Forgot Password"
             )
         } else {

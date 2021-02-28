@@ -1,7 +1,12 @@
 package io.github.diubruteforce.smartcr.ui.common
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -27,15 +32,14 @@ fun ProfileListItem(
     title: String,
     subTitle: String,
     profileUrl: String,
-    isSelected: Boolean = false,
     itemClick: () -> Unit
 ) {
-    val interactionState = remember { InteractionState() }
+    val interactionState = remember { MutableInteractionSource() }
 
     Card(
         modifier = modifier.clickable(
             onClick = itemClick,
-            interactionState = interactionState,
+            interactionSource = interactionState,
             indication = null
         ),
         shape = RoundedCornerShape(CornerRadius.normal),
@@ -43,7 +47,7 @@ fun ProfileListItem(
         border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder)
     ) {
         Row(
-            modifier = Modifier.indication(interactionState, AmbientIndication.current()),
+            modifier = Modifier.indication(interactionState, LocalIndication.current),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Spacer(modifier = Modifier.size(Margin.normal))
@@ -77,7 +81,8 @@ fun ProfileListItem(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     data = profileUrl,
-                    fadeIn = true
+                    fadeIn = true,
+                    contentDescription = null
                 )
             }
         }
@@ -88,17 +93,19 @@ fun ProfileListItem(
 @Composable
 private fun PreviewProfileListItem() {
     SmartCRTheme {
-        ScrollableColumn(
+        LazyColumn(
             verticalArrangement = Arrangement.spacedBy(Margin.normal),
             contentPadding = PaddingValues(Margin.medium)
         ) {
             (1..10).forEach {
-                ProfileListItem(
-                    title = "",
-                    subTitle = "",
-                    profileUrl = "",
-                    itemClick = {}
-                )
+                item {
+                    ProfileListItem(
+                        title = "",
+                        subTitle = "",
+                        profileUrl = "",
+                        itemClick = {}
+                    )
+                }
             }
         }
     }

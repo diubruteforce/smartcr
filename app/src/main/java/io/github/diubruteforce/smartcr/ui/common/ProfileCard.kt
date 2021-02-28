@@ -104,10 +104,10 @@ fun TeacherProfileCard(
             if (teacher.phone.isNotEmpty()) {
                 OutlinedButton(
                     shape = RoundedCornerShape(
-                        topLeft = 16.dp,
-                        topRight = 0.dp,
-                        bottomRight = 0.dp,
-                        bottomLeft = 16.dp
+                        topStart = 16.dp,
+                        topEnd = 0.dp,
+                        bottomStart = 0.dp,
+                        bottomEnd = 16.dp
                     ),
                     onClick = { onCall.invoke(teacher.phone) }
                 ) {

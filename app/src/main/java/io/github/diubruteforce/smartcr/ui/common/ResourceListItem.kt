@@ -1,12 +1,12 @@
 package io.github.diubruteforce.smartcr.ui.common
 
 import android.net.Uri
-import androidx.compose.animation.core.animateAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -113,19 +113,21 @@ fun ResourceListItem(
 @Preview(showBackground = true)
 private fun PreviewResourceListItem() {
     SmartCRTheme {
-        ScrollableColumn(modifier = Modifier.fillMaxWidth()) {
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
             (0..3).forEach { _ ->
-                ResourceListItem(
-                    modifier = Modifier.padding(Margin.normal),
-                    resource = Resource(
-                        name = "OOP Lecture 1 Presentation.pdf",
-                        course = Course(courseCode = "CSE343"),
-                        instructor = Instructor(initial = "NRC"),
-                        uploadedBy = "Zoha"
-                    ),
-                    progressType = ProgressType.Download,
-                    onClick = {}
-                )
+                item {
+                    ResourceListItem(
+                        modifier = Modifier.padding(Margin.normal),
+                        resource = Resource(
+                            name = "OOP Lecture 1 Presentation.pdf",
+                            course = Course(courseCode = "CSE343"),
+                            instructor = Instructor(initial = "NRC"),
+                            uploadedBy = "Zoha"
+                        ),
+                        progressType = ProgressType.Download,
+                        onClick = {}
+                    )
+                }
             }
         }
     }
@@ -166,6 +168,8 @@ private fun ProgressButton(
     val clickableModifier = if (type is ProgressType.View || type is ProgressType.Download)
         Modifier.clickable(onClick = onClick) else Modifier
 
+    val animatedProgress by animateFloatAsState(targetValue = type.progress)
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -180,7 +184,7 @@ private fun ProgressButton(
         Box(
             modifier = clickableModifier
                 .fillMaxHeight()
-                .fillMaxWidth(animateAsState(type.progress).value)
+                .fillMaxWidth(animatedProgress)
                 .background(color = color)
         )
 

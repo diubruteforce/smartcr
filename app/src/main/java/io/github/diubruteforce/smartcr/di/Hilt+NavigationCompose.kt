@@ -3,12 +3,12 @@ package io.github.diubruteforce.smartcr.di
 import android.annotation.SuppressLint
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.AmbientLifecycleOwner
-import androidx.compose.ui.viewinterop.viewModel
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.hilt.lifecycle.ViewModelAssistedFactory
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.savedstate.SavedStateRegistryOwner
 import io.github.diubruteforce.smartcr.utils.extension.getMainActivity
 import javax.inject.Provider
@@ -50,7 +50,7 @@ class AppSavedStateViewModelFactory(
 * */
 @Composable
 inline fun <reified VM : ViewModel> hiltViewModel(): VM {
-    val savedStateRegistryOwner = AmbientLifecycleOwner.current as SavedStateRegistryOwner
+    val savedStateRegistryOwner = LocalLifecycleOwner.current as SavedStateRegistryOwner
     val viewModelAssistedFactories = getMainActivity().viewModelAssistedFactories
 
     val factory = remember {

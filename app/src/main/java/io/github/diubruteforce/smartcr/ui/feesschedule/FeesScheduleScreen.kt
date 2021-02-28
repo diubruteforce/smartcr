@@ -1,25 +1,26 @@
 package io.github.diubruteforce.smartcr.ui.feesschedule
 
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Money
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.onActive
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.AmbientContext
-import androidx.compose.ui.platform.AmbientFocusManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.toPaddingValues
@@ -40,6 +41,7 @@ import io.github.diubruteforce.smartcr.utils.extension.toCalender
 import io.github.diubruteforce.smartcr.utils.extension.toDateString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
@@ -49,10 +51,11 @@ fun FeesScheduleScreen(
 ) {
     val sheetState = rememberBackPressAwareBottomSheetState()
     val sideEffect = viewModel.sideEffect.collectAsState().value
-    val focusManager = AmbientFocusManager.current
-    val activity = AmbientContext.current as AppCompatActivity
+    val focusManager = LocalFocusManager.current
+    val activity = LocalContext.current as AppCompatActivity
+    val scope = rememberCoroutineScope()
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData()
     }
 
@@ -67,8 +70,8 @@ fun FeesScheduleScreen(
         sheetContent = {
             SheetHeader(
                 title = stringResource(id = R.string.select_fees_for),
-                icon = Icons.Outlined.Money,
-                onClose = sheetState::hide
+                imageVector = Icons.Outlined.Money,
+                onClose = { scope.launch { sheetState.hide() } }
             )
 
             FeesReason.values().forEach {
@@ -76,7 +79,7 @@ fun FeesScheduleScreen(
                     name = it.title,
                     onSelected = {
                         viewModel.changeFeesFor(it)
-                        sheetState.hide()
+                        scope.launch { sheetState.hide() }
                     }
                 )
             }
@@ -92,7 +95,7 @@ fun FeesScheduleScreen(
             saveFeesSchedule = viewModel::saveFeesSchedule,
             onBatchCodeChange = viewModel::changeBatchCode,
             changeFeesFor = {
-                sheetState.show()
+                scope.launch { sheetState.show() }
                 focusManager.clearFocus()
             },
             changeLastDate = { dateString ->
@@ -122,7 +125,7 @@ private fun FeesScheduleScreenContent(
     onBackPress: () -> Unit
 ) {
     val state = stateFlow.collectAsState().value
-    val inset = AmbientWindowInsets.current
+    val inset = LocalWindowInsets.current
     val onBackPressCallback = rememberOnBackPressCallback(onBackPress = cancelEditing)
     onBackPressCallback.isEnabled = state.editingFeesSchedule != null
 
@@ -154,45 +157,47 @@ private fun FeesScheduleScreenContent(
             }
         }
     ) {
-        ScrollableColumn(
+        LazyColumn(
             verticalArrangement = Arrangement.spacedBy(Margin.normal),
-            contentPadding = inset.navigationBars.toPaddingValues().copy(
-                start = Margin.normal,
-                end = Margin.normal,
-                top = Margin.normal
+            contentPadding = inset.navigationBars.toPaddingValues(
+                additionalStart = Margin.normal,
+                additionalBottom = Margin.normal,
+                additionalTop = Margin.normal
             )
         ) {
             when {
                 state.editingFeesSchedule != null -> {
-                    FeesScheduleEdit(
-                        state = state,
-                        onBatchCodeChange = onBatchCodeChange,
-                        changeFeesFor = changeFeesFor,
-                        changeLastDate = changeLastDate,
-                        saveFeesSchedule = saveFeesSchedule,
-                        cancelEditing = cancelEditing
-                    )
+                    item {
+                        FeesScheduleEdit(
+                            state = state,
+                            onBatchCodeChange = onBatchCodeChange,
+                            changeFeesFor = changeFeesFor,
+                            changeLastDate = changeLastDate,
+                            saveFeesSchedule = saveFeesSchedule,
+                            cancelEditing = cancelEditing
+                        )
+                    }
                 }
                 sideEffectState is TypedSideEffectState.Success
                         && state.feesSchedules.isEmpty() -> {
-                    Empty(
-                        title = "No Schedule",
-                        message = "No schedule found. Please check later for fees schedule",
-                        image = vectorResource(id = R.drawable.no_fees)
-                    )
-                }
-                else -> {
-                    state.feesSchedules.forEach { feesSchedule ->
-                        PostCard(
-                            title = "Batch Code: ${feesSchedule.batchCode}",
-                            firstRow = "Last Date: ${feesSchedule.lastDate}",
-                            secondRow = "Fees for: ${feesSchedule.feesFor}",
-                            color = MaterialTheme.colors.fees,
-                            onItemClick = {},
-                            onEdit = { onEdit.invoke(feesSchedule) },
-                            onDelete = { onDelete.invoke(feesSchedule) }
+                    item {
+                        Empty(
+                            title = "No Schedule",
+                            message = "No schedule found. Please check later for fees schedule",
+                            image = painterResource(id = R.drawable.no_fees)
                         )
                     }
+                }
+                else -> items(state.feesSchedules) { feesSchedule ->
+                    PostCard(
+                        title = "Batch Code: ${feesSchedule.batchCode}",
+                        firstRow = "Last Date: ${feesSchedule.lastDate}",
+                        secondRow = "Fees for: ${feesSchedule.feesFor}",
+                        color = MaterialTheme.colors.fees,
+                        onItemClick = {},
+                        onEdit = { onEdit.invoke(feesSchedule) },
+                        onDelete = { onDelete.invoke(feesSchedule) }
+                    )
                 }
             }
         }
@@ -201,7 +206,7 @@ private fun FeesScheduleScreenContent(
 
 
 @Composable
-private fun ColumnScope.FeesScheduleEdit(
+private fun FeesScheduleEdit(
     state: FeesScheduleState,
     onBatchCodeChange: (String) -> Unit,
     changeFeesFor: () -> Unit,
@@ -209,7 +214,7 @@ private fun ColumnScope.FeesScheduleEdit(
     saveFeesSchedule: () -> Unit,
     cancelEditing: () -> Unit
 ) {
-    val focusManager = AmbientFocusManager.current
+    val focusManager = LocalFocusManager.current
     val roomFocusRequester = FocusRequester()
 
     FullName(

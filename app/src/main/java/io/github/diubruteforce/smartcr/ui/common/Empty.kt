@@ -9,7 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
@@ -21,7 +21,7 @@ fun Empty(
     modifier: Modifier = Modifier,
     title: String,
     message: String,
-    image: ImageVector,
+    image: Painter,
     actionTitle: String? = null,
     onAction: (() -> Unit)? = null
 ) {
@@ -37,7 +37,7 @@ fun Empty(
 
         Image(
             modifier = Modifier.fillMaxWidth(0.4f),
-            imageVector = image,
+            painter = image,
             contentDescription = "Empty Screen Image"
         )
 

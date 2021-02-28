@@ -8,31 +8,37 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.onDispose
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.AmbientContext
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.platform.LocalContext
+import kotlinx.coroutines.launch
 
 
 @ExperimentalMaterialApi
 @Composable
 fun rememberBackPressAwareBottomSheetState(): ModalBottomSheetState {
     val sheetState = rememberModalBottomSheetState(ModalBottomSheetValue.Hidden)
-    val mainActivity = AmbientContext.current as OnBackPressedDispatcherOwner
+    val mainActivity = LocalContext.current as OnBackPressedDispatcherOwner
+    val scope = rememberCoroutineScope()
     val onBackPressedCallback = remember {
         mainActivity.onBackPressedDispatcher.addCallback {
-            if (sheetState.isVisible) sheetState.hide()
+            if (sheetState.isVisible) scope.launch { sheetState.hide() }
         }
     }
 
     onBackPressedCallback.isEnabled = sheetState.isVisible
-    onDispose { onBackPressedCallback.remove() }
+
+    DisposableEffect(true) {
+        onDispose { onBackPressedCallback.remove() }
+    }
 
     return sheetState
 }
 
 @Composable
 fun rememberOnBackPressCallback(onBackPress: () -> Unit): OnBackPressedCallback {
-    val mainActivity = AmbientContext.current as OnBackPressedDispatcherOwner
+    val mainActivity = LocalContext.current as OnBackPressedDispatcherOwner
     return remember {
         mainActivity.onBackPressedDispatcher.addCallback {
             onBackPress.invoke()

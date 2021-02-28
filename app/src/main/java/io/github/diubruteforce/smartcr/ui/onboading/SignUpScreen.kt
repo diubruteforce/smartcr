@@ -14,11 +14,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.AmbientFocusManager
-import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import dev.chrisbanes.accompanist.insets.statusBarsPadding
 import io.github.diubruteforce.smartcr.R
@@ -76,8 +76,8 @@ private fun SignUpScreenContent(
             .navigationBarsWithImePadding(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val ime = AmbientWindowInsets.current.ime
-        val focusManager = AmbientFocusManager.current
+        val ime = LocalWindowInsets.current.ime
+        val focusManager = LocalFocusManager.current
         val (diuEmailFocusRequester,
             passwordFocusRequester,
             rePasswordFocusRequester) = FocusRequester.createRefs()
@@ -88,7 +88,7 @@ private fun SignUpScreenContent(
                 modifier = Modifier
                     .fillMaxWidth(0.5f)
                     .aspectRatio(1f),
-                bitmap = imageResource(id = R.drawable.sign_up),
+                painter = painterResource(id = R.drawable.sign_up),
                 contentDescription = "Sign Up"
             )
         }

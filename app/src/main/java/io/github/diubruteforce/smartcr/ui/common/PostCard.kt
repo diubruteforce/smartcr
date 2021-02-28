@@ -1,7 +1,12 @@
 package io.github.diubruteforce.smartcr.ui.common
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
 import androidx.compose.material.MaterialTheme
@@ -30,12 +35,12 @@ fun PostCard(
     onEdit: (() -> Unit)? = null,
     onDelete: (() -> Unit)? = null
 ) {
-    val interactionState = remember { InteractionState() }
+    val interactionState = remember { MutableInteractionSource() }
 
     Card(
         modifier = modifier.clickable(
             onClick = onItemClick,
-            interactionState = interactionState,
+            interactionSource = interactionState,
             indication = null
         ),
         shape = RoundedCornerShape(CornerRadius.normal),
@@ -43,8 +48,9 @@ fun PostCard(
         border = BorderStroke(1.dp, color.copy(alpha = 0.4f))
     ) {
         Box(
-            modifier = Modifier.fillMaxWidth()
-                .indication(interactionState, AmbientIndication.current())
+            modifier = Modifier
+                .fillMaxWidth()
+                .indication(interactionState, LocalIndication.current)
                 .padding(horizontal = Margin.normal, vertical = Margin.small),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(Margin.tiny)) {
@@ -71,7 +77,9 @@ fun PostCard(
 
             if (onEdit != null && onDelete != null) {
                 UpdateDeleteMenu(
-                    modifier = Modifier.align(Alignment.TopEnd).offset(x = 16.dp, y = (-16).dp),
+                    modifier = Modifier
+                        .align(Alignment.TopEnd)
+                        .offset(x = 16.dp, y = (-16).dp),
                     iconColor = MaterialTheme.colors.grayText,
                     onEdit = onEdit,
                     onDelete = onDelete
@@ -85,28 +93,32 @@ fun PostCard(
 @Composable
 private fun PreviewPostCard() {
     SmartCRTheme {
-        ScrollableColumn(
+        LazyColumn(
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.normal)
         ) {
-            PostCard(
-                title = "CSE323 (Class)",
-                firstRow = "Time: 10:00 AM - 12:00 PM",
-                secondRow = "Room: 343 DT5",
-                color = MaterialTheme.colors.primary,
-                onItemClick = {},
-                onDelete = {},
-                onEdit = {}
-            )
-
-            (0..10).forEach {
+            item {
                 PostCard(
-                    title = "CSE323 (Section $it)",
+                    title = "CSE323 (Class)",
                     firstRow = "Time: 10:00 AM - 12:00 PM",
                     secondRow = "Room: 343 DT5",
                     color = MaterialTheme.colors.primary,
-                    onItemClick = {}
+                    onItemClick = {},
+                    onDelete = {},
+                    onEdit = {}
                 )
+            }
+
+            (0..10).forEach {
+                item {
+                    PostCard(
+                        title = "CSE323 (Section $it)",
+                        firstRow = "Time: 10:00 AM - 12:00 PM",
+                        secondRow = "Room: 343 DT5",
+                        color = MaterialTheme.colors.primary,
+                        onItemClick = {}
+                    )
+                }
             }
         }
     }

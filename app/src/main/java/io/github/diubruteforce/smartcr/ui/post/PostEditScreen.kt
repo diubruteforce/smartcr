@@ -1,8 +1,8 @@
 package io.github.diubruteforce.smartcr.ui.post
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.Scaffold
@@ -15,7 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.AmbientFocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
 import io.github.diubruteforce.smartcr.R
@@ -49,13 +49,13 @@ fun PostEditScreen(
 ) {
     val sheetState = rememberBackPressAwareBottomSheetState()
     var sheetType by remember { mutableStateOf(PostEditSheet.GroupType) }
-    val focusManager = AmbientFocusManager.current
+    val focusManager = LocalFocusManager.current
     val scope = rememberCoroutineScope()
     val mainActivity = getMainActivity()
 
     val sideEffect = viewModel.sideEffect.collectAsState().value
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData(postType, postId)
     }
 
@@ -74,48 +74,48 @@ fun PostEditScreen(
                 PostEditSheet.Number -> {
                     ListBottomSheet(
                         title = "Select ${postType.name} number",
-                        icon = Icons.Outlined.ConfirmationNumber,
-                        onClose = sheetState::hide,
+                        imageVector = Icons.Outlined.ConfirmationNumber,
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = (1..10).map { "${postType.name} $it" },
                         onItemClick = {
                             viewModel.changeNumber(it)
-                            sheetState.hide()
+                            scope.launch { sheetState.hide() }
                         }
                     )
                 }
                 PostEditSheet.Section -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.select_section_name),
-                        icon = Icons.Outlined.SettingsCell,
-                        onClose = sheetState::hide,
+                        imageVector = Icons.Outlined.SettingsCell,
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = viewModel.joinedSections,
                         onItemClick = {
                             viewModel.changeSection(it)
-                            sheetState.hide()
+                            scope.launch { sheetState.hide() }
                         }
                     )
                 }
                 PostEditSheet.GroupType -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.select_post_type),
-                        icon = Icons.Outlined.Group,
-                        onClose = sheetState::hide,
+                        imageVector = Icons.Outlined.Group,
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = GroupType.values().toList(),
                         onItemClick = {
                             viewModel.changeGroupType(it)
-                            sheetState.hide()
+                            scope.launch { sheetState.hide() }
                         }
                     )
                 }
                 PostEditSheet.MaxMember -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.select_max_member),
-                        icon = Icons.Outlined.Grade,
-                        onClose = sheetState::hide,
+                        imageVector = Icons.Outlined.Grade,
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = (1..10).toList(),
                         onItemClick = {
                             viewModel.changeMaxMember(it.toString())
-                            sheetState.hide()
+                            scope.launch { sheetState.hide() }
                         }
                     )
                 }
@@ -204,48 +204,60 @@ private fun PostEditScreenContent(
             )
         }
     ) {
-        ScrollableColumn(
+        LazyColumn(
             modifier = Modifier.navigationBarsWithImePadding(),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.small)
         ) {
-            CRSelection(
-                state = state.section,
-                placeHolder = stringResource(id = R.string.section),
-                onClick = selectSection
-            )
+            item {
+                CRSelection(
+                    state = state.section,
+                    placeHolder = stringResource(id = R.string.section),
+                    onClick = selectSection
+                )
+            }
 
-            CRSelection(
-                state = state.number,
-                placeHolder = "${postType.name} number",
-                onClick = selectNumber
-            )
+            item {
+                CRSelection(
+                    state = state.number,
+                    placeHolder = "${postType.name} number",
+                    onClick = selectNumber
+                )
+            }
 
-            CRSelection(
-                state = state.date,
-                placeHolder = stringResource(id = R.string.submission_date),
-                onClick = { selectDate.invoke(state.date.value) }
-            )
+            item {
+                CRSelection(
+                    state = state.date,
+                    placeHolder = stringResource(id = R.string.submission_date),
+                    onClick = { selectDate.invoke(state.date.value) }
+                )
+            }
 
-            CRSelection(
-                state = state.time,
-                placeHolder = stringResource(id = R.string.submission_time),
-                onClick = { selectTime.invoke(state.time.value) }
-            )
+            item {
+                CRSelection(
+                    state = state.time,
+                    placeHolder = stringResource(id = R.string.submission_time),
+                    onClick = { selectTime.invoke(state.time.value) }
+                )
+            }
 
             if (postType != PostType.Quiz) {
-                CRSelection(
-                    state = state.groupType,
-                    placeHolder = stringResource(id = R.string.type),
-                    onClick = selectGroupType
-                )
+                item {
+                    CRSelection(
+                        state = state.groupType,
+                        placeHolder = stringResource(id = R.string.type),
+                        onClick = selectGroupType
+                    )
+                }
 
                 if (state.groupType.value == GroupType.Group.name) {
-                    CRSelection(
-                        state = state.maxMember,
-                        placeHolder = stringResource(id = R.string.max_member),
-                        onClick = selectMaxMember
-                    )
+                    item {
+                        CRSelection(
+                            state = state.maxMember,
+                            placeHolder = stringResource(id = R.string.max_member),
+                            onClick = selectMaxMember
+                        )
+                    }
                 }
             }
 
@@ -253,34 +265,42 @@ private fun PostEditScreenContent(
                 syllabusFocusRequester,
                 detailsFocusRequester) = FocusRequester.createRefs()
 
-            FullName(
-                state = state.place,
-                onValueChange = onPlaceChange,
-                placeHolder = stringResource(id = R.string.place_with_example),
-                focusRequester = placeFocusRequester,
-                onImeActionPerformed = {
-                    if (postType == PostType.Quiz) syllabusFocusRequester.requestFocus()
-                    else detailsFocusRequester.requestFocus()
-                }
-            )
-
-            if (postType == PostType.Quiz) {
-                Description(
-                    state = state.syllabus,
-                    onValueChange = onSyllabusChange,
-                    placeHolder = stringResource(id = R.string.syllabus),
-                    focusRequester = syllabusFocusRequester
+            item {
+                FullName(
+                    state = state.place,
+                    onValueChange = onPlaceChange,
+                    placeHolder = stringResource(id = R.string.place_with_example),
+                    focusRequester = placeFocusRequester,
+                    onImeActionPerformed = {
+                        if (postType == PostType.Quiz) syllabusFocusRequester.requestFocus()
+                        else detailsFocusRequester.requestFocus()
+                    }
                 )
             }
 
-            Description(
-                state = state.details,
-                onValueChange = onDetailsChange,
-                placeHolder = stringResource(id = R.string.detail),
-                focusRequester = detailsFocusRequester
-            )
+            if (postType == PostType.Quiz) {
+                item {
+                    Description(
+                        state = state.syllabus,
+                        onValueChange = onSyllabusChange,
+                        placeHolder = stringResource(id = R.string.syllabus),
+                        focusRequester = syllabusFocusRequester
+                    )
+                }
+            }
 
-            LargeButton(text = stringResource(id = R.string.save), onClick = savePost)
+            item {
+                Description(
+                    state = state.details,
+                    onValueChange = onDetailsChange,
+                    placeHolder = stringResource(id = R.string.detail),
+                    focusRequester = detailsFocusRequester
+                )
+            }
+
+            item {
+                LargeButton(text = stringResource(id = R.string.save), onClick = savePost)
+            }
         }
     }
 }

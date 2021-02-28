@@ -7,8 +7,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.onActive
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
@@ -29,7 +29,7 @@ fun CourseListScreen(
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData()
     }
 

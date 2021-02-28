@@ -8,12 +8,12 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.onActive
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
@@ -36,7 +36,7 @@ fun GroupScreen(
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData(postId = postId, sectionId = sectionId)
     }
 
@@ -205,7 +205,7 @@ private fun LazyListScope.EmptyGroup(
             modifier = Modifier.sizeIn(minHeight = 600.dp),
             title = "No Group Available",
             message = "Currently there is no group. To get started create a new group",
-            image = vectorResource(id = R.drawable.no_exam),
+            image = painterResource(id = R.drawable.no_exam),
             actionTitle = "Create a group",
             onAction = { startEditing.invoke(Group()) }
         )

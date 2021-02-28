@@ -1,6 +1,7 @@
 package io.github.diubruteforce.smartcr.ui.common
 
 import androidx.compose.foundation.*
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
@@ -10,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import io.github.diubruteforce.smartcr.ui.theme.Margin
@@ -19,11 +20,11 @@ import io.github.diubruteforce.smartcr.ui.theme.grayBorder
 @Composable
 fun MenuItem(
     modifier: Modifier,
-    icon: ImageVector,
+    icon: Painter,
     title: String,
     onClick: () -> Unit
 ) {
-    val interactionState = remember { InteractionState() }
+    val interactionState = remember { MutableInteractionSource() }
 
     Card(
         shape = RoundedCornerShape(16.dp),
@@ -32,11 +33,11 @@ fun MenuItem(
         modifier = modifier.clickable(
             onClick = onClick,
             indication = null,
-            interactionState = interactionState
+            interactionSource = interactionState
         )
     ) {
         Column(
-            modifier = Modifier.indication(interactionState, AmbientIndication.current()),
+            modifier = Modifier.indication(interactionState, LocalIndication.current),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Image(
@@ -44,7 +45,7 @@ fun MenuItem(
                     .weight(1f)
                     .aspectRatio(1f)
                     .padding(Margin.normal),
-                imageVector = icon,
+                painter = icon,
                 contentDescription = "Menu Item"
             )
 
@@ -63,10 +64,10 @@ fun MenuItem(
 
 @Composable
 fun MenuRow(
-    leftIcon: ImageVector,
+    leftIcon: Painter,
     leftTitle: String,
     leftOnClick: () -> Unit,
-    rightIcon: ImageVector,
+    rightIcon: Painter,
     rightTitle: String,
     rightOnClick: () -> Unit
 ) {

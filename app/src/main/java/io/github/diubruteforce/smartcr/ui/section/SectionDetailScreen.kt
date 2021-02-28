@@ -4,8 +4,8 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -15,7 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.AmbientFocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,7 +53,7 @@ fun SectionDetailScreen(
 
     val scope = rememberCoroutineScope()
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData(sectionId)
     }
 
@@ -83,12 +83,12 @@ fun SectionDetailScreen(
         sheetContent = {
             ListBottomSheet(
                 title = stringResource(id = R.string.select_day),
-                icon = Icons.Outlined.CalendarToday,
-                onClose = sheetState::hide,
+                imageVector = Icons.Outlined.CalendarToday,
+                onClose = { scope.launch { sheetState.hide() } },
                 list = Week.values().toList(),
                 onItemClick = {
                     viewModel.changeDay(it)
-                    sheetState.hide()
+                    scope.launch { sheetState.hide() }
                 }
             )
         }
@@ -104,7 +104,7 @@ fun SectionDetailScreen(
                 clipBoard.setPrimaryClip(clip)
             },
             changeRoom = viewModel::changeRoom,
-            selectDay = { sheetState.show() },
+            selectDay = { scope.launch { sheetState.show() } },
             selectStarTime = {
                 val timePicker = TimePicker(time = it, onResult = viewModel::changeStartTime)
                 timePicker.show(mainActivity.supportFragmentManager, "StartTime")
@@ -160,47 +160,55 @@ private fun SectionDetailScreenContent(
             )
         }
     ) {
-        ScrollableColumn(
+        LazyColumn(
             modifier = Modifier.navigationBarsWithImePadding(),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(0.dp)
         ) {
-            Text(
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = "${state.section.course.courseCode} (${state.section.name})",
-                style = MaterialTheme.typography.h6,
-                color = MaterialTheme.colors.primary
-            )
+            item {
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = "${state.section.course.courseCode} (${state.section.name})",
+                        style = MaterialTheme.typography.h6,
+                        color = MaterialTheme.colors.primary
+                    )
+                }
+            }
 
-            Spacer(modifier = Modifier.size(Margin.big))
+            item { Spacer(modifier = Modifier.size(Margin.big)) }
 
             if (state.editingRoutine == null) {
-                SectionDetail(
-                    section = state.section,
-                    routines = state.routines,
-                    navigateToSectionEdit = navigateToSectionEdit,
-                    navigateToTeacherDetail = navigateToTeacherDetail,
-                    startEditingRoutine = startEditingRoutine,
-                    deleteRoutine = deleteRoutine,
-                    onCopy = onCopy
-                )
+                item {
+                    SectionDetail(
+                        section = state.section,
+                        routines = state.routines,
+                        navigateToSectionEdit = navigateToSectionEdit,
+                        navigateToTeacherDetail = navigateToTeacherDetail,
+                        startEditingRoutine = startEditingRoutine,
+                        deleteRoutine = deleteRoutine,
+                        onCopy = onCopy
+                    )
+                }
             } else {
-                RoutineEdit(
-                    state = state,
-                    onRoomChange = changeRoom,
-                    changeDay = selectDay,
-                    changeStartTime = selectStarTime,
-                    changeEndTime = selectEndTime,
-                    saveRoutine = saveRoutine,
-                    cancelEditing = cancelEditing
-                )
+                item {
+                    RoutineEdit(
+                        state = state,
+                        onRoomChange = changeRoom,
+                        changeDay = selectDay,
+                        changeStartTime = selectStarTime,
+                        changeEndTime = selectEndTime,
+                        saveRoutine = saveRoutine,
+                        cancelEditing = cancelEditing
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ColumnScope.RoutineEdit(
+private fun RoutineEdit(
     state: SectionDetailState,
     onRoomChange: (String) -> Unit,
     changeDay: () -> Unit,
@@ -209,7 +217,7 @@ private fun ColumnScope.RoutineEdit(
     saveRoutine: () -> Unit,
     cancelEditing: () -> Unit
 ) {
-    val focusManager = AmbientFocusManager.current
+    val focusManager = LocalFocusManager.current
     val roomFocusRequester = FocusRequester()
 
     FullName(
@@ -274,7 +282,7 @@ private fun ColumnScope.RoutineEdit(
 }
 
 @Composable
-private fun ColumnScope.SectionDetail(
+private fun SectionDetail(
     section: Section,
     routines: List<Routine>,
     navigateToSectionEdit: (String, String) -> Unit,
@@ -370,7 +378,8 @@ private fun CodeCopy(
         border = BorderStroke(1.dp, MaterialTheme.colors.grayBorder)
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(start = Margin.medium),
             verticalAlignment = Alignment.CenterVertically
         ) {

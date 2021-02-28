@@ -1,6 +1,5 @@
 package io.github.diubruteforce.smartcr.ui.section
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.AmbientFocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
@@ -53,12 +52,12 @@ fun SectionEditScreen(
     val scope = rememberCoroutineScope()
     var currentSheet by remember { mutableStateOf(SectionEditSheet.Instructor) }
 
-    val focusManager = AmbientFocusManager.current
+    val focusManager = LocalFocusManager.current
     val (courseFocusRequester, instructorFocusRequester) = FocusRequester.createRefs()
     val teacherState = viewModel.teacherState.collectAsState().value
     val courseState = viewModel.courseState.collectAsState().value
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadDate(sectionId = sectionId, courseId = courseId)
     }
 
@@ -81,7 +80,7 @@ fun SectionEditScreen(
                     ) {
                         SheetHeader(
                             title = stringResource(id = R.string.select_course),
-                            icon = Icons.Outlined.AccountCircle,
+                            imageVector = Icons.Outlined.AccountCircle,
                             onClose = {
                                 scope.launch {
                                     focusManager.clearFocus()
@@ -130,7 +129,7 @@ fun SectionEditScreen(
                     ) {
                         SheetHeader(
                             title = stringResource(id = R.string.select_instructor),
-                            icon = Icons.Outlined.AccountCircle,
+                            imageVector = Icons.Outlined.AccountCircle,
                             onClose = {
                                 scope.launch {
                                     focusManager.clearFocus()
@@ -202,31 +201,31 @@ fun SectionEditScreen(
                 SectionEditSheet.SectionName -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.select_section_name),
-                        icon = Icons.Outlined.SettingsCell,
-                        onClose = { sheetState.hide() },
+                        imageVector = Icons.Outlined.SettingsCell,
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = ('A'..'Z').map { "Section $it" },
                         onItemClick = {
                             viewModel.changeSectionName(it)
-                            sheetState.hide()
+                            scope.launch { sheetState.hide() }
                         }
                     )
                 }
                 SectionEditSheet.NoCourse -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.prohibited),
-                        icon = Icons.Outlined.Error,
-                        onClose = { sheetState.hide() },
+                        imageVector = Icons.Outlined.Error,
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = listOf("You can't change your course."),
-                        onItemClick = { sheetState.hide() }
+                        onItemClick = { scope.launch { sheetState.hide() } }
                     )
                 }
                 SectionEditSheet.NoSectionName -> {
                     ListBottomSheet(
                         title = stringResource(id = R.string.prohibited),
-                        icon = Icons.Outlined.Error,
-                        onClose = { sheetState.hide() },
+                        imageVector = Icons.Outlined.Error,
+                        onClose = { scope.launch { sheetState.hide() } },
                         list = listOf("You can't change your section name."),
-                        onItemClick = { sheetState.hide() }
+                        onItemClick = { scope.launch { sheetState.hide() } }
                     )
                 }
             }
@@ -292,59 +291,73 @@ private fun SectionEditScreenContent(
             outlineFocusRequester) = FocusRequester.createRefs()
         val state = stateFlow.collectAsState().value
 
-        ScrollableColumn(
+        LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .navigationBarsWithImePadding(),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.tiny)
         ) {
-            CRSelection(
-                state = state.sectionName,
-                placeHolder = stringResource(id = R.string.section_name),
-                onClick = selectSectionName
-            )
+            item {
+                CRSelection(
+                    state = state.sectionName,
+                    placeHolder = stringResource(id = R.string.section_name),
+                    onClick = selectSectionName
+                )
+            }
 
-            CRSelection(
-                state = state.courseTitle,
-                placeHolder = stringResource(id = R.string.course),
-                onClick = selectCourse
-            )
+            item {
+                CRSelection(
+                    state = state.courseTitle,
+                    placeHolder = stringResource(id = R.string.course),
+                    onClick = selectCourse
+                )
+            }
 
-            CRSelection(
-                state = state.instructorName,
-                placeHolder = stringResource(id = R.string.instructor),
-                onClick = selectInstructor
-            )
+            item {
+                CRSelection(
+                    state = state.instructorName,
+                    placeHolder = stringResource(id = R.string.instructor),
+                    onClick = selectInstructor
+                )
+            }
 
-            FullName(
-                state = state.googleCode,
-                onValueChange = changeGoogleCode,
-                placeHolder = stringResource(id = R.string.google_code),
-                focusRequester = googleFocusRequester,
-                onImeActionPerformed = {
-                    blcFocusRequester.requestFocus()
-                }
-            )
+            item {
+                FullName(
+                    state = state.googleCode,
+                    onValueChange = changeGoogleCode,
+                    placeHolder = stringResource(id = R.string.google_code),
+                    focusRequester = googleFocusRequester,
+                    onImeActionPerformed = {
+                        blcFocusRequester.requestFocus()
+                    }
+                )
+            }
 
-            FullName(
-                state = state.blcCode,
-                onValueChange = changeBlcCode,
-                placeHolder = stringResource(id = R.string.blc_code),
-                focusRequester = blcFocusRequester,
-                onImeActionPerformed = {
-                    outlineFocusRequester.requestFocus()
-                }
-            )
+            item {
+                FullName(
+                    state = state.blcCode,
+                    onValueChange = changeBlcCode,
+                    placeHolder = stringResource(id = R.string.blc_code),
+                    focusRequester = blcFocusRequester,
+                    onImeActionPerformed = {
+                        outlineFocusRequester.requestFocus()
+                    }
+                )
+            }
 
-            Description(
-                state = state.courseOutline,
-                onValueChange = changeCourseOutline,
-                placeHolder = stringResource(id = R.string.course_outline),
-                focusRequester = outlineFocusRequester
-            )
+            item {
+                Description(
+                    state = state.courseOutline,
+                    onValueChange = changeCourseOutline,
+                    placeHolder = stringResource(id = R.string.course_outline),
+                    focusRequester = outlineFocusRequester
+                )
+            }
 
-            LargeButton(text = stringResource(id = R.string.save), onClick = saveSection)
+            item {
+                LargeButton(text = stringResource(id = R.string.save), onClick = saveSection)
+            }
         }
     }
 }

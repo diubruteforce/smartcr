@@ -1,10 +1,10 @@
 package io.github.diubruteforce.smartcr.ui.event
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
@@ -32,7 +32,7 @@ fun EventDetailScreen(
     val sideEffect = viewModel.sideEffect.collectAsState().value
     var deleteEvent by remember { mutableStateOf(false) }
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData(eventId)
     }
 
@@ -106,33 +106,43 @@ private fun EventDetailScreenContent(
             }
         }
     ) {
-        ScrollableColumn(
+        LazyColumn(
             modifier = Modifier.navigationBarsPadding(),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.tiny)
         ) {
             state.event?.let { event ->
-                Spacer(modifier = Modifier.size(Margin.normal))
+                item {
+                    Spacer(modifier = Modifier.size(Margin.normal))
+                }
 
-                Text(
-                    text = event.title,
-                    style = MaterialTheme.typography.h6,
-                    color = MaterialTheme.colors.event
-                )
+                item {
+                    Text(
+                        text = event.title,
+                        style = MaterialTheme.typography.h6,
+                        color = MaterialTheme.colors.event
+                    )
+                }
 
-                Spacer(modifier = Modifier.size(Margin.normal))
+                item {
+                    Spacer(modifier = Modifier.size(Margin.normal))
+                }
 
-                LabelText(label = stringResource(id = R.string.type), text = event.type)
-                LabelText(label = stringResource(id = R.string.date), text = event.date)
-                LabelText(label = stringResource(id = R.string.time), text = event.time)
-                LabelText(label = stringResource(id = R.string.place), text = event.place)
+                item { LabelText(label = stringResource(id = R.string.type), text = event.type) }
+                item { LabelText(label = stringResource(id = R.string.date), text = event.date) }
+                item { LabelText(label = stringResource(id = R.string.time), text = event.time) }
+                item { LabelText(label = stringResource(id = R.string.place), text = event.place) }
 
-                TitleRow(
-                    title = stringResource(id = R.string.detail),
-                    onEdit = navigateToEventEdit
-                )
+                item {
+                    TitleRow(
+                        title = stringResource(id = R.string.detail),
+                        onEdit = navigateToEventEdit
+                    )
+                }
 
-                Text(text = event.details)
+                item {
+                    Text(text = event.details)
+                }
             }
         }
     }

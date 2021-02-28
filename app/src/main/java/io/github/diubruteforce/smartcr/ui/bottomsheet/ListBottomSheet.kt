@@ -7,14 +7,35 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import io.github.diubruteforce.smartcr.ui.theme.Margin
 
 @Composable
 fun <T> ListBottomSheet(
     modifier: Modifier = Modifier,
     title: String,
-    icon: ImageVector,
+    imageVector: ImageVector,
+    onClose: () -> Unit,
+    list: List<T>,
+    onItemClick: (T) -> Unit
+) {
+    ListBottomSheet(
+        modifier = modifier,
+        title = title,
+        icon = rememberVectorPainter(image = imageVector),
+        onClose = onClose,
+        list = list,
+        onItemClick = onItemClick
+    )
+}
+
+@Composable
+fun <T> ListBottomSheet(
+    modifier: Modifier = Modifier,
+    title: String,
+    icon: Painter,
     onClose: () -> Unit,
     list: List<T>,
     onItemClick: (T) -> Unit

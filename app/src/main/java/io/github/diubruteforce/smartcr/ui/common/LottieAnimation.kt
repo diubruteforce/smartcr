@@ -13,7 +13,7 @@ fun LottieAnimation(
     modifier: Modifier = Modifier,
     @RawRes rawRes: Int
 ){
-    AndroidView(viewBlock = { context ->
+    AndroidView(factory = { context ->
         LottieAnimationView(context).apply {
             repeatCount = LottieDrawable.INFINITE
             scaleType = ImageView.ScaleType.CENTER_CROP

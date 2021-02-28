@@ -15,12 +15,12 @@ import androidx.compose.material.icons.outlined.HistoryEdu
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.platform.AmbientFocusManager
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.core.content.ContextCompat
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.toPaddingValues
 import io.github.diubruteforce.smartcr.R
 import io.github.diubruteforce.smartcr.model.data.Resource
@@ -38,6 +38,7 @@ import io.github.diubruteforce.smartcr.utils.extension.isUpLoadable
 import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBottomSheetState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalCoroutinesApi::class)
 @Composable
@@ -48,8 +49,9 @@ fun ResourceScreen(
     val sideEffect = viewModel.sideEffect.collectAsState().value
     val mainActivity = getMainActivity()
     var deleteEvent by remember { mutableStateOf<Resource?>(null) }
+    val scope = rememberCoroutineScope()
 
-    onActive {
+    LaunchedEffect(true) {
         val readPermission = ContextCompat.checkSelfPermission(
             mainActivity,
             Manifest.permission.READ_EXTERNAL_STORAGE
@@ -106,15 +108,15 @@ fun ResourceScreen(
         sheetContent = {
             SheetHeader(
                 title = stringResource(id = R.string.select_section_name),
-                icon = Icons.Outlined.HistoryEdu,
-                onClose = sheetState::hide
+                imageVector = Icons.Outlined.HistoryEdu,
+                onClose = { scope.launch { sheetState.hide() } }
             )
 
             viewModel.joinedSections.forEach {
                 SheetListItem(
                     name = "${it.course.courseCode} (${it.name})",
                     onSelected = {
-                        sheetState.hide()
+                        scope.launch { sheetState.hide() }
                         viewModel.changeSection(it)
                     }
                 )
@@ -128,7 +130,7 @@ fun ResourceScreen(
             stateFlow = viewModel.state,
             onQueryChange = viewModel::search,
             onNameChange = viewModel::onTitleChange,
-            changeSection = { sheetState.show() },
+            changeSection = { scope.launch { sheetState.show() } },
             changeFile = {
                 if (viewModel.canChangeFile()) {
                     mainActivity.pickFile {
@@ -199,8 +201,8 @@ private fun ResourceScreenContent(
 ) {
     val state = stateFlow.collectAsState().value
 
-    val inset = AmbientWindowInsets.current
-    val focusManager = AmbientFocusManager.current
+    val inset = LocalWindowInsets.current
+    val focusManager = LocalFocusManager.current
 
     Scaffold(
         floatingActionButton = {
@@ -221,10 +223,10 @@ private fun ResourceScreenContent(
         }
     ) {
         LazyColumn(
-            contentPadding = inset.navigationBars.toPaddingValues().copy(
-                start = Margin.normal,
-                end = Margin.normal,
-                top = Margin.normal
+            contentPadding = inset.navigationBars.toPaddingValues(
+                additionalStart = Margin.normal,
+                additionalEnd = Margin.normal,
+                additionalTop = Margin.normal
             ),
             verticalArrangement = Arrangement.spacedBy(Margin.normal)
         ) {
@@ -245,7 +247,7 @@ private fun ResourceScreenContent(
                     Empty(
                         title = stringResource(id = R.string.no_resource),
                         message = stringResource(id = R.string.no_resource_message),
-                        image = vectorResource(id = R.drawable.no_exam)
+                        image = painterResource(id = R.drawable.no_exam)
                     )
                 }
                 else -> {
@@ -299,7 +301,7 @@ private fun ResourceScreenEdit(
     cancelEdit: () -> Unit,
     uploadFile: () -> Unit,
 ) {
-    val focusManager = AmbientFocusManager.current
+    val focusManager = LocalFocusManager.current
 
     Column(verticalArrangement = Arrangement.spacedBy(Margin.normal)) {
         FullName(

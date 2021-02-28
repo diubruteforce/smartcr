@@ -6,7 +6,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.savedinstancestate.savedInstanceState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,7 +36,7 @@ fun SmartCRScreen(
     navigateToProfileDetail: () -> Unit,
     onMenuClick: (Menu) -> Unit
 ) {
-    var currentScreen by savedInstanceState { HomeRoute.HOME }
+    var currentScreen by rememberSaveable { mutableStateOf(HomeRoute.HOME) }
 
     Scaffold(
         modifier = Modifier
@@ -79,7 +80,7 @@ fun SmartCRScreen(
                         selected = currentScreen == screen,
                         selectedContentColor = MaterialTheme.colors.primary,
                         unselectedContentColor = Color.Gray,
-                        alwaysShowLabels = true,
+                        alwaysShowLabel = true,
                         onClick = { currentScreen = screen }
                     )
                 }

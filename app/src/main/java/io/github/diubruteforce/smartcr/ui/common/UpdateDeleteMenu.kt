@@ -1,5 +1,6 @@
 package io.github.diubruteforce.smartcr.ui.common
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreHoriz
@@ -13,38 +14,38 @@ import io.github.diubruteforce.smartcr.R
 @Composable
 fun UpdateDeleteMenu(
     modifier: Modifier = Modifier,
-    iconColor: Color = AmbientContentColor.current.copy(alpha = AmbientContentAlpha.current),
+    iconColor: Color = LocalContentColor.current.copy(alpha = LocalContentAlpha.current),
     icon: ImageVector = Icons.Outlined.MoreHoriz,
     onEdit: () -> Unit,
     onDelete: () -> Unit
 ) {
     var isExpanded by remember { mutableStateOf(false) }
-    DropdownMenu(
-        toggle = {
-            IconButton(onClick = { isExpanded = true }) {
-                Icon(
-                    imageVector = icon,
-                    tint = iconColor,
-                    contentDescription = "Menu"
-                )
-            }
-        },
-        toggleModifier = modifier,
-        expanded = isExpanded,
-        onDismissRequest = { isExpanded = false }
-    ) {
-        DropdownMenuItem(onClick = {
-            onEdit.invoke()
-            isExpanded = false
-        }) {
-            Text(text = stringResource(id = R.string.edit))
+    Box(modifier = modifier) {
+        IconButton(onClick = { isExpanded = true }) {
+            Icon(
+                imageVector = icon,
+                tint = iconColor,
+                contentDescription = "Menu"
+            )
         }
 
-        DropdownMenuItem(onClick = {
-            onDelete.invoke()
-            isExpanded = false
-        }) {
-            Text(text = stringResource(id = R.string.delete))
+        DropdownMenu(
+            expanded = isExpanded,
+            onDismissRequest = { isExpanded = false }
+        ) {
+            DropdownMenuItem(onClick = {
+                onEdit.invoke()
+                isExpanded = false
+            }) {
+                Text(text = stringResource(id = R.string.edit))
+            }
+
+            DropdownMenuItem(onClick = {
+                onDelete.invoke()
+                isExpanded = false
+            }) {
+                Text(text = stringResource(id = R.string.delete))
+            }
         }
     }
 }

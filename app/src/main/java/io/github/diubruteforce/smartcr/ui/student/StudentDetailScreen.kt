@@ -1,10 +1,11 @@
 package io.github.diubruteforce.smartcr.ui.student
 
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.KeyboardArrowLeft
@@ -31,7 +32,7 @@ fun StudentDetailScreen(
     val sideEffect = viewModel.sideEffect.collectAsState().value
     var deleteProfile by remember { mutableStateOf(false) }
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData()
     }
 
@@ -106,27 +107,33 @@ private fun StudentDetailScreenContent(
             )
         }
     ) {
-        ScrollableColumn(
+        LazyColumn(
             modifier = Modifier.navigationBarsWithImePadding(),
             contentPadding = PaddingValues(Margin.normal),
             verticalArrangement = Arrangement.spacedBy(Margin.normal),
         ) {
 
-            StudentProfileCard(
-                student = state.student,
-                onEdit = onProfileEdit,
-                onDelete = onProfileDelete
-            )
+            item {
+                StudentProfileCard(
+                    student = state.student,
+                    onEdit = onProfileEdit,
+                    onDelete = onProfileDelete
+                )
+            }
 
-            Spacer(modifier = Modifier.size(Margin.medium))
+            item {
+                Spacer(modifier = Modifier.size(Margin.medium))
+            }
 
-            Text(
-                text = stringResource(id = R.string.joined_sections),
-                style = MaterialTheme.typography.h6,
-                color = MaterialTheme.colors.grayText
-            )
+            item {
+                Text(
+                    text = stringResource(id = R.string.joined_sections),
+                    style = MaterialTheme.typography.h6,
+                    color = MaterialTheme.colors.grayText
+                )
+            }
 
-            state.joinedSections.forEach {
+            items(state.joinedSections) {
                 SectionListItem(
                     state = it,
                     itemClick = { navigateToSectionDetail.invoke(it.sectionId) },
@@ -135,11 +142,17 @@ private fun StudentDetailScreenContent(
                 )
             }
 
-            Spacer(modifier = Modifier.size(Margin.medium))
+            item {
+                Spacer(modifier = Modifier.size(Margin.medium))
+            }
 
-            LargeButton(text = stringResource(id = R.string.sign_out), onClick = signOut)
+            item {
+                LargeButton(text = stringResource(id = R.string.sign_out), onClick = signOut)
+            }
 
-            Spacer(modifier = Modifier.size(Margin.medium))
+            item {
+                Spacer(modifier = Modifier.size(Margin.medium))
+            }
         }
     }
 }

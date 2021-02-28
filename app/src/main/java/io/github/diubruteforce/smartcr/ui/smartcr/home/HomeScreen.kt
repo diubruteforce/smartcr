@@ -10,12 +10,13 @@ import androidx.compose.material.icons.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.KeyboardArrowRight
 import androidx.compose.material.icons.outlined.PostAdd
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.onActive
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
@@ -32,6 +33,7 @@ import io.github.diubruteforce.smartcr.ui.theme.grayText
 import io.github.diubruteforce.smartcr.utils.extension.rememberBackPressAwareBottomSheetState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -44,8 +46,9 @@ fun HomeScreen(
 ) {
     val sheetState = rememberBackPressAwareBottomSheetState()
     val sideEffect = viewModel.sideEffect.collectAsState().value
+    val scope = rememberCoroutineScope()
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData()
     }
 
@@ -60,11 +63,12 @@ fun HomeScreen(
         sheetContent = {
             ListBottomSheet(
                 title = stringResource(id = R.string.what_to_create),
-                icon = Icons.Outlined.PostAdd,
-                onClose = sheetState::hide,
+                imageVector = Icons.Outlined.PostAdd,
+                onClose = { scope.launch { sheetState.hide() } },
                 list = PostType.values().toList().dropLast(1),
                 onItemClick = {
-                    sheetState.hide {
+                    scope.launch {
+                        sheetState.hide()
                         navigateToPostEdit.invoke(it)
                     }
                 }
@@ -78,7 +82,7 @@ fun HomeScreen(
             navigateToPostDetail = navigateToPostDetail,
             navigateToCourseList = navigateToCourseList,
             onNextDay = viewModel::nextDay,
-            createNewPost = sheetState::show,
+            createNewPost = { scope.launch { sheetState.show() } },
             onPreviousDay = viewModel::previousDay
         )
     }
@@ -189,14 +193,14 @@ private fun HomeScreenContent(
                     Empty(
                         title = stringResource(id = R.string.no_class_today),
                         message = stringResource(id = R.string.no_class_today_message),
-                        image = vectorResource(id = R.drawable.new_class)
+                        image = painterResource(id = R.drawable.new_class)
                     )
                 }
             } else if (sideEffectState is TypedSideEffectState.Success) {
                 Empty(
                     title = stringResource(id = R.string.new_semester),
                     message = stringResource(id = R.string.new_semester_message),
-                    image = vectorResource(id = R.drawable.new_semseter),
+                    image = painterResource(id = R.drawable.new_semseter),
                     actionTitle = stringResource(id = R.string.join_section),
                     onAction = navigateToCourseList
                 )

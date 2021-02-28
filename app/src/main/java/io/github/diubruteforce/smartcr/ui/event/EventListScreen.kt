@@ -1,6 +1,10 @@
 package io.github.diubruteforce.smartcr.ui.event
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.indication
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -9,14 +13,14 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.onActive
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.toPaddingValues
 import io.github.diubruteforce.smartcr.R
@@ -42,7 +46,7 @@ fun EventListScreen(
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData()
     }
 
@@ -71,7 +75,7 @@ private fun EVentListScreenContent(
     onBackPress: () -> Unit
 ) {
     val state = stateFlow.collectAsState().value
-    val inset = AmbientWindowInsets.current
+    val inset = LocalWindowInsets.current
 
     Scaffold(
         topBar = {
@@ -83,7 +87,7 @@ private fun EVentListScreenContent(
                 onClick = createNewEvent,
                 backgroundColor = MaterialTheme.colors.primary
             ) {
-                Icon(imageVector = Icons.Outlined.Add)
+                Icon(imageVector = Icons.Outlined.Add, contentDescription = null)
             }
         }
     ) {
@@ -91,14 +95,14 @@ private fun EVentListScreenContent(
             Empty(
                 title = "No Event",
                 message = "No event found. Please check later for new events",
-                image = vectorResource(id = R.drawable.no_extra)
+                image = painterResource(id = R.drawable.no_extra)
             )
         } else {
             LazyColumn(
-                contentPadding = inset.navigationBars.toPaddingValues().copy(
-                    start = Margin.normal,
-                    end = Margin.normal,
-                    top = Margin.normal
+                contentPadding = inset.navigationBars.toPaddingValues(
+                    additionalStart = Margin.normal,
+                    additionalEnd = Margin.normal,
+                    additionalTop = Margin.normal
                 ),
                 verticalArrangement = Arrangement.spacedBy(Margin.normal)
             ) {
@@ -125,13 +129,13 @@ private fun EventCard(
     type: String,
     onItemClick: () -> Unit
 ) {
-    val interactionState = remember { InteractionState() }
+    val interactionState = remember { MutableInteractionSource() }
     val eventColor = MaterialTheme.colors.event
 
     Card(
         modifier = modifier.clickable(
             onClick = onItemClick,
-            interactionState = interactionState,
+            interactionSource = interactionState,
             indication = null
         ),
         shape = RoundedCornerShape(CornerRadius.normal),
@@ -141,7 +145,7 @@ private fun EventCard(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .indication(interactionState, AmbientIndication.current())
+                .indication(interactionState, LocalIndication.current)
                 .padding(horizontal = Margin.normal, vertical = Margin.small),
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(Margin.tiny)) {

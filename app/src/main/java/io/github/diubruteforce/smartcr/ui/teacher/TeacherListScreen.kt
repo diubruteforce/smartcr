@@ -18,9 +18,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.AmbientFocusManager
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import dev.chrisbanes.accompanist.insets.navigationBarsWithImePadding
@@ -68,7 +68,7 @@ private fun TeacherListContent(
     addNewTeacher: () -> Unit,
     navigateToTeacherDetail: (String) -> Unit
 ) {
-    val focusManager = AmbientFocusManager.current
+    val focusManager = LocalFocusManager.current
     val focusRequester = FocusRequester()
     val state = stateFlow.collectAsState().value
 
@@ -136,7 +136,7 @@ private fun TeacherListContent(
                         message = "There is no teacher found at this point",
                         actionTitle = stringResource(id = R.string.create_teacher_profile),
                         onAction = addNewTeacher,
-                        image = vectorResource(id = R.drawable.new_semseter)
+                        image = painterResource(id = R.drawable.new_semseter)
                     )
                 }
             } else {

@@ -1,21 +1,21 @@
 package io.github.diubruteforce.smartcr.ui.examroutine
 
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.foundation.ScrollableColumn
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.CastForEducation
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.AmbientContext
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
-import dev.chrisbanes.accompanist.insets.AmbientWindowInsets
+import dev.chrisbanes.accompanist.insets.LocalWindowInsets
 import dev.chrisbanes.accompanist.insets.navigationBarsHeight
 import dev.chrisbanes.accompanist.insets.navigationBarsPadding
 import dev.chrisbanes.accompanist.insets.toPaddingValues
@@ -35,6 +35,7 @@ import io.github.diubruteforce.smartcr.utils.extension.toCalender
 import io.github.diubruteforce.smartcr.utils.extension.toDateString
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalCoroutinesApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -44,12 +45,13 @@ fun ExamRoutineScreen(
     onBackPress: () -> Unit
 ) {
     val sideEffect = viewModel.sideEffect.collectAsState().value
+    val scope = rememberCoroutineScope()
     val sheetState = rememberBackPressAwareBottomSheetState()
-    val activity = AmbientContext.current as AppCompatActivity
+    val activity = LocalContext.current as AppCompatActivity
     var deleteExamRoutine by remember { mutableStateOf<ExamRoutine?>(null) }
     var showNoEditAlert by remember { mutableStateOf(false) }
 
-    onActive {
+    LaunchedEffect(true) {
         viewModel.loadData()
     }
 
@@ -94,8 +96,8 @@ fun ExamRoutineScreen(
         sheetContent = {
             SheetHeader(
                 title = stringResource(id = R.string.select_course),
-                icon = Icons.Outlined.CastForEducation,
-                onClose = sheetState::hide
+                imageVector = Icons.Outlined.CastForEducation,
+                onClose = { scope.launch { sheetState.hide() } }
             )
 
             viewModel.courseList.forEach { course ->
@@ -103,7 +105,7 @@ fun ExamRoutineScreen(
                     name = course.courseTitle,
                     onSelected = {
                         viewModel.changeCourse(course)
-                        sheetState.hide()
+                        scope.launch { sheetState.hide() }
                     }
                 )
             }
@@ -120,7 +122,7 @@ fun ExamRoutineScreen(
             },
             onDelete = { deleteExamRoutine = it },
             cancelEdit = viewModel::cancelEditing,
-            selectCourse = sheetState::show,
+            selectCourse = { scope.launch { sheetState.show() } },
             selectDate = { dateString ->
                 val datePicker = DatePickerBottomSheet(dateString.toCalender()) { calender ->
                     viewModel.changeDate(calender.toDateString())
@@ -152,7 +154,7 @@ private fun ExamRoutineScreenContent(
     onBackPress: () -> Unit
 ) {
     val state = stateFlow.collectAsState().value
-    val inset = AmbientWindowInsets.current
+    val inset = LocalWindowInsets.current
 
     Scaffold(
         topBar = {
@@ -171,34 +173,38 @@ private fun ExamRoutineScreenContent(
             }
         }
     ) {
-        ScrollableColumn(
-            contentPadding = inset.navigationBars.toPaddingValues().copy(
-                start = Margin.normal,
-                end = Margin.normal,
-                top = Margin.normal
+        LazyColumn(
+            contentPadding = inset.navigationBars.toPaddingValues(
+                additionalStart = Margin.normal,
+                additionalEnd = Margin.normal,
+                additionalTop = Margin.normal
             ),
             verticalArrangement = Arrangement.spacedBy(Margin.normal)
         ) {
             when {
                 state.editingExamRoutine != null -> {
-                    EditExamRoutine(
-                        state = state,
-                        cancelEdit = cancelEdit,
-                        selectCourse = selectCourse,
-                        selectDate = selectDate,
-                        selectTime = selectTime,
-                        saveExamRoutine = saveExamRoutine
-                    )
+                    item {
+                        EditExamRoutine(
+                            state = state,
+                            cancelEdit = cancelEdit,
+                            selectCourse = selectCourse,
+                            selectDate = selectDate,
+                            selectTime = selectTime,
+                            saveExamRoutine = saveExamRoutine
+                        )
+                    }
                 }
                 sideEffectState is TypedSideEffectState.Success
                         && state.routines.isEmpty() -> {
-                    Empty(
-                        title = "No Exam Routine",
-                        message = "No routine found. Please check later for exam routines",
-                        image = vectorResource(id = R.drawable.no_exam)
-                    )
+                    item {
+                        Empty(
+                            title = "No Exam Routine",
+                            message = "No routine found. Please check later for exam routines",
+                            image = painterResource(id = R.drawable.no_exam)
+                        )
+                    }
                 }
-                else -> state.routines.forEach { examRoutine ->
+                else -> items(state.routines) { examRoutine ->
                     PostCard(
                         title = examRoutine.courseCode,
                         firstRow = examRoutine.date,
@@ -215,7 +221,7 @@ private fun ExamRoutineScreenContent(
 }
 
 @Composable
-private fun ColumnScope.EditExamRoutine(
+private fun EditExamRoutine(
     state: ExamRoutineState,
     cancelEdit: () -> Unit,
     selectCourse: () -> Unit,
